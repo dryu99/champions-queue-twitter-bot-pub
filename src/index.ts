@@ -12,8 +12,10 @@ const CQ_GAME_VERSION = "12.3";
   console.log("connecting to twitch");
   await twitchService.connect();
 
+  // channels that are either not live or waiting to be checked (TODO maybe can split into 2 diff lists)
   let channels = ["dhoklalol", "shenyi0521", "lourlo"];
-  const livePendingChannels = [];
+  const listeningChannels = [];
+  const pendingChannels = [];
 
   twitchService.chatClient.onMessage(
     async (
@@ -22,7 +24,20 @@ const CQ_GAME_VERSION = "12.3";
       msg: string,
       privateMsg: PrivateMessage
     ) => {
-      console.log({ channel, user, msg, privateMsg });
+      if (msg.includes("!teams")) {
+        console.log({ channel, user, msg });
+        // 1. parse message to match
+        // TODO
+
+        // 2. post match to twitter
+        // TODO
+
+        // 3. add channel to pending channel (set timeout for 20 min)
+        channels.push(channel.substring(1)); // TODO this logic is wrong should prob push to another array
+
+        // 4. stop listening to channel
+        twitchService.chatClient.part(channel);
+      }
     }
   );
 
@@ -32,12 +47,14 @@ const CQ_GAME_VERSION = "12.3";
     const channelsCopy = [...channels];
 
     for (const channel of channelsCopy) {
-      if (!(await twitchService.isStreamLive(channel))) continue;
+      if (!(await twitchService.isStreamLive(channel))) continue; // TODO have to validate they're playing league too (and in champions queue hmmmm)
 
+      console.log("stream is live", { channel });
+      // TODO prob have to make this async
       twitchService.chatClient
         .join(channel)
         .then(() => {
-          livePendingChannels.push(channel);
+          listeningChannels.push(channel); // TODO what's the point of this
 
           // update main array
           channels = channels.filter((c) => c !== channel);
@@ -46,7 +63,8 @@ const CQ_GAME_VERSION = "12.3";
     }
 
     // TODO do another check here to see if we can move items from live pending channels
-  }, 60 * 1000);
+    // TODO what happens when streamer goes offline?
+  }, 10 * 1000);
 
   const parseMatchMessage = (message: string): Match => {
     const teams = message.split("| vs. |");

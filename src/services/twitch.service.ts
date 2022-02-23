@@ -13,7 +13,7 @@ class TwitchService {
   static async getInstance() {
     if (!TwitchService.instance) {
       const tokenData = JSON.parse(
-        fs.readFileSync(path.resolve(__dirname, "config/twitch-tokens.json"), {
+        fs.readFileSync(Config.getTwitchTokensPath(), {
           encoding: "utf-8",
         })
       );
@@ -25,7 +25,7 @@ class TwitchService {
           clientSecret: Config.TWITCH_SECRET,
           onRefresh: (newTokenData) =>
             fs.writeFileSync(
-              path.resolve(__dirname, "config/twitch-tokens.json"),
+              Config.getTwitchTokensPath(),
               JSON.stringify(newTokenData, null, 4),
               { encoding: "utf-8" }
             ),
