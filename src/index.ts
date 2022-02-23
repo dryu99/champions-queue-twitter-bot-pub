@@ -1,26 +1,21 @@
-import dotenv from "dotenv";
-import { RefreshingAuthProvider } from "@twurple/auth";
-import { ApiClient } from "@twurple/api";
-import fs from "fs";
-import path from "path";
-import { ChatClient, PrivateMessage } from "@twurple/chat";
+import { PrivateMessage } from "@twurple/chat";
 import { Match } from "./types";
-import TwitchService, { chatClient } from "./services/twitch.service";
-
-dotenv.config();
+import TwitchService from "./services/twitch.service";
 
 const TWITCH_URL_BASE = "https://www.twitch.tv/";
 const MAX_CHANNELS = 50;
 const CQ_GAME_VERSION = "12.3";
 
 (async () => {
-  console.log("connecting to chat client");
-  await chatClient.connect();
+  const twitchService = await TwitchService.getInstance();
+
+  console.log("connecting to twitch");
+  await twitchService.connect();
 
   let channels = ["dhoklalol", "shenyi0521", "lourlo"];
   const livePendingChannels = [];
 
-  chatClient.onMessage(
+  twitchService.chatClient.onMessage(
     async (
       channel: string,
       user: string,
@@ -37,9 +32,9 @@ const CQ_GAME_VERSION = "12.3";
     const channelsCopy = [...channels];
 
     for (const channel of channelsCopy) {
-      if (!(await TwitchService.isStreamLive(channel))) continue;
+      if (!(await twitchService.isStreamLive(channel))) continue;
 
-      chatClient
+      twitchService.chatClient
         .join(channel)
         .then(() => {
           livePendingChannels.push(channel);
@@ -52,8 +47,6 @@ const CQ_GAME_VERSION = "12.3";
 
     // TODO do another check here to see if we can move items from live pending channels
   }, 60 * 1000);
-
-  const playerCacheMap = {};
 
   const parseMatchMessage = (message: string): Match => {
     const teams = message.split("| vs. |");
