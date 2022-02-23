@@ -11,15 +11,16 @@
     "watch": "ts-node-dev --respawn"
   },
   "dependencies": {
+    "@twurple/api": "^5.0.18",
+    "@twurple/auth": "^5.0.18",
+    "@twurple/chat": "^5.0.18",
     "@types/tmi.js": "^1.8.1",
     "@types/utf8": "^3.0.1",
     "dotenv": "^16.0.0",
-    "irc": "^0.5.2",
     "tmi.js": "^1.8.5",
     "utf8": "^3.0.0"
   },
   "devDependencies": {
-    "@types/irc": "^0.5.1",
     "@types/node": "^17.0.19",
     "prettier": "^2.5.1",
     "ts-node": "^10.5.0",
