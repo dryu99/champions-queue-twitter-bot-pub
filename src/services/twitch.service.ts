@@ -47,13 +47,19 @@ class TwitchService {
   }
 
   public async connect(): Promise<void> {
-    await this.chatClient.connect();
+    return this.chatClient.connect();
   }
 
   public async isStreamLive(twitchUsername: string): Promise<boolean> {
-    const user = await this.apiClient.users.getUserByName(twitchUsername);
-    if (!user) return false;
-    return (await user.getStream()) !== null;
+    try {
+      const user = await this.apiClient.users.getUserByName(twitchUsername);
+      if (!user) return false;
+      const stream = await user.getStream();
+      return stream !== null && stream.gameName === "League of Legends";
+    } catch (err) {
+      console.error("error checking stream live", { twitchUsername });
+      return false;
+    }
   }
 }
 

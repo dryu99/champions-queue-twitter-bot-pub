@@ -10,6 +10,7 @@ const getTwitchTokensPath = (): string => {
 const Config = {
   TWITCH_CLIENT_ID: process.env.TWITCH_CLIENT_ID as string,
   TWITCH_SECRET: process.env.TWITCH_SECRET as string,
+  ATLAS_URL: process.env.ATLAS_URL as string,
   getTwitchTokensPath,
 };
 

@@ -1,6 +1,9 @@
 import { PrivateMessage } from "@twurple/chat";
 import { Match } from "./types";
 import TwitchService from "./services/twitch.service";
+import mongoose from "mongoose";
+import Config from "./config/config";
+import PlayerService from "./services/player.service";
 
 const TWITCH_URL_BASE = "https://www.twitch.tv/";
 const MAX_CHANNELS = 50;
@@ -9,13 +12,23 @@ const CQ_GAME_VERSION = "12.3";
 (async () => {
   const twitchService = await TwitchService.getInstance();
 
-  console.log("connecting to twitch");
-  await twitchService.connect();
+  try {
+    console.log("connecting to twitch");
+    await twitchService.connect();
+
+    console.log("connecting to database");
+    await mongoose.connect(Config.ATLAS_URL);
+  } catch (err) {
+    console.error("error connecting to services", err);
+  }
 
   // channels that are either not live or waiting to be checked (TODO maybe can split into 2 diff lists)
-  let channels = ["dhoklalol", "shenyi0521", "lourlo"];
-  const listeningChannels = [];
-  const pendingChannels = [];
+  const players = await PlayerService.getAllTwitch();
+  const pendingChannels = new Set(players.map((player) => player.twitchId));
+  // let channels = players.map((player) => player.twitchId);
+  const listeningChannels = new Set<string>();
+
+  console.log("fetched channels", pendingChannels.size);
 
   twitchService.chatClient.onMessage(
     async (
@@ -25,6 +38,7 @@ const CQ_GAME_VERSION = "12.3";
       privateMsg: PrivateMessage
     ) => {
       if (msg.includes("!teams")) {
+        // TODO have to check if sender is mod
         console.log({ channel, user, msg });
         // 1. parse message to match
         // TODO
@@ -33,39 +47,56 @@ const CQ_GAME_VERSION = "12.3";
         // TODO
 
         // 3. add channel to pending channel (set timeout for 20 min)
-        channels.push(channel.substring(1)); // TODO this logic is wrong should prob push to another array
+        pendingChannels.add(channel.substring(1)); // TODO this logic is wrong should prob push to another array
 
         // 4. stop listening to channel
         twitchService.chatClient.part(channel);
+        listeningChannels.delete(channel);
       }
     }
   );
 
   setInterval(async () => {
-    console.log("interval start", { channels });
+    console.log("START checking pending channels", {
+      pendingChannels: pendingChannels.size,
+      listeningChannels: Array.from(listeningChannels),
+      players: players.length,
+    });
 
-    const channelsCopy = [...channels];
+    const pendingChannelsList = Array.from(pendingChannels); // need copy because we remove item from list in loop
 
-    for (const channel of channelsCopy) {
-      if (!(await twitchService.isStreamLive(channel))) continue; // TODO have to validate they're playing league too (and in champions queue hmmmm)
-
-      console.log("stream is live", { channel });
-      // TODO prob have to make this async
-      twitchService.chatClient
-        .join(channel)
-        .then(() => {
-          listeningChannels.push(channel); // TODO what's the point of this
-
-          // update main array
-          channels = channels.filter((c) => c !== channel);
-        })
-        .catch((err) => console.error("failed to join channel", err));
+    const checkChannelPromises = [];
+    for (const channel of pendingChannelsList) {
+      checkChannelPromises.push(checkChannel(channel));
     }
+
+    await Promise.allSettled(checkChannelPromises);
+    console.log("END checking pending channels", {
+      pendingChannels: pendingChannels.size,
+      listeningChannels: Array.from(listeningChannels),
+      players: players.length,
+    });
 
     // TODO do another check here to see if we can move items from live pending channels
     // TODO what happens when streamer goes offline?
-  }, 10 * 1000);
+  }, 60 * 1000);
 
+  const checkChannel = async (channel: string): Promise<void> => {
+    if (!(await twitchService.isStreamLive(channel))) return; // TODO have to validate they're playing league too (and in champions queue hmmmm)
+
+    console.log("stream is live", { channel });
+    return twitchService.chatClient
+      .join(channel)
+      .then(() => {
+        listeningChannels.add(channel); // TODO what's the point of this
+
+        // update pending list
+        pendingChannels.delete(channel);
+      })
+      .catch((err) => console.error("failed to join channel", err));
+  };
+
+  // e.g. format: Lourlo / TL Armao / GG ry0ma / EG Kaori / TSM Shenyi | vs. | TL Bwipo / DNHA Svmmy / BOG rjs / CLG Luger / EST Mia
   const parseMatchMessage = (message: string): Match => {
     const teams = message.split("| vs. |");
     const blueTeam = teams[0]
