@@ -32,18 +32,18 @@ export default class TwitterService {
     this.twitterClient = twitterClient;
   }
 
-  public tweetLiveMatch(match: any) {
+  public tweetLiveMatch(match: any): Promise<void> {
     const tweetText = this.parseMatchTweetText(match);
     console.log("uploading tweet", { tweetText });
 
-    // return twitterClient.v2
-    //   .tweet(tweetText)
-    //   .then(() => {
-    //     console.log("tweet successfully created");
-    //   })
-    //   .catch((err) => {
-    //     console.error("something went wrong", err);
-    //   });
+    return twitterClient.v2
+      .tweet(tweetText)
+      .then(() => {
+        console.log("tweet successfully created");
+      })
+      .catch((err) => {
+        console.error("something went wrong", err);
+      });
   }
 
   // TODO how to include streaming players? can prob check the playermap (add an isLive field)
