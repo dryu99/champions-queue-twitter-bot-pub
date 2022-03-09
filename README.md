@@ -36,3 +36,23 @@ Workflow
     - remove channel from pending queue
 
 !editcom !teams come back on march 13th
+
+
+
+example tweet:
+ 
+Version 12.5
+ 
+TOP Lourlo - twitch.tv/lourlo
+JGL Xmithe 
+MID PowerofEvil - twitch.tv/lourlo
+BOT Doublelift
+SUP CoreJJ
+
+vs
+
+TOP Lourlo
+JGL Xmithe - twitch.tv/lourlo
+MID PowerofEvil
+BOT Doublelift
+SUP CoreJJ
