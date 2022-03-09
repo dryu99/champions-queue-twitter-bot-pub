@@ -12,15 +12,16 @@ export default class TwitterService {
   private static instance?: TwitterService;
   private twitterClient: TwitterApiReadWrite;
 
-  static getInstance() {
+  public static getInstance() {
     if (!TwitterService.instance) {
-      console.log("connecting to twitter");
       const twitterClient = new TwitterApi({
         appKey: process.env.TWITTER_API_KEY as string,
         appSecret: process.env.TWITTER_API_KEY_SECRET as string,
         accessToken: process.env.TWITTER_ACCESS_TOKEN,
         accessSecret: process.env.TWITTER_ACCESS_TOKEN_SECRET,
       }).readWrite;
+
+      console.log("connected to twitter");
 
       TwitterService.instance = new TwitterService(twitterClient);
     }

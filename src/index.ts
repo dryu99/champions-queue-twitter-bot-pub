@@ -3,138 +3,15 @@ import { Match } from "./types";
 import TwitchService from "./services/twitch.service";
 import mongoose from "mongoose";
 import Config from "./config/config";
-import PlayerService from "./services/player.service";
+import PlayerService, { TwitchPlayer } from "./services/player.service";
 import TwitterService from "./services/twitter.service";
+import Server from "./server";
 
 const TWITCH_URL_BASE = "https://www.twitch.tv/";
 const MAX_CHANNELS = 50;
 const CQ_GAME_VERSION = "12.3";
 
-(async () => {
-  const twitchService = await TwitchService.getInstance();
-  const twitterService = TwitterService.getInstance();
-
-  try {
-    console.log("connecting to twitch");
-    await twitchService.connect();
-
-    console.log("connecting to database");
-    await mongoose.connect(Config.ATLAS_URL);
-  } catch (err) {
-    console.error("error connecting to services", err);
-  }
-
-  // channels that are either not live or waiting to be checked (TODO maybe can split into 2 diff lists)
-  const players = await PlayerService.getAllTwitch();
-  // const pendingChannels = new Set(players.map((player) => player.twitchId)); // channels that can be checked for games
-  const pendingChannels = new Set(["imls"]);
-  // let channels = players.map((player) => player.twitchId);
-  const listeningChannels = new Set<string>(); // channels that are currently being listened to
-  const ongoingChannels = new Set<string>(); // channels that have been checked and are waiting to be put in pending
-
-  console.log("fetched channels", pendingChannels.size);
-
-  twitchService.chatClient.onMessage(
-    async (
-      channel: string,
-      user: string,
-      msg: string,
-      privateMsg: PrivateMessage
-    ) => {
-      if (msg.includes("!editcom !teams")) {
-        // TODO have to check if sender is mod
-        console.log({ channel, user, msg });
-        // 1. parse message to match
-        try {
-          const match = parseMatchMessage(msg);
-
-          // 2. post match to twitter
-          await twitterService.tweetLiveMatch(match); // TODO how ot handle error here
-
-          // 3. add channel to ongoing channel (set timeout for 20 min)
-          pendingChannels.add(channel.substring(1)); // TODO should be adding to ongoing channels here but w/e
-
-          // 4. stop listening to channel
-          twitchService.chatClient.part(channel);
-          listeningChannels.delete(channel);
-        } catch (error) {
-          console.error("failed to check message", { error, msg });
-          return;
-        }
-      }
-    }
-  );
-
-  setInterval(async () => {
-    console.log("START checking pending channels", {
-      pendingChannels: pendingChannels.size,
-      listeningChannels: Array.from(listeningChannels),
-      players: players.length,
-    });
-
-    const pendingChannelsList = Array.from(pendingChannels); // need copy because we remove item from list in loop
-
-    const checkChannelPromises = [];
-    for (const channel of pendingChannelsList) {
-      checkChannelPromises.push(checkChannel(channel));
-    }
-
-    await Promise.allSettled(checkChannelPromises);
-    console.log("END checking pending channels", {
-      pendingChannels: pendingChannels.size,
-      listeningChannels: Array.from(listeningChannels),
-      players: players.length,
-    });
-
-    // TODO what happens when streamer goes offline?
-  }, 10 * 1000); // TODO shoudl prob be 5 minutes
-
-  const checkChannel = async (channel: string): Promise<void> => {
-    if (!(await twitchService.isStreamLive(channel))) return; // TODO have to validate they're playing league too (and in champions queue hmmmm)
-
-    console.log("stream is live", { channel });
-    return twitchService.chatClient
-      .join(channel)
-      .then(() => {
-        listeningChannels.add(channel); // TODO what's the point of this
-
-        // update pending list
-        pendingChannels.delete(channel);
-      })
-      .catch((err) => console.error("failed to join channel", err));
-  };
-
-  // e.g. format: !editcom !teams Lourlo / TL Armao / GG ry0ma / EG Kaori / TSM Shenyi | vs. | TL Bwipo / DNHA Svmmy / BOG rjs / CLG Luger / EST Mia
-  const parseMatchMessage = (message: string): Match => {
-    const messageParts = message.split("!editcom !teams");
-    const commandInput = messageParts[1];
-
-    if (!commandInput) {
-      throw new Error("match message formatted incorrectly: " + message);
-    }
-
-    const teams = commandInput.split("| vs. |");
-    if (teams.length !== 2) {
-      throw new Error("match message formatted incorrectly: " + message);
-    }
-    // TODO have to validate more (team length, summonernamewithteam forma, whether they exist in db (can prob fetch before hand))
-
-    const blueTeam = teams[0]
-      .split("/")
-      .map((summonerName) => summonerName.trim());
-
-    const redTeam = teams[1]
-      .split("/")
-      .map((summonerName) => summonerName.trim());
-
-    console.log({ blueTeam, redTeam });
-
-    return {
-      blueTeam,
-      redTeam,
-    };
-  };
-})();
+Server.start();
 
 // setup
 // - store all player metadata in db (player metadata should be updated periodically as new players join queue)

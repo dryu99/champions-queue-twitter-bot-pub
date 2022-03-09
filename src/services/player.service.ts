@@ -17,10 +17,10 @@ interface Player {
   // TODO isStarter
 }
 
-interface TwitchPlayer {
+export interface TwitchPlayer {
   summonerNameWithTeam: string;
   primaryRole: string;
-  twitchId: string;
+  twitchUsername: string;
 }
 
 type SocialLink = {
@@ -70,13 +70,13 @@ export default class PlayerService {
         )!.link;
 
         const urlParts = twitchUrl.split("/");
-        const twitchId = urlParts[urlParts.length - 1]
+        const twitchUsername = urlParts[urlParts.length - 1]
           ? urlParts[urlParts.length - 1]
           : urlParts[urlParts.length - 2]; // prob '/' at end
 
         return {
           summonerNameWithTeam: mongoPlayer.summonerNameWithTeam,
-          twitchId,
+          twitchUsername,
           primaryRole: "TOP", // TODO lol
         };
       });
