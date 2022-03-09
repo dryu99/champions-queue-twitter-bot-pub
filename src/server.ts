@@ -22,10 +22,7 @@ export default class Server {
 
     await this.initCache();
 
-    const twitchService = await TwitchService.getInstance();
-    const twitterService = TwitterService.getInstance();
-
-    twitchService.chatClient.onMessage(
+    TwitchService.chatClient.onMessage(
       async (
         channel: string,
         user: string,
@@ -48,13 +45,13 @@ export default class Server {
             const match = this.parseMatchMessage(msg);
 
             // 2. post match to twitter
-            await twitterService.tweetLiveMatch(match); // TODO how ot handle error here
+            await TwitterService.tweetLiveMatch(match); // TODO how ot handle error here
 
             // 3. add channel to ongoing channel (set timeout for 20 min)
             this.pendingChannels.add(channel.substring(1)); // TODO should be adding to ongoing channels here but w/e
 
             // 4. stop listening to channel
-            twitchService.chatClient.part(channel);
+            TwitchService.chatClient.part(channel);
             this.listeningChannels.delete(channel);
           } catch (error) {
             console.error("failed to check message", { error, msg });
@@ -103,11 +100,8 @@ export default class Server {
   }
 
   private static async connectToServices() {
-    // connect to services
-    await TwitchService.getInstance();
-    TwitterService.getInstance();
-
-    // connect to db
+    await TwitchService.init();
+    TwitterService.init();
     await mongoose.connect(Config.ATLAS_URL);
     console.log("connected to db");
   }
@@ -143,12 +137,10 @@ export default class Server {
   }
 
   private static async checkChannel(channel: string): Promise<void> {
-    const twitchService = await TwitchService.getInstance();
-
-    if (!(await twitchService.isStreamLive(channel))) return; // TODO have to validate they're playing league too (and in champions queue hmmmm)
+    if (!(await TwitchService.isStreamLive(channel))) return; // TODO have to validate they're playing league too (and in champions queue hmmmm)
 
     console.log("stream is live", { channel });
-    return twitchService.chatClient
+    return TwitchService.chatClient
       .join(channel)
       .then(() => {
         this.listeningChannels.add(channel); // TODO what's the point of this

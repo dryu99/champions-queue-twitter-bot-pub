@@ -6,52 +6,40 @@ import { ChatClient } from "@twurple/chat";
 import Config from "../config/config";
 
 class TwitchService {
-  private static instance?: TwitchService;
-  public apiClient: ApiClient;
-  public chatClient: ChatClient;
+  public static apiClient: ApiClient;
+  public static chatClient: ChatClient;
 
-  static async getInstance() {
-    if (!TwitchService.instance) {
-      const tokenData = JSON.parse(
-        fs.readFileSync(Config.getTwitchTokensPath(), {
-          encoding: "utf-8",
-        })
-      );
+  public static async init() {
+    const tokenData = JSON.parse(
+      fs.readFileSync(Config.getTwitchTokensPath(), {
+        encoding: "utf-8",
+      })
+    );
 
-      console.log("initializing auth provider");
-      const authProvider = new RefreshingAuthProvider(
-        {
-          clientId: Config.TWITCH_CLIENT_ID,
-          clientSecret: Config.TWITCH_SECRET,
-          onRefresh: (newTokenData) =>
-            fs.writeFileSync(
-              Config.getTwitchTokensPath(),
-              JSON.stringify(newTokenData, null, 4),
-              { encoding: "utf-8" }
-            ),
-        },
-        tokenData
-      );
+    console.log("initializing auth provider");
+    const authProvider = new RefreshingAuthProvider(
+      {
+        clientId: Config.TWITCH_CLIENT_ID,
+        clientSecret: Config.TWITCH_SECRET,
+        onRefresh: (newTokenData) =>
+          fs.writeFileSync(
+            Config.getTwitchTokensPath(),
+            JSON.stringify(newTokenData, null, 4),
+            { encoding: "utf-8" }
+          ),
+      },
+      tokenData
+    );
 
-      const apiClient = new ApiClient({ authProvider });
-      const chatClient = new ChatClient({ authProvider });
+    this.apiClient = new ApiClient({ authProvider });
+    this.chatClient = new ChatClient({ authProvider });
+    console.log("connected to twitch");
 
-      TwitchService.instance = new TwitchService(apiClient, chatClient);
-    }
-    return TwitchService.instance;
-  }
-
-  constructor(apiClient: ApiClient, chatClient: ChatClient) {
-    this.apiClient = apiClient;
-    this.chatClient = chatClient;
-  }
-
-  public async connect(): Promise<void> {
     return this.chatClient.connect();
   }
 
   // TODO change name to reflect checking game too
-  public async isStreamLive(twitchUsername: string): Promise<boolean> {
+  public static async isStreamLive(twitchUsername: string): Promise<boolean> {
     try {
       const user = await this.apiClient.users.getUserByName(twitchUsername);
       if (!user) return false;
@@ -61,6 +49,23 @@ class TwitchService {
       console.error("error checking stream live", { twitchUsername });
       return false;
     }
+  }
+
+  public static async isUserMod(
+    channel: string,
+    twitchUsername: string
+  ): Promise<boolean> {
+    // const user = await this.apiClient.users.getUserByName( );
+    const isUserMod = await this.apiClient.moderation.checkUserMod(
+      channel,
+      twitchUsername
+    );
+
+    // TODO fix this
+    //     (node:51970) UnhandledPromiseRejectionWarning: Error: This token does not have the requested scopes (moderation:read) and can not be upgraded.
+    // If you need dynamically upgrading scopes, please implement the AuthProvider interface accordingly:
+
+    return isUserMod;
   }
 }
 

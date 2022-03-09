@@ -6,12 +6,18 @@ import Config from "./config/config";
 import PlayerService, { TwitchPlayer } from "./services/player.service";
 import TwitterService from "./services/twitter.service";
 import Server from "./server";
+import { createLogger } from "@d-fischer/logger/lib";
 
 const TWITCH_URL_BASE = "https://www.twitch.tv/";
 const MAX_CHANNELS = 50;
 const CQ_GAME_VERSION = "12.3";
 
-Server.start();
+try {
+  Server.start();
+} catch (error) {
+  console.log("something went wrong in the server", error);
+  process.exit(1);
+}
 
 // setup
 // - store all player metadata in db (player metadata should be updated periodically as new players join queue)
