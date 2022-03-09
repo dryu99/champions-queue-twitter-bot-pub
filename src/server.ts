@@ -1,10 +1,11 @@
 import { PrivateMessage } from "@twurple/chat/lib";
 import mongoose from "mongoose";
-import Config from "./config/config";
+import Config from "./utils/config";
 import PlayerService, { TwitchPlayer } from "./services/player.service";
 import TwitchService from "./services/twitch.service";
 import TwitterService from "./services/twitter.service";
 import { Match } from "./types";
+import logger from "./utils/logger";
 
 type TwitchUsername = string;
 export default class Server {
@@ -62,7 +63,7 @@ export default class Server {
     );
 
     setInterval(async () => {
-      console.log("START checking pending channels", {
+      logger.info("START checking pending channels", {
         pendingChannels: this.pendingChannels.size,
         listeningChannels: Array.from(this.listeningChannels),
         players: this.playerData.size,
@@ -76,7 +77,7 @@ export default class Server {
       }
 
       await Promise.allSettled(checkChannelPromises);
-      console.log("END checking pending channels", {
+      logger.info("END checking pending channels", {
         pendingChannels: this.pendingChannels.size,
         listeningChannels: Array.from(this.listeningChannels),
         players: this.playerData.size,
@@ -103,7 +104,7 @@ export default class Server {
     await TwitchService.init();
     TwitterService.init();
     await mongoose.connect(Config.ATLAS_URL);
-    console.log("connected to db");
+    logger.info("connected to db");
   }
 
   private static parseMatchMessage(message: string): Match {
@@ -128,8 +129,6 @@ export default class Server {
       .split("/")
       .map((summonerName) => summonerName.trim());
 
-    console.log({ blueTeam, redTeam });
-
     return {
       blueTeam,
       redTeam,
@@ -139,7 +138,7 @@ export default class Server {
   private static async checkChannel(channel: string): Promise<void> {
     if (!(await TwitchService.isStreamLive(channel))) return; // TODO have to validate they're playing league too (and in champions queue hmmmm)
 
-    console.log("stream is live", { channel });
+    logger.info("stream is live", { channel });
     return TwitchService.chatClient
       .join(channel)
       .then(() => {

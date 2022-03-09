@@ -20,7 +20,8 @@
     "mongoose": "^6.2.4",
     "tmi.js": "^1.8.5",
     "twitter-api-v2": "^1.11.0",
-    "utf8": "^3.0.0"
+    "utf8": "^3.0.0",
+    "winston": "^3.6.0"
   },
   "devDependencies": {
     "@types/node": "^17.0.19",

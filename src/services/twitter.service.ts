@@ -1,5 +1,6 @@
 import { TwitterApi, TwitterApiReadWrite } from "twitter-api-v2";
 import { Match } from "../types";
+import logger from "../utils/logger";
 
 export default class TwitterService {
   private static twitterClient: TwitterApiReadWrite;
@@ -12,17 +13,17 @@ export default class TwitterService {
       accessSecret: process.env.TWITTER_ACCESS_TOKEN_SECRET,
     }).readWrite;
 
-    console.log("connected to twitter");
+    logger.info("connected to twitter");
   }
 
   public static tweetLiveMatch(match: any): Promise<void> {
     const tweetText = this.parseMatchTweetText(match);
-    console.log("uploading tweet", { tweetText });
+    logger.info("uploading tweet", { tweetText });
 
     return this.twitterClient.v2
       .tweet(tweetText)
       .then(() => {
-        console.log("tweet successfully created");
+        logger.info("tweet successfully created");
       })
       .catch((err) => {
         console.error("something went wrong", err);

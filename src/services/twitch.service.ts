@@ -1,9 +1,9 @@
 import { RefreshingAuthProvider } from "@twurple/auth";
 import { ApiClient } from "@twurple/api";
 import fs from "fs";
-import path from "path";
 import { ChatClient } from "@twurple/chat";
-import Config from "../config/config";
+import Config from "../utils/config";
+import logger from "../utils/logger";
 
 class TwitchService {
   public static apiClient: ApiClient;
@@ -16,7 +16,7 @@ class TwitchService {
       })
     );
 
-    console.log("initializing auth provider");
+    logger.info("initializing twitch auth provider");
     const authProvider = new RefreshingAuthProvider(
       {
         clientId: Config.TWITCH_CLIENT_ID,
@@ -33,7 +33,7 @@ class TwitchService {
 
     this.apiClient = new ApiClient({ authProvider });
     this.chatClient = new ChatClient({ authProvider });
-    console.log("connected to twitch");
+    logger.info("connected to twitch");
 
     return this.chatClient.connect();
   }

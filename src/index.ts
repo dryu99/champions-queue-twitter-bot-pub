@@ -2,11 +2,12 @@ import { PrivateMessage } from "@twurple/chat";
 import { Match } from "./types";
 import TwitchService from "./services/twitch.service";
 import mongoose from "mongoose";
-import Config from "./config/config";
+import Config from "./utils/config";
 import PlayerService, { TwitchPlayer } from "./services/player.service";
 import TwitterService from "./services/twitter.service";
 import Server from "./server";
 import { createLogger } from "@d-fischer/logger/lib";
+import logger from "./utils/logger";
 
 const TWITCH_URL_BASE = "https://www.twitch.tv/";
 const MAX_CHANNELS = 50;
@@ -15,7 +16,7 @@ const CQ_GAME_VERSION = "12.3";
 try {
   Server.start();
 } catch (error) {
-  console.log("something went wrong in the server", error);
+  logger.error("something went wrong in the server", error);
   process.exit(1);
 }
 
