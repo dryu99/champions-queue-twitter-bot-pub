@@ -39,7 +39,7 @@ class TwitchService {
   }
 
   // TODO change name to reflect checking game too
-  public static async isStreamLive(twitchUsername: string): Promise<boolean> {
+  public static async isChannelLive(twitchUsername: string): Promise<boolean> {
     try {
       const user = await this.apiClient.users.getUserByName(twitchUsername);
       if (!user) return false;

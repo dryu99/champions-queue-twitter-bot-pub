@@ -11,19 +11,19 @@ type TwitchUsername = string;
 
 export default class Server {
   private static playerData: Map<TwitchUsername, TwitchPlayer> = new Map();
-  private static pendingChannels: Set<TwitchUsername> = new Set();
+  private static pendingChannels: Set<TwitchUsername> = new Set(); // channels that aren't being listened to
   private static listeningChannels: Set<TwitchUsername> = new Set();
-  private static ongoingChannels: Set<TwitchUsername> = new Set();
+  // private static ongoingChannels: Set<{twitchUsername: TwitchUsername, startTime: number}> = new Set(); TODO stretch goal, if stream count starts getting too high
 
   public static async start() {
     try {
       await this.connectToServices();
+      await this.initCache();
     } catch (error) {
-      console.error("error connecting to services", error);
+      console.error("error in server initialization", error);
     }
 
-    await this.initCache();
-
+    // setup channel message listener
     TwitchService.chatClient.onMessage(
       async (
         channel: string,
@@ -48,7 +48,7 @@ export default class Server {
 
           try {
             if (!(await TwitterService.isMatchTweeted(match))) {
-              await TwitterService.tweetMatch(match); // TODO how ot handle error here
+              await TwitterService.tweetMatch(match);
             }
           } catch (error) {
             logger.error(
@@ -58,7 +58,7 @@ export default class Server {
           }
 
           // add channel to ongoing channels (set timeout for 20 min)
-          this.ongoingChannels.add(channel.substring(1)); // substring to remove #
+          // this.ongoingChannels.add(channel.substring(1)); // substring to remove #
 
           // stop listening to channel
           this.listeningChannels.delete(channel);
@@ -74,28 +74,40 @@ export default class Server {
       }
     );
 
+    // setup pending channel interval check
     setInterval(async () => {
       logger.info("START checking pending channels", {
         pendingChannels: this.pendingChannels.size,
         listeningChannels: Array.from(this.listeningChannels),
-        players: this.playerData.size,
       });
 
       const pendingChannelsList = Array.from(this.pendingChannels); // need copy because we remove item from list in loop
 
-      const checkChannelPromises = [];
+      const checkChannelPromises: Promise<void>[] = [];
       for (const channel of pendingChannelsList) {
-        checkChannelPromises.push(this.checkChannel(channel));
+        // this promise updates channel list states if the channel is live
+        const checkChannelPromise = TwitchService.isChannelLive(channel)
+          .then((isChannelLive) => {
+            if (!isChannelLive) return;
+
+            return TwitchService.chatClient.join(channel).then(() => {
+              this.listeningChannels.add(channel);
+              this.pendingChannels.delete(channel);
+            });
+          })
+          .catch((err) => console.error("failed to join channel", err));
+
+        checkChannelPromises.push(checkChannelPromise);
       }
 
       await Promise.allSettled(checkChannelPromises);
+
       logger.info("END checking pending channels", {
         pendingChannels: this.pendingChannels.size,
         listeningChannels: Array.from(this.listeningChannels),
-        players: this.playerData.size,
       });
 
-      // TODO what happens when streamer goes offline?
+      // TODO what happens when streamer goes offline then online?
     }, 10 * 1000); // TODO shoudl prob be 5 minutes
   }
 
@@ -109,7 +121,7 @@ export default class Server {
 
     this.pendingChannels = new Set(
       players.map((player) => player.twitchUsername)
-    );
+    ); // TODO how to include casters here?
   }
 
   private static async connectToServices() {
@@ -145,20 +157,5 @@ export default class Server {
       blueTeam,
       redTeam,
     };
-  }
-
-  private static async checkChannel(channel: string): Promise<void> {
-    if (!(await TwitchService.isStreamLive(channel))) return; // TODO have to validate they're playing league too (and in champions queue hmmmm)
-
-    logger.info("stream is live", { channel });
-    return TwitchService.chatClient
-      .join(channel)
-      .then(() => {
-        this.listeningChannels.add(channel); // TODO what's the point of this
-
-        // update pending list
-        this.pendingChannels.delete(channel);
-      })
-      .catch((err) => console.error("failed to join channel", err));
   }
 }
