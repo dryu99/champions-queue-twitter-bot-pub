@@ -4,10 +4,11 @@ import Config from "./utils/config";
 import PlayerService, { TwitchPlayer } from "./services/player.service";
 import TwitchService from "./services/twitch.service";
 import TwitterService from "./services/twitter.service";
-import { Match } from "./types";
+import { Match, SummonerNameWithTeam } from "./types";
 import logger from "./utils/logger";
 
 type TwitchUsername = string;
+
 export default class Server {
   private static playerData: Map<TwitchUsername, TwitchPlayer> = new Map();
   private static pendingChannels: Set<TwitchUsername> = new Set();
@@ -30,6 +31,7 @@ export default class Server {
         msg: string,
         privateMsg: PrivateMessage
       ) => {
+        // TODO have to process these callbacks synchronously (otherwise race conditions with re-posts)
         // const isUserMod = await twitchService.isUserMod(channel, user);
 
         // if (!isUserMod) {
@@ -39,14 +41,17 @@ export default class Server {
 
         if (msg.includes("!editcom !teams")) {
           // TODO have to check if sender is mod
+
           console.log({ channel, user, msg });
           // 1. parse message to match
-
           try {
             const match = this.parseMatchMessage(msg);
 
             // 2. post match to twitter
-            await TwitterService.tweetLiveMatch(match); // TODO how ot handle error here
+            // TODO race conditions here?
+            if (!(await TwitterService.isMatchTweeted(match))) {
+              await TwitterService.tweetMatch(match); // TODO how ot handle error here
+            }
 
             // 3. add channel to ongoing channel (set timeout for 20 min)
             this.pendingChannels.add(channel.substring(1)); // TODO should be adding to ongoing channels here but w/e

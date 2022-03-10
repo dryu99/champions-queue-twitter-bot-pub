@@ -1,22 +1,24 @@
 import { TwitterApi, TwitterApiReadWrite } from "twitter-api-v2";
 import { Match } from "../types";
+import Config from "../utils/config";
 import logger from "../utils/logger";
 
 export default class TwitterService {
+  private static readonly BOT_USERNAME = "whysoryude";
   private static twitterClient: TwitterApiReadWrite;
 
   public static init() {
     this.twitterClient = new TwitterApi({
-      appKey: process.env.TWITTER_API_KEY as string,
-      appSecret: process.env.TWITTER_API_KEY_SECRET as string,
-      accessToken: process.env.TWITTER_ACCESS_TOKEN,
-      accessSecret: process.env.TWITTER_ACCESS_TOKEN_SECRET,
+      appKey: Config.TWITTER_API_KEY,
+      appSecret: Config.TWITTER_API_KEY_SECRET,
+      accessToken: Config.TWITTER_ACCESS_TOKEN,
+      accessSecret: Config.TWITTER_ACCESS_TOKEN_SECRET,
     }).readWrite;
 
     logger.info("connected to twitter");
   }
 
-  public static tweetLiveMatch(match: any): Promise<void> {
+  public static tweetMatch(match: Match): Promise<void> {
     const tweetText = this.parseMatchTweetText(match);
     logger.info("uploading tweet", { tweetText });
 
@@ -28,6 +30,15 @@ export default class TwitterService {
       .catch((err) => {
         console.error("something went wrong", err);
       });
+  }
+
+  public static async isMatchTweeted(match: Match): Promise<boolean> {
+    const searchText = this.parseMatchTweetText(match);
+    const result = await this.twitterClient.v2.search(
+      `"${searchText}" (from:${this.BOT_USERNAME})`
+    );
+
+    return result.data.meta.result_count > 0;
   }
 
   // TODO how to include streaming players? can prob check the playermap (add an isLive field)
