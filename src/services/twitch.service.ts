@@ -52,20 +52,11 @@ class TwitchService {
   }
 
   public static async isUserMod(
-    channel: string,
-    twitchUsername: string
+    channel: string, // starts with #
+    modUsername: string
   ): Promise<boolean> {
-    // const user = await this.apiClient.users.getUserByName( );
-    const isUserMod = await this.apiClient.moderation.checkUserMod(
-      channel,
-      twitchUsername
-    );
-
-    // TODO fix this
-    //     (node:51970) UnhandledPromiseRejectionWarning: Error: This token does not have the requested scopes (moderation:read) and can not be upgraded.
-    // If you need dynamically upgrading scopes, please implement the AuthProvider interface accordingly:
-
-    return isUserMod;
+    const mods = await this.chatClient.getMods(channel);
+    return mods.includes(modUsername);
   }
 }
 

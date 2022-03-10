@@ -35,21 +35,18 @@ export default class Server {
         privateMsg: PrivateMessage
       ) => {
         if (msg.includes("!editcom !teams")) {
-          // check mod here to avoid overhead
-          // TODO have to check if sender is mod
-          // const isUserMod = await twitchService.isUserMod(channel, user);
-
-          // if (!isUserMod) {
-          //   console.log()
-          //   return
-          // }
-
           logger.info("received new match message", { channel, user, msg });
+          const isUserMod = await TwitchService.isUserMod(channel, user);
+          if (!isUserMod) {
+            logger.warn("user is not a mod, not tweeting", {
+              channel,
+              user,
+              msg,
+            });
+            return;
+          }
 
-          // parse message to match object
           const match = this.parseMatchMessage(msg);
-
-          // flag live streamers
 
           try {
             if (await TwitterService.isMatchTweeted(match)) {
@@ -83,6 +80,7 @@ export default class Server {
     );
 
     // setup pending channel interval check
+    // tODO handle case where next iteration starts before prev one finishes (use while + timeout)
     setInterval(async () => {
       logger.info("START checking pending channels", {
         allChannels: this.playerData.size,
@@ -164,7 +162,7 @@ export default class Server {
     logger.info("connected to db");
   }
 
-  // e.g. format: !editcom !teams Lourlo / TL Armao / GG ry0ma / EG Kaori / TSM Shenyi | vs. | TL Bwipo / DNHA Svmmy / BOG rjs / CLG Luger / EST Mia
+  // !editcom !teams Lourlo / TL Armao / GG ry0ma / EG Kaori / TSM Shenyi | vs. | TL Bwipo / DNHA Svmmy / BOG rjs / CLG Luger / EST Mia
   private static parseMatchMessage(message: string): Match {
     const messageParts = message.split("!editcom !teams");
     const commandInput = messageParts[1];
