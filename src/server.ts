@@ -14,8 +14,8 @@ export default class Server {
   private static playerData: Map<TwitchUsername, TwitchPlayer> = new Map();
   private static nameMap: Map<LowerCaseSummonerNameWithTeam, TwitchUsername> =
     new Map();
-  private static pendingChannels: Set<TwitchUsername> = new Set(); // channels that aren't being listened to
   private static listeningChannels: Set<TwitchUsername> = new Set();
+  // private static pendingChannels: Set<TwitchUsername> = new Set(); // channels that aren't being listened to
   // private static ongoingChannels: Set<{twitchUsername: TwitchUsername, startTime: number}> = new Set(); TODO stretch goal, if stream count starts getting too high
 
   public static async start() {
@@ -85,31 +85,36 @@ export default class Server {
     // setup pending channel interval check
     setInterval(async () => {
       logger.info("START checking pending channels", {
-        pendingChannels: this.pendingChannels.size,
+        allChannels: this.playerData.size,
         listeningChannels: Array.from(this.listeningChannels),
       });
 
-      const pendingChannelsList = Array.from(this.pendingChannels); // need copy because we remove item from list in loop
+      // const pendingChannelsList = Array.from(this.pendingChannels); // need copy because we remove item from list in loop
 
       const checkChannelPromises: Promise<void>[] = [];
-      for (const channel of pendingChannelsList) {
+      for (const channel of Array.from(this.playerData.keys())) {
         // this promise updates channel list states if the channel is live
         const checkChannelPromise = TwitchService.isChannelLive(channel)
           .then((isChannelLive) => {
-            if (!isChannelLive) return;
+            if (!isChannelLive) {
+              // toggle live flag
+              const player = this.playerData.get(channel)!;
+              player.isStreaming = false;
 
-            // set live flag
-            const player = this.playerData.get(channel);
-            if (!player) {
-              logger.warn("player doesn't exist in cache", { player });
+              // stop listening to channel
+              TwitchService.chatClient.part(channel);
+              this.listeningChannels.delete(channel);
               return;
             }
+
+            // toggle live flag
+            const player = this.playerData.get(channel)!;
             player.isStreaming = true;
 
             // listen to channel
             return TwitchService.chatClient.join(channel).then(() => {
               this.listeningChannels.add(channel);
-              this.pendingChannels.delete(channel);
+              // this.pendingChannels.delete(channel);
             });
           })
           .catch((err) => console.error("failed to join channel", err));
@@ -120,7 +125,7 @@ export default class Server {
       await Promise.allSettled(checkChannelPromises);
 
       logger.info("END checking pending channels", {
-        pendingChannels: this.pendingChannels.size,
+        allChannels: this.playerData.size,
         listeningChannels: Array.from(this.listeningChannels),
       });
 
@@ -147,9 +152,9 @@ export default class Server {
     }, new Map<SummonerNameWithTeam, TwitchUsername>());
 
     // init pending channels list
-    this.pendingChannels = new Set(
-      players.map((player) => player.twitchUsername)
-    ); // TODO how to include casters here?
+    // this.pendingChannels = new Set(
+    //   players.map((player) => player.twitchUsername)
+    // ); // TODO how to include casters here?
   }
 
   private static async connectToServices() {
