@@ -31,37 +31,44 @@ export default class Server {
         msg: string,
         privateMsg: PrivateMessage
       ) => {
-        // TODO have to process these callbacks synchronously (otherwise race conditions with re-posts)
-        // const isUserMod = await twitchService.isUserMod(channel, user);
-
-        // if (!isUserMod) {
-        //   console.log()
-        //   return
-        // }
-
         if (msg.includes("!editcom !teams")) {
+          // check mod here to avoid overhead
           // TODO have to check if sender is mod
+          // const isUserMod = await twitchService.isUserMod(channel, user);
 
-          console.log({ channel, user, msg });
-          // 1. parse message to match
+          // if (!isUserMod) {
+          //   console.log()
+          //   return
+          // }
+
+          logger.info("received new match message", { channel, user, msg });
+
+          // parse message to match object
+          const match = this.parseMatchMessage(msg);
+
           try {
-            const match = this.parseMatchMessage(msg);
-
-            // 2. post match to twitter
-            // TODO race conditions here?
             if (!(await TwitterService.isMatchTweeted(match))) {
               await TwitterService.tweetMatch(match); // TODO how ot handle error here
             }
-
-            // 3. add channel to ongoing channel (set timeout for 20 min)
-            this.pendingChannels.add(channel.substring(1)); // TODO should be adding to ongoing channels here but w/e
-
-            // 4. stop listening to channel
-            TwitchService.chatClient.part(channel);
-            this.listeningChannels.delete(channel);
           } catch (error) {
-            console.error("failed to check message", { error, msg });
-            return;
+            logger.error(
+              "failed to tweet, server will keep listening to channel and try again",
+              { error, channel, msg }
+            );
+          }
+
+          // add channel to ongoing channels (set timeout for 20 min)
+          this.ongoingChannels.add(channel.substring(1)); // substring to remove #
+
+          // stop listening to channel
+          this.listeningChannels.delete(channel);
+          try {
+            TwitchService.chatClient.part(channel);
+          } catch (error) {
+            console.error("failed to stop listening to channel", {
+              error,
+              channel,
+            });
           }
         }
       }

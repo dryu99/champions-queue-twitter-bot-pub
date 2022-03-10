@@ -20,15 +20,14 @@ export default class TwitterService {
 
   public static tweetMatch(match: Match): Promise<void> {
     const tweetText = this.parseMatchTweetText(match);
-    logger.info("uploading tweet", { tweetText });
 
     return this.twitterClient.v2
       .tweet(tweetText)
       .then(() => {
-        logger.info("tweet successfully created");
+        logger.info("tweet successfully created", { tweetText });
       })
       .catch((err) => {
-        console.error("something went wrong", err);
+        logger.error("something went wrong", err);
       });
   }
 
