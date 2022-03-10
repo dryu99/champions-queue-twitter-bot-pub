@@ -1,17 +1,12 @@
-export interface Player {
-  summonerName: string;
-  summonerNameWithTeam: string;
-  team: string;
-  twitchUsername?: string;
-}
+export type SummonerNameWithTeam = string;
 
-export type SummonerName = string;
 export interface Match {
-  blueTeam: SummonerName[];
-  redTeam: SummonerName[];
+  blueTeam: MatchPlayer[];
+  redTeam: MatchPlayer[];
 }
 
-export interface PlayerCache {
-  summonerName: SummonerName;
-  prevMatch?: Match;
+export interface MatchPlayer {
+  summonerNameWithTeam: SummonerNameWithTeam;
+  isStreaming: boolean;
+  twitchUsername: string;
 }

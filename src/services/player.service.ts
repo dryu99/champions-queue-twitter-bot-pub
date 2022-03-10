@@ -21,6 +21,7 @@ export interface TwitchPlayer {
   summonerNameWithTeam: string;
   primaryRole: string;
   twitchUsername: string;
+  isStreaming: boolean;
 }
 
 type SocialLink = {
@@ -78,6 +79,7 @@ export default class PlayerService {
           summonerNameWithTeam: mongoPlayer.summonerNameWithTeam,
           twitchUsername,
           primaryRole: "TOP", // TODO lol
+          isStreaming: false,
         };
       });
   }

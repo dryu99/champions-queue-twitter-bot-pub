@@ -1,5 +1,5 @@
 import { TwitterApi, TwitterApiReadWrite } from "twitter-api-v2";
-import { Match } from "../types";
+import { Match, MatchPlayer } from "../types";
 import Config from "../utils/config";
 import logger from "../utils/logger";
 
@@ -19,7 +19,7 @@ export default class TwitterService {
   }
 
   public static tweetMatch(match: Match): Promise<void> {
-    const tweetText = this.parseMatchTweetText(match);
+    const tweetText = this.buildMatchTweetText(match);
 
     return this.twitterClient.v2
       .tweet(tweetText)
@@ -32,7 +32,7 @@ export default class TwitterService {
   }
 
   public static async isMatchTweeted(match: Match): Promise<boolean> {
-    const searchText = this.parseMatchTweetText(match);
+    const searchText = this.buildMatchTweetText(match);
     const result = await this.twitterClient.v2.search(
       `"${searchText}" (from:${this.BOT_USERNAME})`
     );
@@ -41,22 +41,32 @@ export default class TwitterService {
   }
 
   // TODO how to include streaming players? can prob check the playermap (add an isLive field)
-  private static parseMatchTweetText(match: Match): string {
+  private static buildMatchTweetText(match: Match): string {
     let text = "";
 
-    text += `TOP ${match.blueTeam[0]}\n`;
-    text += `JGL ${match.blueTeam[1]}\n`;
-    text += `MID ${match.blueTeam[2]}\n`;
-    text += `BOT ${match.blueTeam[3]}\n`;
-    text += `SUP ${match.blueTeam[4]}\n\n`;
+    text += `TOP 🏔 ${this.buildMatchPlayerText(match.blueTeam[0])}\n`;
+    text += `JGL 🌲 ${this.buildMatchPlayerText(match.blueTeam[1])}\n`;
+    text += `MID 🪄 ${this.buildMatchPlayerText(match.blueTeam[2])}\n`;
+    text += `BOT 🏹 ${this.buildMatchPlayerText(match.blueTeam[3])}\n`;
+    text += `SUP 🛡 ${this.buildMatchPlayerText(match.blueTeam[4])}\n\n`;
 
     text += "vs\n\n";
 
-    text += `TOP ${match.redTeam[0]}\n`;
-    text += `JGL ${match.redTeam[1]}\n`;
-    text += `MID ${match.redTeam[2]}\n`;
-    text += `BOT ${match.redTeam[3]}\n`;
-    text += `SUP ${match.redTeam[4]}`;
+    text += `TOP 🏔 ${this.buildMatchPlayerText(match.redTeam[0])}\n`;
+    text += `JGL 🌲 ${this.buildMatchPlayerText(match.redTeam[1])}\n`;
+    text += `MID 🪄 ${this.buildMatchPlayerText(match.redTeam[2])}\n`;
+    text += `BOT 🏹 ${this.buildMatchPlayerText(match.redTeam[3])}\n`;
+    text += `SUP 🛡 ${this.buildMatchPlayerText(match.redTeam[4])}`;
+
+    return text;
+  }
+
+  private static buildMatchPlayerText(matchPlayer: MatchPlayer): string {
+    let text = matchPlayer.summonerNameWithTeam;
+
+    if (matchPlayer.isStreaming) {
+      text += ` (https://www.twitch.tv/${matchPlayer.twitchUsername})`;
+    }
 
     return text;
   }
