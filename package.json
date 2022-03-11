@@ -6,8 +6,9 @@
   "author": "Daniel Ryu <rujjiryu99@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "build": "rm -rf ./dist/ && yarn tsc --project",
-    "start": "ts-node ./src/index.ts",
+    "build": "rm -rf ./dist/ && yarn tsc",
+    "start": "node ./dist/index.js",
+    "dev": "ts-node ./src/index.ts",
     "watch": "ts-node-dev --respawn"
   },
   "dependencies": {
