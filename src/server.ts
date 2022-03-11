@@ -6,10 +6,13 @@ import TwitchService from "./services/twitch.service";
 import TwitterService from "./services/twitter.service";
 import { Match, MatchPlayer, SummonerNameWithTeam } from "./types";
 import logger from "./utils/logger";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+import { wait } from "./utils/wait";
 
 type TwitchUsername = string;
 type LowerCaseSummonerNameWithTeam = string;
-
 export default class Server {
   private static playerData: Map<TwitchUsername, TwitchPlayer> = new Map();
   private static nameMap: Map<LowerCaseSummonerNameWithTeam, TwitchUsername> =
@@ -17,9 +20,16 @@ export default class Server {
   private static listeningChannels: Set<TwitchUsername> = new Set();
   // private static pendingChannels: Set<TwitchUsername> = new Set(); // channels that aren't being listened to
   // private static ongoingChannels: Set<{twitchUsername: TwitchUsername, startTime: number}> = new Set(); TODO stretch goal, if stream count starts getting too high
+  private static readonly SERVER_MIN_START_HOUR = 9; // mondays we start @ 10am
+  private static readonly SERVER_END_HOUR = 2;
+  private static readonly TWITCH_CHANNEL_CHECK_INTERVAL_MINUTES = 5;
 
   public static async start() {
     try {
+      dayjs.extend(utc);
+      dayjs.extend(timezone);
+      dayjs.tz.setDefault("America/Los_Angeles");
+
       await this.connectToServices();
       await this.initCache();
     } catch (error) {
@@ -79,9 +89,19 @@ export default class Server {
       }
     );
 
-    // setup pending channel interval check
-    // tODO handle case where next iteration starts before prev one finishes (use while + timeout)
-    setInterval(async () => {
+    while (true) {
+      // server shouldn't run between 2am-9am
+      const currDate = dayjs().tz();
+      if (
+        currDate.hour() >= this.SERVER_END_HOUR &&
+        currDate.hour() <= this.SERVER_MIN_START_HOUR
+      ) {
+        logger.info("champions queue block has ended, stopping server", {
+          date: currDate.toDate().toLocaleString(),
+        });
+        process.exit(0);
+      }
+
       logger.info("START checking pending channels", {
         allChannels: this.playerData.size,
         listeningChannels: Array.from(this.listeningChannels),
@@ -89,6 +109,7 @@ export default class Server {
 
       // const pendingChannelsList = Array.from(this.pendingChannels); // need copy because we remove item from list in loop
 
+      // check each channel to see if it's live
       const checkChannelPromises: Promise<void>[] = [];
       for (const channel of Array.from(this.playerData.keys())) {
         // this promise updates channel list states if the channel is live
@@ -127,8 +148,8 @@ export default class Server {
         listeningChannels: Array.from(this.listeningChannels),
       });
 
-      // TODO what happens when streamer goes offline then online?
-    }, 30 * 1000); // TODO shoudl prob be 5 minutes
+      await wait(this.TWITCH_CHANNEL_CHECK_INTERVAL_MINUTES * 60 * 1000);
+    }
   }
 
   private static async initCache() {

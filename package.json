@@ -16,6 +16,7 @@
     "@twurple/chat": "^5.0.18",
     "@types/tmi.js": "^1.8.1",
     "@types/utf8": "^3.0.1",
+    "dayjs": "^1.10.8",
     "dotenv": "^16.0.0",
     "mongoose": "^6.2.4",
     "tmi.js": "^1.8.5",
