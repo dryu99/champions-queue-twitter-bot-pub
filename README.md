@@ -23,7 +23,8 @@ TODOS
   - [x] how to handle multiple players streaming in one match 
   - [x] deploy app (vps)
   - [x] figure out scheduling for app (cron)
-  - [ ] add pngs to tweets (will get rid of embedded links too)
+  - [ ] add pngs to tweets (will get rid of embedded links too + save space)
+    - [x] alternatively can just post thread and add twitch urls in replies
   - [x] store mods who post tweets in db (tracking for rewards?)
     - nah not for now, twitter can be our database lol (we're posting credits in tweets)
   - [x] add mod check

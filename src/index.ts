@@ -1,21 +1,10 @@
-import { PrivateMessage } from "@twurple/chat";
-import { Match } from "./types";
-import TwitchService from "./services/twitch.service";
-import mongoose from "mongoose";
-import Config from "./utils/config";
-import PlayerService, { TwitchPlayer } from "./services/player.service";
-import TwitterService, { MatchTweetData } from "./services/twitter.service";
+import { MatchTweetData } from "./services/twitter.service";
 import Server from "./server";
-import { createLogger } from "@d-fischer/logger/lib";
 import logger from "./utils/logger";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
-import advanced from "dayjs/plugin/advancedFormat"
+import advanced from "dayjs/plugin/advancedFormat";
 import dayjs from "dayjs";
-
-const TWITCH_URL_BASE = "https://www.twitch.tv/";
-const MAX_CHANNELS = 50;
-const CQ_GAME_VERSION = "12.3";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -30,43 +19,57 @@ Server.start().catch((error) => {
 // const matchData: MatchTweetData = {
 //   match: {
 //     blueTeam: [
-//       { summonerNameWithTeam: "a", isStreaming: false, twitchUsername: "a" },
-//       { summonerNameWithTeam: "b", isStreaming: false, twitchUsername: "b" },
-//       { summonerNameWithTeam: "c", isStreaming: false, twitchUsername: "c" },
-//       { summonerNameWithTeam: "d", isStreaming: false, twitchUsername: "d" },
-//       { summonerNameWithTeam: "e", isStreaming: false, twitchUsername: "e" },
-//       { summonerNameWithTeam: "f", isStreaming: false, twitchUsername: "f" },
+//       {
+//         summonerNameWithTeam: "100 aaaaaaaa",
+//         isStreaming: false,
+//         twitchUsername: "a",
+//       },
+//       {
+//         summonerNameWithTeam: "TSM bbbbbbbb",
+//         isStreaming: true,
+//         twitchUsername: "bbbbbbbbbbbbb",
+//       },
+//       {
+//         summonerNameWithTeam: "TSM ccccc",
+//         isStreaming: false,
+//         twitchUsername: "c",
+//       },
+//       {
+//         summonerNameWithTeam: "CLG dddddddddd",
+//         isStreaming: true,
+//         twitchUsername: "dddd",
+//       },
+//       {
+//         summonerNameWithTeam: "100 eeee",
+//         isStreaming: false,
+//         twitchUsername: "e",
+//       },
 //     ],
 //     redTeam: [
 //       {
-//         summonerNameWithTeam: "FLY a",
+//         summonerNameWithTeam: "Lourlo",
 //         isStreaming: true,
-//         twitchUsername: "flyaaa",
+//         twitchUsername: "lourlo",
 //       },
 //       {
-//         summonerNameWithTeam: "FLY b",
+//         summonerNameWithTeam: "FLY bbbbbbbbbb",
 //         isStreaming: false,
 //         twitchUsername: "FLY b",
 //       },
 //       {
-//         summonerNameWithTeam: "FLY c",
+//         summonerNameWithTeam: "FLY ccccccccc",
 //         isStreaming: false,
 //         twitchUsername: "FLY c",
 //       },
 //       {
-//         summonerNameWithTeam: "FLY d",
+//         summonerNameWithTeam: "FLY ddddddddd",
 //         isStreaming: false,
 //         twitchUsername: "FLY d",
 //       },
 //       {
-//         summonerNameWithTeam: "FLY e",
+//         summonerNameWithTeam: "FLY eeeeeeeee",
 //         isStreaming: false,
 //         twitchUsername: "FLY e",
-//       },
-//       {
-//         summonerNameWithTeam: "FLY f",
-//         isStreaming: false,
-//         twitchUsername: "FLY f",
 //       },
 //     ],
 //   },
