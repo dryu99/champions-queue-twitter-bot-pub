@@ -4,7 +4,7 @@ import TwitchService from "./services/twitch.service";
 import mongoose from "mongoose";
 import Config from "./utils/config";
 import PlayerService, { TwitchPlayer } from "./services/player.service";
-import TwitterService from "./services/twitter.service";
+import TwitterService, { MatchTweetData } from "./services/twitter.service";
 import Server from "./server";
 import { createLogger } from "@d-fischer/logger/lib";
 import logger from "./utils/logger";
@@ -13,12 +13,56 @@ const TWITCH_URL_BASE = "https://www.twitch.tv/";
 const MAX_CHANNELS = 50;
 const CQ_GAME_VERSION = "12.3";
 
-try {
-  Server.start();
-} catch (error) {
+Server.start().catch((error) => {
   logger.error("something went wrong in the server", error);
   process.exit(1);
-}
+});
+
+// const matchData: MatchTweetData = {
+//   match: {
+//     blueTeam: [
+//       { summonerNameWithTeam: "a", isStreaming: false, twitchUsername: "a" },
+//       { summonerNameWithTeam: "b", isStreaming: false, twitchUsername: "b" },
+//       { summonerNameWithTeam: "c", isStreaming: false, twitchUsername: "c" },
+//       { summonerNameWithTeam: "d", isStreaming: false, twitchUsername: "d" },
+//       { summonerNameWithTeam: "e", isStreaming: false, twitchUsername: "e" },
+//       { summonerNameWithTeam: "f", isStreaming: false, twitchUsername: "f" },
+//     ],
+//     redTeam: [
+//       {
+//         summonerNameWithTeam: "FLY a",
+//         isStreaming: true,
+//         twitchUsername: "flyaaa",
+//       },
+//       {
+//         summonerNameWithTeam: "FLY b",
+//         isStreaming: false,
+//         twitchUsername: "FLY b",
+//       },
+//       {
+//         summonerNameWithTeam: "FLY c",
+//         isStreaming: false,
+//         twitchUsername: "FLY c",
+//       },
+//       {
+//         summonerNameWithTeam: "FLY d",
+//         isStreaming: false,
+//         twitchUsername: "FLY d",
+//       },
+//       {
+//         summonerNameWithTeam: "FLY e",
+//         isStreaming: false,
+//         twitchUsername: "FLY e",
+//       },
+//       {
+//         summonerNameWithTeam: "FLY f",
+//         isStreaming: false,
+//         twitchUsername: "FLY f",
+//       },
+//     ],
+//   },
+//   author: "testuser",
+// };
 
 // setup
 // - store all player metadata in db (player metadata should be updated periodically as new players join queue)

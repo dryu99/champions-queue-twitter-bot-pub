@@ -29,6 +29,7 @@ export default class Server {
   private static readonly TWITCH_CHANNEL_CHECK_INTERVAL_MINUTES = 5;
 
   public static async start() {
+    logger.info("starting server");
     try {
       dayjs.extend(utc);
       dayjs.extend(timezone);
