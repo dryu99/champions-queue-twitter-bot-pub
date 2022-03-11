@@ -10,6 +10,7 @@ import { createLogger } from "@d-fischer/logger/lib";
 import logger from "./utils/logger";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
+import advanced from "dayjs/plugin/advancedFormat"
 import dayjs from "dayjs";
 
 const TWITCH_URL_BASE = "https://www.twitch.tv/";
@@ -18,6 +19,7 @@ const CQ_GAME_VERSION = "12.3";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
+dayjs.extend(advanced);
 dayjs.tz.setDefault("America/Los_Angeles");
 
 Server.start().catch((error) => {

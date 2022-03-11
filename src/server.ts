@@ -255,8 +255,8 @@ export default class Server {
       (currDate.hour() >= 0 && currDate.hour() <= this.CQ_END_HOUR); // 12am - 1am
 
     logger.info("isChampsQueueLive", {
-      currDate: currDate.toDate().toLocaleString(),
-      currDay: currDate.day(),
+      currDate: currDate.format('MM/DD/YYYY HH:mma z'),
+      cqStartHour,
       isChampsQueueLive: result,
     });
 
