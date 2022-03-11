@@ -14,6 +14,7 @@ import {
 import logger from "./utils/logger";
 import dayjs from "dayjs";
 import { wait } from "./utils/wait";
+import ChampsQueueService from "./services/champs-queue.service";
 
 export default class Server {
   private static playerData: Map<TwitchUsername, TwitchPlayer> = new Map();
@@ -22,16 +23,12 @@ export default class Server {
   private static listeningChannels: Set<TwitchUsername> = new Set();
   // private static pendingChannels: Set<TwitchUsername> = new Set(); // channels that aren't being listened to
   // private static ongoingChannels: Set<{twitchUsername: TwitchUsername, startTime: number}> = new Set(); TODO stretch goal, if stream count starts getting too high
-  private static readonly CQ_START_HOUR = 18;
-  private static readonly CQ_START_HOUR_MONDAY = 10;
-  private static readonly CQ_END_HOUR = 1;
   private static readonly TWITCH_CHANNEL_CHECK_INTERVAL_MINUTES = 5;
 
   public static async start() {
     logger.info("starting server");
 
-    // account for monday here
-    if (!this.isChampsQueueLive()) {
+    if (!ChampsQueueService.isQueueLive()) {
       logger.warn("champions queue not live, stopping server");
       process.exit(0);
     }
@@ -100,7 +97,7 @@ export default class Server {
     );
 
     while (true) {
-      if (!this.isChampsQueueLive()) {
+      if (!ChampsQueueService.isQueueLive()) {
         logger.info("champions queue not live anymore, stopping server");
         process.exit(0);
       }
@@ -244,22 +241,5 @@ export default class Server {
         twitchUsername: player.twitchUsername,
       };
     });
-  }
-
-  private static isChampsQueueLive(): boolean {
-    const currDate = dayjs().tz();
-    const cqStartHour =
-      currDate.day() === 1 ? this.CQ_START_HOUR_MONDAY : this.CQ_START_HOUR;
-    const result =
-      currDate.hour() >= cqStartHour || // 10am or 6pm - 12am
-      (currDate.hour() >= 0 && currDate.hour() <= this.CQ_END_HOUR); // 12am - 1am
-
-    logger.info("isChampsQueueLive", {
-      currDate: currDate.format('MM/DD/YYYY HH:mma z'),
-      cqStartHour,
-      isChampsQueueLive: result,
-    });
-
-    return result;
   }
 }
