@@ -38,7 +38,6 @@ class TwitchService {
     return this.chatClient.connect();
   }
 
-  // TODO change name to reflect checking game too
   public static async isChannelLive(twitchUsername: string): Promise<boolean> {
     try {
       const user = await this.apiClient.users.getUserByName(twitchUsername);

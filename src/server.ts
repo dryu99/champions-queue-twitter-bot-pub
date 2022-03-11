@@ -50,46 +50,48 @@ export default class Server {
       ) => {
         if (msg.includes("!editcom !teams")) {
           logger.info("received new match message", { channel, user, msg });
-          const isUserMod = await TwitchService.isUserMod(channel, user);
-          if (!isUserMod) {
-            logger.warn("user is not a mod, not tweeting", {
-              channel,
-              user,
-              msg,
-            });
-            return;
-          }
-
-          const match = this.parseMatchMessage(msg);
-          const matchData = { match, author: user };
 
           try {
+            const isUserMod = await TwitchService.isUserMod(channel, user);
+            if (!isUserMod) {
+              logger.warn("user is not a mod, not tweeting", {
+                channel,
+                user,
+                msg,
+              });
+              return;
+            }
+
+            const match = this.parseMatchMessage(msg);
+            const matchData = { match, author: user };
+
             if (await TwitterService.isMatchTweeted(matchData)) {
               logger.warn("match has already been tweeted", { match });
             } else {
               // TODO we could avoid this network call by doing inMatch checks in-memory (won't be perfect solution but would help)
               await TwitterService.tweetMatch(matchData);
             }
+
+            // add channel to ongoing channels (set timeout for 20 min)
+            // this.ongoingChannels.add(channel.substring(1)); // substring to remove #
+
+            // stop listening to channel
+            // this.listeningChannels.delete(channel);
+            // try {
+            //   TwitchService.chatClient.part(channel);
+            // } catch (error) {
+            //   console.error("failed to stop listening to channel", {
+            //     error,
+            //     channel,
+            //   });
+            // }
           } catch (error) {
-            logger.error(
-              "failed to tweet, server will keep listening to channel and try again",
-              { error, channel, msg }
-            );
+            logger.error("something went wrong while parsing chat", {
+              error,
+              channel,
+              msg,
+            });
           }
-
-          // add channel to ongoing channels (set timeout for 20 min)
-          // this.ongoingChannels.add(channel.substring(1)); // substring to remove #
-
-          // stop listening to channel
-          // this.listeningChannels.delete(channel);
-          // try {
-          //   TwitchService.chatClient.part(channel);
-          // } catch (error) {
-          //   console.error("failed to stop listening to channel", {
-          //     error,
-          //     channel,
-          //   });
-          // }
         }
       }
     );
@@ -109,6 +111,7 @@ export default class Server {
 
       logger.info("START checking pending channels", {
         allChannels: this.playerData.size,
+        listeningChannelCount: this.listeningChannels.size,
         listeningChannels: Array.from(this.listeningChannels),
       });
 
@@ -150,6 +153,7 @@ export default class Server {
 
       logger.info("END checking pending channels", {
         allChannels: this.playerData.size,
+        listeningChannelCount: this.listeningChannels.size,
         listeningChannels: Array.from(this.listeningChannels),
       });
 
@@ -194,14 +198,17 @@ export default class Server {
     const commandInput = messageParts[1];
 
     if (!commandInput) {
-      throw new Error("match message formatted incorrectly: " + message);
+      throw new Error(
+        "parseMatchMessage message formatted incorrectly: " + message
+      );
     }
 
     const teams = commandInput.split("| vs. |");
     if (teams.length !== 2) {
-      throw new Error("match message formatted incorrectly: " + message);
+      throw new Error(
+        "parseMatchMessage message formatted incorrectly: " + message
+      );
     }
-    // TODO have to validate more (team length, summonernamewithteam forma, whether they exist in db (can prob fetch before hand))
 
     const blueTeamNames = teams[0]
       .split("/")
@@ -210,6 +217,10 @@ export default class Server {
     const redTeamNames = teams[1]
       .split("/")
       .map((summonerName) => summonerName.trim());
+
+    if (blueTeamNames.length !== 5 || redTeamNames.length !== 5) {
+      throw new Error("parseMatchMessage invalid player count: " + message);
+    }
 
     return {
       blueTeam: this.getMatchPlayers(blueTeamNames),
@@ -221,26 +232,15 @@ export default class Server {
     summonerNamesWithTeams: string[]
   ): MatchPlayer[] {
     return summonerNamesWithTeams.map((name) => {
-      const twitchUsername = this.nameMap.get(name.toLowerCase());
-
-      if (!twitchUsername) {
-        logger.warn("parsing match, name doesn't exist", { name });
-        return {
-          summonerNameWithTeam: name,
-          isStreaming: false,
-          twitchUsername: "🤖",
-        };
+      if (!this.nameMap.has(name.toLowerCase())) {
+        throw new Error(
+          "getMatchPlayers invalid summoner name, check db if player exists: " +
+            name
+        );
       }
 
-      const player = this.playerData.get(twitchUsername);
-      if (!player) {
-        logger.warn("parsing match, player doesn't exist", { name });
-        return {
-          summonerNameWithTeam: name,
-          isStreaming: false,
-          twitchUsername: "🤖",
-        };
-      }
+      const twitchUsername = this.nameMap.get(name.toLowerCase())!; // has to exist b/c of prev check
+      const player = this.playerData.get(twitchUsername)!; // has to exist since nameMap and playerData built from same data source
 
       return {
         summonerNameWithTeam: name,
