@@ -8,10 +8,17 @@ import TwitterService, { MatchTweetData } from "./services/twitter.service";
 import Server from "./server";
 import { createLogger } from "@d-fischer/logger/lib";
 import logger from "./utils/logger";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+import dayjs from "dayjs";
 
 const TWITCH_URL_BASE = "https://www.twitch.tv/";
 const MAX_CHANNELS = 50;
 const CQ_GAME_VERSION = "12.3";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault("America/Los_Angeles");
 
 Server.start().catch((error) => {
   logger.error("something went wrong in the server", error);

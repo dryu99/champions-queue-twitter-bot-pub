@@ -45,7 +45,10 @@ class TwitchService {
       const stream = await user.getStream();
       return stream !== null && stream.gameName === "League of Legends";
     } catch (err) {
-      console.error("error checking stream live", { twitchUsername });
+      logger.error("error checking stream live", {
+        twitchUsername,
+        err,
+      });
       return false;
     }
   }
