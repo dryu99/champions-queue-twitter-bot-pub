@@ -17,12 +17,26 @@ TODOS
   - how to handle players playing league but not CQ?
   - how to handle players with no nightbot setup? (we will keep listening until the end of time)
 - CODE
-  - setup players in db
-  - figure out twitter api to post tweets
-  - check how winter ward's twitter command is formatted
-  - has to be running at certain times
+  - [x] setup players in db
+  - [x] figure out twitter api to post tweets
+  - [x] check how winter ward's twitter command is formatted
+  - [x] how to handle multiple players streaming in one match 
+  - [x] deploy app (vps)
+  - [x] figure out scheduling for app (cron)
+  - [ ] add pngs to tweets (will get rid of embedded links too)
+  - [x] store mods who post tweets in db (tracking for rewards?)
+    - nah not for now, twitter can be our database lol (we're posting credits in tweets)
+  - [x] add mod check
+  - [ ] make website for building commands
+  - [ ] figure out if we need more official twitch/twitter dev permissions
+    - [ ] figure out which twitch account to use
+    - [ ] add dev + prod keys to env file
 
 Workflow
+- currently our server wakes up every 15 seconds to check if CQ is live (going by 10am/6pm - 1am blocks)
+  - if it isn't, go back to sleep
+  - if it is continue with workflow
+  - ideally we would want to use a cron job but pm2 is being dumb, maybe try docker (stretch)
 - fetch all players with valid twitch username from DB
 - assign event listener for chat msgs
   - if chat msg contains mod !teams setup command (must verify modm)
@@ -35,8 +49,8 @@ Workflow
     - join channel (i.e. listen to incoming msgs)
     - remove channel from pending queue
 
-!editcom !teams come back on march 13th
 
+!editcom !teams come back on march 13th
 
 
 example tweet:
@@ -56,3 +70,6 @@ JGL Xmithe - twitch.tv/lourlo
 MID PowerofEvil
 BOT Doublelift
 SUP CoreJJ
+
+
+!editcom !teams Lourlo / TL Armao / GG ry0ma / EG Kaori / TSM Shenyi | vs. | TL Bwipo / DNHA Svmmy / BOG rjs / CLG Luger / EST Mia
