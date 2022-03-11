@@ -4,15 +4,19 @@ import Config from "./utils/config";
 import PlayerService, { TwitchPlayer } from "./services/player.service";
 import TwitchService from "./services/twitch.service";
 import TwitterService from "./services/twitter.service";
-import { Match, MatchPlayer, SummonerNameWithTeam } from "./types";
+import {
+  LowerCaseSummonerNameWithTeam,
+  Match,
+  MatchPlayer,
+  SummonerNameWithTeam,
+  TwitchUsername,
+} from "./types";
 import logger from "./utils/logger";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import { wait } from "./utils/wait";
 
-type TwitchUsername = string;
-type LowerCaseSummonerNameWithTeam = string;
 export default class Server {
   private static playerData: Map<TwitchUsername, TwitchPlayer> = new Map();
   private static nameMap: Map<LowerCaseSummonerNameWithTeam, TwitchUsername> =
@@ -57,13 +61,14 @@ export default class Server {
           }
 
           const match = this.parseMatchMessage(msg);
+          const matchData = { match, author: user };
 
           try {
-            if (await TwitterService.isMatchTweeted(match)) {
+            if (await TwitterService.isMatchTweeted(matchData)) {
               logger.warn("match has already been tweeted", { match });
             } else {
               // TODO we could avoid this network call by doing inMatch checks in-memory (won't be perfect solution but would help)
-              await TwitterService.tweetMatch(match);
+              await TwitterService.tweetMatch(matchData);
             }
           } catch (error) {
             logger.error(

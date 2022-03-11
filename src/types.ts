@@ -10,3 +10,6 @@ export interface MatchPlayer {
   isStreaming: boolean;
   twitchUsername: string;
 }
+
+export type TwitchUsername = string;
+export type LowerCaseSummonerNameWithTeam = string;
