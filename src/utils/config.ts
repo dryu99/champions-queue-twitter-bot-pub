@@ -4,7 +4,7 @@ import path from "path";
 dotenv.config();
 
 const getTwitchTokensPath = (): string => {
-  return path.resolve(__dirname, "./twitch-tokens.json");
+  return path.resolve(__dirname, "../../twitch-tokens.json");
 };
 
 const Config = {
