@@ -16,7 +16,7 @@ export default class ChampsQueueService {
       (currDate.hour() >= 0 && currDate.hour() <= this.CQ_END_HOUR); // 12am - 1am
 
     logger.info("isChampsQueueLive", {
-      currDate: currDate.format("MM/DD/YYYY HH:mma z"),
+      currDate: currDate.format("MM/DD/YYYY HH:mm z"),
       cqStartHour,
       isChampsQueueLive: result,
     });
