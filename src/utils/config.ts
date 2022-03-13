@@ -1,7 +1,9 @@
 import dotenv from "dotenv";
 import path from "path";
 
-dotenv.config();
+dotenv.config({
+  path: path.resolve(__dirname, `../../.env.${process.env.NODE_ENV}`),
+});
 
 const getTwitchTokensPath = (): string => {
   return path.resolve(__dirname, "../../twitch-tokens.json");
