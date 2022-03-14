@@ -54,11 +54,13 @@ export default class Server {
       ) => {
         if (msg.includes("!editcom !teams")) {
           logger.info("received new match message", { channel, user, msg });
-          BugService.captureMessage("user used !editcom !teams command", {
-            channel,
-            user,
-            msg,
-          });
+          BugService.captureMessage(
+            `user used !editcom !teams command: ${JSON.stringify({
+              channel,
+              user,
+              msg,
+            })}`
+          );
 
           try {
             const isUserMod = await TwitchService.isUserMod(channel, user);
