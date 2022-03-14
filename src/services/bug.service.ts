@@ -12,11 +12,8 @@ export default class BugService {
     Sentry.captureException(err);
   }
 
-  public static captureMessage(
-    message: string,
-    data?: Record<string, unknown>
-  ) {
-    Sentry.captureMessage(message, data);
+  public static captureMessage(message: string) {
+    Sentry.captureMessage(message);
   }
 
   public static async close(ms: number) {
