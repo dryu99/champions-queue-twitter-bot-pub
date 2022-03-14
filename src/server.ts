@@ -24,7 +24,7 @@ export default class Server {
   private static listeningChannels: Set<TwitchUsername> = new Set();
   // private static pendingChannels: Set<TwitchUsername> = new Set(); // channels that aren't being listened to
   // private static ongoingChannels: Set<{twitchUsername: TwitchUsername, startTime: number}> = new Set(); TODO stretch goal, if stream count starts getting too high
-  private static readonly TWITCH_CHANNEL_CHECK_INTERVAL_MINUTES = 5;
+  private static readonly TWITCH_CHANNEL_CHECK_INTERVAL_MINUTES = 2;
 
   public static async start() {
     logger.info("starting server");
@@ -111,50 +111,66 @@ export default class Server {
         listeningChannels: Array.from(this.listeningChannels),
       });
 
-      // const pendingChannelsList = Array.from(this.pendingChannels); // need copy because we remove item from list in loop
+      // TODO should break up batches into groups of 100 (will reduce duplication)
+      const channels = Array.from(this.playerData.keys());
+      const midIndex = Math.floor(channels.length / 2);
+      const channelBatch1 = channels.slice(0, midIndex);
+      const channelBatch2 = channels.slice(midIndex);
 
-      // check each channel to see if it's live
-      const checkChannelPromises: Promise<void>[] = [];
-      for (const channel of Array.from(this.playerData.keys())) {
-        // this promise updates channel list states if the channel is live
-        const checkChannelPromise = TwitchService.isChannelLive(channel)
-          .then((isChannelLive) => {
-            if (!isChannelLive) {
-              // toggle live flag
-              const player = this.playerData.get(channel)!;
-              player.isStreaming = false;
+      await this.checkLiveChannels(channelBatch1);
+      logger.info("finished checking batch 1", {
+        batchSize: channelBatch1.length,
+        listeningChannelCount: this.listeningChannels.size,
+        listeningChannels: Array.from(this.listeningChannels),
+      });
 
-              // stop listening to channel
-              TwitchService.chatClient.part(channel);
-              this.listeningChannels.delete(channel);
-              return;
-            }
+      // wait x min (to avoid rate limit)
+      await wait(this.TWITCH_CHANNEL_CHECK_INTERVAL_MINUTES * 60 * 1000);
 
-            // toggle live flag
-            const player = this.playerData.get(channel)!;
-            player.isStreaming = true;
-
-            // listen to channel
-            return TwitchService.chatClient.join(channel).then(() => {
-              this.listeningChannels.add(channel);
-              // this.pendingChannels.delete(channel);
-            });
-          })
-          .catch((err) => console.error("failed to join channel", err));
-
-        checkChannelPromises.push(checkChannelPromise);
-      }
-
-      await Promise.allSettled(checkChannelPromises);
-
-      logger.info("END checking pending channels", {
-        allChannels: this.playerData.size,
+      await this.checkLiveChannels(channelBatch2);
+      logger.info("finished checking batch 2", {
+        batchSize: channelBatch2.length,
         listeningChannelCount: this.listeningChannels.size,
         listeningChannels: Array.from(this.listeningChannels),
       });
 
       await wait(this.TWITCH_CHANNEL_CHECK_INTERVAL_MINUTES * 60 * 1000);
     }
+  }
+
+  // has side effects
+  private static async checkLiveChannels(channels: string[]) {
+    const checkChannelPromises: Promise<void>[] = [];
+    for (const channel of channels) {
+      // this promise updates channel list states if the channel is live
+      const checkChannelPromise = TwitchService.isChannelLive(channel)
+        .then((isChannelLive) => {
+          const player = this.playerData.get(channel)!;
+          if (!isChannelLive) {
+            // toggle live flag
+            player.isStreaming = false;
+
+            // stop listening to channel
+            TwitchService.chatClient.part(channel);
+            this.listeningChannels.delete(channel);
+            return;
+          }
+
+          // toggle live flag
+          player.isStreaming = true;
+
+          // listen to channel
+          return TwitchService.chatClient.join(channel).then(() => {
+            this.listeningChannels.add(channel);
+            // this.pendingChannels.delete(channel);
+          });
+        })
+        .catch((err) => console.error("failed to join channel", err));
+
+      checkChannelPromises.push(checkChannelPromise);
+    }
+
+    return Promise.allSettled(checkChannelPromises);
   }
 
   private static async initCache() {
