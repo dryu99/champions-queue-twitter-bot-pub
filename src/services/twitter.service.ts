@@ -12,7 +12,6 @@ export type MatchTweetData = {
 };
 
 export default class TwitterService {
-  private static readonly BOT_USERNAME = "whysoryude";
   private static twitterClient: TwitterApiReadWrite;
 
   public static init() {
@@ -54,7 +53,7 @@ export default class TwitterService {
   ): Promise<boolean> {
     const searchText = this.buildMatchTweetText(matchData);
     const result = await this.twitterClient.v2.search(
-      `"${searchText}" (from:${this.BOT_USERNAME})`
+      `"${searchText}" (from:${Config.TWITTER_USERNAME})`
     ); // twitter throws error on duplicate content too "You are not allowed to create a Tweet with duplicate content."
 
     return result.data.meta.result_count > 0;

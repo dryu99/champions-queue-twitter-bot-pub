@@ -12,6 +12,7 @@ const getTwitchTokensPath = (): string => {
 const Config = {
   TWITCH_CLIENT_ID: process.env.TWITCH_CLIENT_ID as string,
   TWITCH_SECRET: process.env.TWITCH_SECRET as string,
+  TWITTER_USERNAME: process.env.TWITTER_USERNAME as string,
   TWITTER_API_KEY: process.env.TWITTER_API_KEY as string,
   TWITTER_API_KEY_SECRET: process.env.TWITTER_API_KEY_SECRET as string,
   TWITTER_BEARER_TOKEN: process.env.TWITTER_BEARER_TOKEN as string,
