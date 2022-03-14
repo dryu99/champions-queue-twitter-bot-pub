@@ -252,10 +252,15 @@ export default class Server {
   ): MatchPlayer[] {
     return summonerNamesWithTeams.map((name) => {
       if (!this.playerLcNameMap.has(name.toLowerCase())) {
-        throw new Error(
+        const errorMsg =
           "getMatchPlayers invalid summoner name, check db if player exists: " +
-            name
-        );
+          name;
+        logger.error(errorMsg);
+        BugService.captureException(new Error(errorMsg));
+        return {
+          summonerNameWithTeam: name,
+          isStreaming: false,
+        };
       }
 
       const twitchUsername = this.playerLcNameMap.get(name.toLowerCase());
