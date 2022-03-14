@@ -3,6 +3,7 @@ import { TwitterApi, TwitterApiReadWrite } from "twitter-api-v2";
 import { Match, MatchPlayer, TwitchUsername } from "../types";
 import Config from "../utils/config";
 import logger from "../utils/logger";
+import BugService from "./bug.service";
 import ChampsQueueService from "./champs-queue.service";
 
 export type MatchTweetData = {
@@ -44,6 +45,7 @@ export default class TwitterService {
           playersTweetText,
           linksTweetText,
         });
+        BugService.captureException(error);
       });
   }
 

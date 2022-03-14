@@ -4,6 +4,7 @@ import fs from "fs";
 import { ChatClient } from "@twurple/chat";
 import Config from "../utils/config";
 import logger from "../utils/logger";
+import BugService from "./bug.service";
 
 class TwitchService {
   public static apiClient: ApiClient;
@@ -49,6 +50,7 @@ class TwitchService {
         twitchUsername,
         err,
       });
+      BugService.captureException(err);
       return false;
     }
   }

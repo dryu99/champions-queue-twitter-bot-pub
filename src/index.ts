@@ -1,20 +1,23 @@
-import { MatchTweetData } from "./services/twitter.service";
 import Server from "./server";
 import logger from "./utils/logger";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import advanced from "dayjs/plugin/advancedFormat";
 import dayjs from "dayjs";
+import BugService from "./services/bug.service";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(advanced);
 dayjs.tz.setDefault("America/Los_Angeles");
 
-Server.start().catch((error) => {
-  logger.error("something went wrong in the server", error);
-  process.exit(1);
-});
+Server.start()
+  .catch((error) => {
+    logger.error("something went wrong in the server", error);
+    BugService.captureException(error);
+    return BugService.close(2000);
+  })
+  .then(() => process.exit(1));
 
 // const matchData: MatchTweetData = {
 //   match: {

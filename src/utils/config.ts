@@ -21,6 +21,8 @@ const Config = {
   TWITTER_CLIENT_ID: process.env.TWITTER_CLIENT_ID as string,
   TWITTER_CLIENT_SECRET: process.env.TWITTER_CLIENT_SECRET as string,
   ATLAS_URL: process.env.ATLAS_URL as string,
+  NODE_ENV: process.env.NODE_ENV as string,
+  SENTRY_DSN: process.env.SENTRY_DSN as string,
   getTwitchTokensPath,
 };
 

@@ -15,6 +15,7 @@ import logger from "./utils/logger";
 import dayjs from "dayjs";
 import { wait } from "./utils/wait";
 import ChampsQueueService from "./services/champs-queue.service";
+import BugService from "./services/bug.service";
 
 export default class Server {
   private static playerData: Map<TwitchUsername, TwitchPlayer> = new Map();
@@ -88,9 +89,11 @@ export default class Server {
           } catch (error) {
             logger.error("something went wrong while parsing chat", {
               error,
+              user,
               channel,
               msg,
             });
+            BugService.captureException(error);
           }
         }
       }

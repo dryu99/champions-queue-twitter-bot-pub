@@ -12,6 +12,8 @@
     "watch": "cross-env NODE_ENV=development ts-node-dev --respawn"
   },
   "dependencies": {
+    "@sentry/node": "^6.18.2",
+    "@sentry/tracing": "^6.18.2",
     "@twurple/api": "^5.0.18",
     "@twurple/auth": "^5.0.18",
     "@twurple/chat": "^5.0.18",

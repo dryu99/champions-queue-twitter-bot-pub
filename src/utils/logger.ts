@@ -1,5 +1,6 @@
 import winston from "winston";
 import path from "path";
+import Config from "./config";
 
 const logger = winston.createLogger({
   transports: [
@@ -8,7 +9,7 @@ const logger = winston.createLogger({
         winston.format.timestamp(),
         winston.format.json()
       ),
-      filename: path.resolve(__dirname, `../../logs/dev.log`),
+      filename: path.resolve(__dirname, `../../logs/${Config.NODE_ENV}.log`),
     }),
     new winston.transports.Console({
       format: winston.format.combine(
