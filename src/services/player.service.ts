@@ -19,8 +19,7 @@ interface Player {
 
 export interface TwitchPlayer {
   summonerNameWithTeam: string;
-  primaryRole: string;
-  twitchUsername: string;
+  twitchUsername?: string;
   isStreaming: boolean;
 }
 
@@ -58,29 +57,28 @@ const PlayerModel = mongoose.model("Player", PlayerSchema);
 export default class PlayerService {
   public static async getAllTwitch(): Promise<TwitchPlayer[]> {
     const mongoPlayers = await PlayerModel.find({});
-    return mongoPlayers
-      .filter(
-        (mongoPlayer) =>
-          mongoPlayer.socialLinks.findIndex(
-            (socialLink) => socialLink.platform === "twitch"
-          ) !== -1
-      )
-      .map((mongoPlayer) => {
-        const twitchUrl = mongoPlayer.socialLinks.find(
-          (socialLink) => socialLink.platform === "twitch"
-        )!.link;
+    return mongoPlayers.map((mongoPlayer) => {
+      const twitchSocialLink = mongoPlayer.socialLinks.find(
+        (socialLink) => socialLink.platform === "twitch"
+      );
 
-        const urlParts = twitchUrl.split("/");
-        const twitchUsername = urlParts[urlParts.length - 1]
-          ? urlParts[urlParts.length - 1]
-          : urlParts[urlParts.length - 2]; // prob '/' at end
-
+      if (!twitchSocialLink) {
         return {
           summonerNameWithTeam: mongoPlayer.summonerNameWithTeam,
-          twitchUsername,
-          primaryRole: "TOP", // TODO lol
           isStreaming: false,
         };
-      });
+      }
+
+      const urlParts = twitchSocialLink.link.split("/");
+      const twitchUsername = urlParts[urlParts.length - 1]
+        ? urlParts[urlParts.length - 1]
+        : urlParts[urlParts.length - 2]; // prob '/' at end
+
+      return {
+        summonerNameWithTeam: mongoPlayer.summonerNameWithTeam,
+        twitchUsername,
+        isStreaming: false,
+      };
+    });
   }
 }

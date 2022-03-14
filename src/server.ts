@@ -18,9 +18,12 @@ import ChampsQueueService from "./services/champs-queue.service";
 import BugService from "./services/bug.service";
 
 export default class Server {
-  private static playerData: Map<TwitchUsername, TwitchPlayer> = new Map();
-  private static nameMap: Map<LowerCaseSummonerNameWithTeam, TwitchUsername> =
-    new Map();
+  private static twitchPlayerData: Map<TwitchUsername, TwitchPlayer> =
+    new Map(); // only contains players with twitch channels
+  private static playerLcNameMap: Map<
+    LowerCaseSummonerNameWithTeam,
+    TwitchUsername | undefined
+  > = new Map(); // contains name mappings for ALL players (if no twitch channel, val is undefined)
   private static listeningChannels: Set<TwitchUsername> = new Set();
   // private static pendingChannels: Set<TwitchUsername> = new Set(); // channels that aren't being listened to
   // private static ongoingChannels: Set<{twitchUsername: TwitchUsername, startTime: number}> = new Set(); TODO stretch goal, if stream count starts getting too high
@@ -87,12 +90,7 @@ export default class Server {
             //   });
             // }
           } catch (error) {
-            logger.error("something went wrong while parsing chat", {
-              error,
-              user,
-              channel,
-              msg,
-            });
+            logger.error("something went wrong while parsing chat: ", error);
             BugService.captureException(error);
           }
         }
@@ -106,13 +104,13 @@ export default class Server {
       }
 
       logger.info("START checking pending channels", {
-        allChannels: this.playerData.size,
+        allChannels: this.twitchPlayerData.size,
         listeningChannelCount: this.listeningChannels.size,
         listeningChannels: Array.from(this.listeningChannels),
       });
 
       // TODO should break up batches into groups of 100 (will reduce duplication)
-      const channels = Array.from(this.playerData.keys());
+      const channels = Array.from(this.twitchPlayerData.keys());
       const midIndex = Math.floor(channels.length / 2);
       const channelBatch1 = channels.slice(0, midIndex);
       const channelBatch2 = channels.slice(midIndex);
@@ -145,7 +143,7 @@ export default class Server {
       // this promise updates channel list states if the channel is live
       const checkChannelPromise = TwitchService.isChannelLive(channel)
         .then((isChannelLive) => {
-          const player = this.playerData.get(channel)!;
+          const player = this.twitchPlayerData.get(channel)!;
           if (!isChannelLive) {
             // toggle live flag
             player.isStreaming = false;
@@ -174,22 +172,24 @@ export default class Server {
   }
 
   private static async initCache() {
-    const players = await PlayerService.getAllTwitch();
+    const twitchPlayers = await PlayerService.getAllTwitch();
 
     // init player data map
-    this.playerData = players.reduce((map, currPlayer) => {
-      map.set(currPlayer.twitchUsername, currPlayer);
+    this.twitchPlayerData = twitchPlayers.reduce((map, currPlayer) => {
+      if (currPlayer.twitchUsername) {
+        map.set(currPlayer.twitchUsername, currPlayer);
+      }
       return map;
     }, new Map<TwitchUsername, TwitchPlayer>());
 
     // init name map
-    this.nameMap = players.reduce((map, currPlayer) => {
+    this.playerLcNameMap = twitchPlayers.reduce((map, currPlayer) => {
       map.set(
         currPlayer.summonerNameWithTeam.toLowerCase(),
         currPlayer.twitchUsername
       );
       return map;
-    }, new Map<SummonerNameWithTeam, TwitchUsername>());
+    }, new Map<SummonerNameWithTeam, TwitchUsername | undefined>());
 
     // init pending channels list
     // this.pendingChannels = new Set(
@@ -244,20 +244,32 @@ export default class Server {
     summonerNamesWithTeams: string[]
   ): MatchPlayer[] {
     return summonerNamesWithTeams.map((name) => {
-      if (!this.nameMap.has(name.toLowerCase())) {
+      if (!this.playerLcNameMap.has(name.toLowerCase())) {
         throw new Error(
           "getMatchPlayers invalid summoner name, check db if player exists: " +
             name
         );
       }
 
-      const twitchUsername = this.nameMap.get(name.toLowerCase())!; // has to exist b/c of prev check
-      const player = this.playerData.get(twitchUsername)!; // has to exist since nameMap and playerData built from same data source
+      const twitchUsername = this.playerLcNameMap.get(name.toLowerCase());
+      if (!twitchUsername)
+        return {
+          summonerNameWithTeam: name,
+          isStreaming: false,
+        };
+
+      const player = this.twitchPlayerData.get(twitchUsername);
+      if (!player)
+        return {
+          summonerNameWithTeam: name,
+          twitchUsername,
+          isStreaming: false,
+        };
 
       return {
         summonerNameWithTeam: name,
+        twitchUsername,
         isStreaming: player.isStreaming,
-        twitchUsername: player.twitchUsername,
       };
     });
   }
