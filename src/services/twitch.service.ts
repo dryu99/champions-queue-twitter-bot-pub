@@ -59,6 +59,8 @@ class TwitchService {
     channel: string, // starts with #
     modUsername: string
   ): Promise<boolean> {
+    if (modUsername === channel.slice(1)) return true;
+
     const mods = await this.chatClient.getMods(channel);
     return mods.includes(modUsername);
   }
