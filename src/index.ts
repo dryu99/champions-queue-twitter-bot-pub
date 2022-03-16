@@ -11,13 +11,11 @@ dayjs.extend(timezone);
 dayjs.extend(advanced);
 dayjs.tz.setDefault("America/Los_Angeles");
 
-Server.start()
-  .catch((error) => {
-    logger.error("something went wrong in the server", error);
-    BugService.captureException(error);
-    return BugService.close(2000);
-  })
-  .then(() => process.exit(1));
+Server.start().catch((error) => {
+  logger.error("something went wrong in the server", error);
+  BugService.captureException(error);
+  return BugService.close(2000).then(() => process.exit(1));
+});
 
 // const matchData: MatchTweetData = {
 //   match: {
