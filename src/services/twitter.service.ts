@@ -68,7 +68,7 @@ export default class TwitterService {
 
     text += `TOP 🏔 ${this.buildPlayerText(blueTeam[0], includeLink)}\n`;
     text += `JGL 🌲 ${this.buildPlayerText(blueTeam[1], includeLink)}\n`;
-    text += `MID 🪄 ${this.buildPlayerText(blueTeam[2], includeLink)}\n`;
+    text += `MID 🔱 ${this.buildPlayerText(blueTeam[2], includeLink)}\n`;
     text += `BOT 🏹 ${this.buildPlayerText(blueTeam[3], includeLink)}\n`;
     text += `SUP 🛡 ${this.buildPlayerText(blueTeam[4], includeLink)}\n\n`;
 
@@ -76,7 +76,7 @@ export default class TwitterService {
 
     text += `TOP 🏔 ${this.buildPlayerText(redTeam[0], includeLink)}\n`;
     text += `JGL 🌲 ${this.buildPlayerText(redTeam[1], includeLink)}\n`;
-    text += `MID 🪄 ${this.buildPlayerText(redTeam[2], includeLink)}\n`;
+    text += `MID 🔱 ${this.buildPlayerText(redTeam[2], includeLink)}\n`;
     text += `BOT 🏹 ${this.buildPlayerText(redTeam[3], includeLink)}\n`;
     text += `SUP 🛡 ${this.buildPlayerText(redTeam[4], includeLink)}`;
 
