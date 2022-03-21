@@ -101,6 +101,10 @@ export default class Server {
             BugService.captureException(error);
           }
         }
+
+        // else if (msg.includes("| vs. |")) {
+        //   // TODO do this (for winters ward :^))
+        // }
       }
     );
 
@@ -255,12 +259,7 @@ export default class Server {
         const errorMsg =
           "getMatchPlayers invalid summoner name, check db if player exists: " +
           name;
-        logger.error(errorMsg);
-        BugService.captureException(new Error(errorMsg));
-        return {
-          summonerNameWithTeam: name,
-          isStreaming: false,
-        };
+        throw new Error(errorMsg);
       }
 
       const twitchUsername = this.playerLcNameMap.get(name.toLowerCase());
