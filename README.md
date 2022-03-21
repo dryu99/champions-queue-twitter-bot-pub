@@ -23,15 +23,30 @@ TODOS
   - [x] how to handle multiple players streaming in one match 
   - [x] deploy app (vps)
   - [x] figure out scheduling for app (cron)
-  - [ ] add pngs to tweets (will get rid of embedded links too + save space)
-    - [x] alternatively can just post thread and add twitch urls in replies
   - [x] store mods who post tweets in db (tracking for rewards?)
     - nah not for now, twitter can be our database lol (we're posting credits in tweets)
   - [x] add mod check
-  - [ ] make website for building commands
-  - [ ] figure out if we need more official twitch/twitter dev permissions
+  - [x] make website for building commands
+  - [x] figure out if we need more official twitch/twitter dev permissions
     - [ ] figure out which twitch account to use
-    - [ ] add dev + prod keys to env file
+    - [x] add dev + prod keys to env file
+  - [ ] add validation for duplicate players in parse match message fn
+  - [ ] add pngs to tweets (will get rid of embedded links too + save space)
+    - [x] alternatively can just post thread and add twitch urls in replies
+  - [x] add sentry
+  - [ ] limit test (50 channels at once)
+  - [ ] make it more scalable (rn we're just listening to all channels 24/7, we should prob stop listening once we know theyre in a game and relisten after 30 min)
+  - [x] server side rendering for up to date cmd builder site??? or can just run a job to manually update json lmao 
+  - [x] check these players
+    - [x] XT camilo (needs to be added to site)
+    - [x] WC CrazyGoose (needs to be added to site)
+  - [x] add keyboard controls for cmd builder site
+  - [x] how to prevent duplicate msgs when new streamers go live? (have to keep track of cache of existing matches?)
+    - [x] can't really control this unless i enforce people use the website
+  - [x] consider adding db name existence check back in (to prevent illegal names from being posted)
+  - [x] when checking for duplicate tweets, should also try switching teams around (sometimes they mix it up?)
+  - [ ] add cron job for restarts lol, sometimes the program doesn't exit??
+  - [ ] check if streamer is playing cq (must have champions queue, cq, champ queue, etc in the title of their stream)
 
 Workflow
 - currently our server wakes up every 15 seconds to check if CQ is live (going by 10am/6pm - 1am blocks)
@@ -49,6 +64,12 @@ Workflow
   - if channel is live + playing league + in CQ
     - join channel (i.e. listen to incoming msgs)
     - remove channel from pending queue
+
+Pinned Tweet
+- mention
+  - cmd site builder
+  - you can double check if the tweet has been posted by going to @ChampionsQueue
+    - if your tweet hasn't been posted in ~3 minutes, you may have used incorrect names/formatting. Please use the cmd builder site and don't edit the generated command!
 
 
 !editcom !teams come back on march 13th
@@ -74,3 +95,22 @@ SUP CoreJJ
 
 
 !editcom !teams Lourlo / TL Armao / GG ry0ma / EG Kaori / TSM Shenyi | vs. | TL Bwipo / DNHA Svmmy / BOG rjs / CLG Luger / EST Mia
+
+
+!editcom !teams 100 Closer / 100 Huhi / FLY Tomo / DARE Snow2 / 100 Gamsu | vs. | TSM Huni / DARE BMFX / MU Azog / DIG River / 100 Tenacity
+
+
+HOW THE BOT WORKS
+This bot is entirely community driven by Twitch mods! Whenever a mod enters the "!editcom !teams" command in a CQ streamer's Twitch chat, the bot validates the command and automatically tweets a live game update.
+
+HOW TO CONTRIBUTE
+Be a mod for your favourite CQ streamer (if you aren't a mod but would still like to contribute please DM us)
+When a new game starts, use https://champions-queue-cmd-builder.vercel.app to fill out the teams and generate the Twitch command (see link in bio)
+Enter command into chat
+Check @ChampQueueBot to see your tweet!
+
+Some things to keep in mind:
+Please avoid editing the generated command (e.g. format, player names). If you make any changes, the bot will likely invalidate the command and won't tweet anything.
+Only the first mod to set the command for a given game will trigger a tweet.
+
+If you find any bugs or have any feedback please shoot us a DM!
