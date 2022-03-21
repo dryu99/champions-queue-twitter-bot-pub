@@ -51,9 +51,18 @@ export default class TwitterService {
   public static async isMatchTweeted(
     matchData: MatchTweetData
   ): Promise<boolean> {
-    const searchText = this.buildMatchTweetText(matchData, true);
+    const searchText1 = this.buildMatchTweetText(matchData, true);
+
+    const reverseMatchData = {
+      ...matchData,
+      match: {
+        blueTeam: matchData.match.redTeam,
+        redTeam: matchData.match.blueTeam,
+      },
+    };
+    const searchText2 = this.buildMatchTweetText(reverseMatchData, true); // reversed teams
     const result = await this.twitterClient.v2.search(
-      `"${searchText}" (from:${Config.TWITTER_USERNAME})`
+      `("${searchText1}" OR "${searchText2}") (from:${Config.TWITTER_USERNAME})`
     ); // twitter throws error on duplicate content too "You are not allowed to create a Tweet with duplicate content."
 
     return result.data.meta.result_count > 0;
