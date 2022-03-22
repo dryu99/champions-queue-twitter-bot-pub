@@ -5,10 +5,19 @@ import { MatchPlayer } from "../../types";
 import { PRIMARY_COLOR } from "../common";
 import ChampionsQueueLogoData from "../assets/champions-queue-logo.json";
 import Root from "./root";
+import { getTeamLogoBase64, parseTeamName } from "../../lib/team";
+import TeamLogo from "./team-logo";
 
 interface LiveGameUpdateProps {
   matchData: MatchTweetData;
 }
+
+const Container = styled.div`
+  background-color: hsl(205deg 15% 5%);
+  margin: 0 auto;
+  padding-top: 1em;
+  width: 700px;
+`;
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -16,10 +25,15 @@ const HeaderContainer = styled.div`
   justify-content: center;
   margin-bottom: 0;
 
-  // tODO don't do this lmao
   & > img {
     width: 40px;
   }
+`;
+
+const HeaderLine = styled.hr`
+  width: 587px;
+  border-top: none;
+  border-bottom: 2px solid white;
 `;
 
 const Header = styled.h1`
@@ -38,63 +52,64 @@ const HighlightText = styled.span`
   color: ${PRIMARY_COLOR};
 `;
 
-const TableTitle = styled.h2`
-  font-size: 2.5em;
-  margin: 0;
-  margin-bottom: -5px;
-`;
-
 const Teams = styled.div`
   display: flex;
   justify-content: space-around;
   align-items: center;
   font-family: "Source Sans Pro";
-  width: 600px;
+  // width: 650px;
+  // background-color: hsl(205deg 15% 5%);
   margin: 0 auto;
+  padding: 1em;
 `;
 
 const VsContainer = styled.div`
   font-size: 2em;
+  font-family: "Bebas Neue", sans-serif;
 `;
 
 const LiveGameUpdate: React.FC<LiveGameUpdateProps> = ({ matchData }) => {
   const { match, author } = matchData;
   return (
     <Root>
-      <HeaderContainer>
-        <img src={ChampionsQueueLogoData.base64} />
-        <Header>
-          <HighlightText>CHAMPIONS</HighlightText> QUEUE
-        </Header>
-      </HeaderContainer>
-      <SubHeader>
-        {/* {season} | Split {split} | {dateOffsetText} ({dateText}) */}
-        2022 Spring | Split 2 | Day 4
-      </SubHeader>
-      <div>
+      <Container>
+        <HeaderContainer>
+          <img src={ChampionsQueueLogoData.base64} />
+          <Header>
+            <HighlightText>CHAMPIONS</HighlightText> QUEUE
+          </Header>
+        </HeaderContainer>
+        <SubHeader>
+          {/* {season} | Split {split} | {dateOffsetText} ({dateText}) */}
+          2022 Spring | Split 2 | Day 4
+        </SubHeader>
+        <HeaderLine />
         <Teams>
           <Team players={match.blueTeam} teamSide="left" />
           <VsContainer>VS</VsContainer>
           <Team players={match.redTeam} teamSide="right" />
         </Teams>
-      </div>
+      </Container>
     </Root>
   );
 };
 
-const TeamContainer = styled.div<{ teamSide: "left" | "right" }>`
+export type TeamSide = "left" | "right";
+
+const TeamContainer = styled.div<{ teamSide: TeamSide }>`
   margin: 0;
   text-align: ${(props) => (props.teamSide === "left" ? "left" : "right")};
-  font-size: 2em;
-`;
-
-const TeamHeader = styled.h3`
-  margin-top: 0;
-  margin-bottom: 0.5em;
+  font-size: 1.5em;
 `;
 
 const PlayerContainer = styled.div`
-  margin-bottom: 0.25em;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 0.5em;
+`;
+
+const PlayerName = styled.span`
   width: 16ch;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -103,19 +118,27 @@ const PlayerContainer = styled.div`
 
 interface TeamProps {
   players: MatchPlayer[];
-  teamSide: "left" | "right";
+  teamSide: TeamSide;
 }
 
 const Team: React.FC<TeamProps> = ({ players, teamSide }) => {
   return (
     <TeamContainer teamSide={teamSide}>
-      <TeamHeader>Team {teamSide === "left" ? 1 : 2}</TeamHeader>
       <div>
-        {players.map((player) => (
-          <PlayerContainer key={player.summonerNameWithTeam}>
-            {player.summonerNameWithTeam}
-          </PlayerContainer>
-        ))}
+        {players.map((player) => {
+          const team = parseTeamName(player.summonerNameWithTeam);
+          return (
+            <PlayerContainer key={player.summonerNameWithTeam}>
+              {teamSide === "left" && (
+                <TeamLogo teamSide={teamSide} team={team} />
+              )}
+              <PlayerName>{player.summonerNameWithTeam}</PlayerName>
+              {teamSide === "right" && (
+                <TeamLogo teamSide={teamSide} team={team} />
+              )}
+            </PlayerContainer>
+          );
+        })}
       </div>
     </TeamContainer>
   );
