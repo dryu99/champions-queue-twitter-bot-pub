@@ -3,11 +3,11 @@ import styled from "styled-components";
 import { BG_COLOR } from "../common";
 
 const Body = styled.body`
-  background-color: ${BG_COLOR};
+  background-color: hsl(205deg 15% 15%);
   color: white;
   font-size: 14px;
   font-family: "Bebas Neue", sans-serif;
-  margin-top: 1.25em;
+  margin: 0;
   text-align: center;
 `;
 
