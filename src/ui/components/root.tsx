@@ -31,7 +31,7 @@ const Root: React.FC = ({ children }) => {
       </head>
       <Body>
         {children}
-        <WaterMark>@ChampionsQueue</WaterMark>
+        {/* <WaterMark>@ChampionsQueue</WaterMark> */}
         {/* TODO include twitter logo */}
       </Body>
     </html>
