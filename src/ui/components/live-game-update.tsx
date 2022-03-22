@@ -66,7 +66,7 @@ const Teams = styled.div`
 `;
 
 const VsContainer = styled.div`
-  font-size: 2em;
+  font-size: 3em;
   font-family: "Bebas Neue", sans-serif;
 `;
 
