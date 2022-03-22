@@ -4,6 +4,7 @@ import { MatchTweetData } from "../../services/twitter.service";
 import { MatchPlayer } from "../../types";
 import { PRIMARY_COLOR } from "../common";
 import ChampionsQueueLogoData from "../assets/champions-queue-logo.json";
+import TwitchLogoData from "../assets/twitch-logo.json";
 import Root from "./root";
 import { getTeamLogoBase64, parseTeamName } from "../../lib/team";
 import TeamLogo from "./team-logo";
@@ -14,6 +15,7 @@ interface LiveGameUpdateProps {
 
 const Container = styled.div`
   background-color: hsl(205deg 15% 5%);
+  border: 3px solid hsl(205deg 15% 15%);
   margin: 0 auto;
   padding-top: 1em;
   width: 700px;
@@ -76,7 +78,7 @@ const LiveGameUpdate: React.FC<LiveGameUpdateProps> = ({ matchData }) => {
         <HeaderContainer>
           <img src={ChampionsQueueLogoData.base64} />
           <Header>
-            <HighlightText>CHAMPIONS</HighlightText> QUEUE
+            <HighlightText>CHAMPION'S</HighlightText> QUEUE
           </Header>
         </HeaderContainer>
         <SubHeader>
@@ -110,10 +112,14 @@ const PlayerContainer = styled.div`
 `;
 
 const PlayerName = styled.span`
-  width: 16ch;
+  width: 18ch; // TODO we should handle case where name is too long + twitch logo should display
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+`;
+
+const StreamLogoImg = styled.img`
+  width: 25px;
 `;
 
 interface TeamProps {
@@ -132,7 +138,15 @@ const Team: React.FC<TeamProps> = ({ players, teamSide }) => {
               {teamSide === "left" && (
                 <TeamLogo teamSide={teamSide} team={team} />
               )}
-              <PlayerName>{player.summonerNameWithTeam}</PlayerName>
+              <PlayerName>
+                {teamSide === "right" && player.isStreaming && (
+                  <StreamLogoImg src={TwitchLogoData.base64} />
+                )}
+                {player.summonerNameWithTeam}
+                {teamSide === "left" && player.isStreaming && (
+                  <StreamLogoImg src={TwitchLogoData.base64} />
+                )}
+              </PlayerName>
               {teamSide === "right" && (
                 <TeamLogo teamSide={teamSide} team={team} />
               )}
