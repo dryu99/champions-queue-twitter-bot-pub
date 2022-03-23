@@ -8,17 +8,22 @@ export default class ChampsQueueService {
   public static readonly CQ_CURR_PATCH = "12.5";
   public static readonly CQ_CURR_SEASON_TEXT = "2022 Spring";
   public static readonly CQ_CURR_SPLIT_TEXT = "Split 2";
-  public static readonly CQ_CURR_SPLIT_START_DATE = new Date(
-    2022,
-    2,
-    14,
-    0,
-    0,
-    0
-  );
+  public static readonly CQ_CURR_SPLIT_DATE_DATA = {
+    year: 2022,
+    month: 2,
+    date: 14,
+  };
 
   public static getSplitDay() {
     const currDate = dayjs().tz();
+    const splitStartDate = dayjs()
+      .tz()
+      .year(this.CQ_CURR_SPLIT_DATE_DATA.year)
+      .month(this.CQ_CURR_SPLIT_DATE_DATA.month)
+      .date(this.CQ_CURR_SPLIT_DATE_DATA.date)
+      .hour(0)
+      .minute(0)
+      .millisecond(0);
 
     // account for fn calls past midnight
     if (currDate.hour() >= 0 && currDate.hour() <= this.CQ_END_HOUR) {
@@ -26,7 +31,7 @@ export default class ChampsQueueService {
     }
 
     return Math.floor(
-      (currDate.toDate().getTime() - this.CQ_CURR_SPLIT_START_DATE.getTime()) /
+      (currDate.toDate().getTime() - splitStartDate.toDate().getTime()) /
         (3600 * 24 * 1000) +
         1
     );
