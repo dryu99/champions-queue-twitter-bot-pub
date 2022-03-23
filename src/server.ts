@@ -88,7 +88,7 @@ export default class Server {
               });
               return;
             }
-            this.matchService.addHash(matchHashData);
+            this.matchService.enqueueHash(matchHashData);
 
             await TwitterService.tweetMatch(matchData);
 
@@ -117,6 +117,18 @@ export default class Server {
       }
     );
 
+    // hash clear interval
+    setInterval(() => {
+      logger.info("START Dequeueing hash", {
+        matchHashesSize: this.matchService.getMatchHashesSize(),
+      });
+      this.matchService.dequeueHash();
+      logger.info("END Dequeueing hash", {
+        matchHashesSize: this.matchService.getMatchHashesSize(),
+      });
+    }, 0.2 * 60 * 1000);
+
+    // check channels interval (we use while here instead of setInterval to have more async control)
     while (true) {
       if (!ChampsQueueService.isQueueLive()) {
         logger.info("champions queue not live anymore, stopping server");
@@ -127,7 +139,7 @@ export default class Server {
         allChannels: this.twitchPlayerData.size,
         listeningChannelCount: this.listeningChannels.size,
         listeningChannels: Array.from(this.listeningChannels),
-        matchHashSetSize: this.matchService.getMatchHashesSize(),
+        matchHashesSize: this.matchService.getMatchHashesSize(),
       });
 
       // TODO should break up batches into groups of 100 (will reduce duplication)
@@ -151,7 +163,7 @@ export default class Server {
         batchSize: channelBatch2.length,
         listeningChannelCount: this.listeningChannels.size,
         listeningChannels: Array.from(this.listeningChannels),
-        matchHashSetSize: this.matchService.getMatchHashesSize(),
+        matchHashesSize: this.matchService.getMatchHashesSize(),
       });
 
       await wait(this.TWITCH_CHANNEL_CHECK_INTERVAL_MINUTES * 60 * 1000);

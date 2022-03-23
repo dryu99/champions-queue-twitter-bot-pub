@@ -8,18 +8,23 @@ interface MatchHashData {
 
 export default class MatchService {
   // we use this to keep track of which matches played so we can avoid duplicate posts
-  private matchHashes: Set<number> = new Set();
+  private matchHashes: number[] = []; // TODO not scalable, should hover around 120 - 160 items atm. Can use ordered set later
 
   public isMatchDuplicate(hashData: MatchHashData): boolean {
     return (
-      this.matchHashes.has(hashData.hash) ||
-      this.matchHashes.has(hashData.reverseHash)
+      this.matchHashes.includes(hashData.hash) ||
+      this.matchHashes.includes(hashData.reverseHash)
     );
   }
 
-  public addHash(hashData: MatchHashData) {
-    this.matchHashes.add(hashData.hash);
-    this.matchHashes.add(hashData.reverseHash);
+  public enqueueHash(hashData: MatchHashData) {
+    this.matchHashes.push(hashData.hash);
+    this.matchHashes.push(hashData.reverseHash);
+  }
+
+  public dequeueHash() {
+    const hash1 = this.matchHashes.shift();
+    const hash2 = this.matchHashes.shift();
   }
 
   public calcMatchHashData(match: Match): MatchHashData {
@@ -43,6 +48,6 @@ export default class MatchService {
   }
 
   public getMatchHashesSize(): number {
-    return this.matchHashes.size;
+    return this.matchHashes.length;
   }
 }
