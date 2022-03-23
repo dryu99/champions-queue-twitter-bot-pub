@@ -84,7 +84,7 @@ const VsChar = styled.div`
 const WaterMark = styled.div`
   text-align: center;
   font-size: 0.75em;
-  margin-top: -1.25em;
+  margin-top: -1em;
 `;
 
 const LiveGameUpdate: React.FC<LiveGameUpdateProps> = ({ matchData }) => {

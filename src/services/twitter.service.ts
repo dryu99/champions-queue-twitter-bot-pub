@@ -33,7 +33,7 @@ export default class TwitterService {
     logger.info("tweeting match", { tweetText });
     ImageService.savePng(html, {
       width: 606,
-      height: 387,
+      height: 390,
     })
       .then((imgBuffer) =>
         this.twitterClient.v1.uploadMedia(imgBuffer, { mimeType: "png" })
