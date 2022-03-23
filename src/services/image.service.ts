@@ -1,5 +1,6 @@
 import logger from "../utils/logger";
 import puppeteer from "puppeteer";
+import Config from "../utils/config";
 
 const savePng = async (
   html: string,
@@ -7,7 +8,17 @@ const savePng = async (
   savePath?: string
 ): Promise<Buffer> => {
   logger.info("Saving PNG");
-  const browser = await puppeteer.launch();
+
+  const launchOptions =
+    Config.NODE_ENV === "production"
+      ? {
+          // needed for vultr server
+          args: ["--no-sandbox", "--disable-setuid-sandbox"],
+          executablePath: "/usr/bin/chromium-browser",
+        }
+      : {};
+  const browser = await puppeteer.launch(launchOptions);
+
   const page = await browser.newPage();
   await page.setViewport({
     width: dimensions.width,
