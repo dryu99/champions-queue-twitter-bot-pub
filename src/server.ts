@@ -12,10 +12,10 @@ import {
   TwitchUsername,
 } from "./types";
 import logger from "./utils/logger";
-import dayjs from "dayjs";
 import { wait } from "./utils/wait";
 import ChampsQueueService from "./services/champs-queue.service";
 import BugService from "./services/bug.service";
+import MatchService from "./services/match.service";
 
 export default class Server {
   private static twitchPlayerData: Map<TwitchUsername, TwitchPlayer> =
@@ -25,9 +25,10 @@ export default class Server {
     TwitchUsername | undefined
   > = new Map(); // contains name mappings for ALL players (if no twitch channel, val is undefined)
   private static listeningChannels: Set<TwitchUsername> = new Set();
+  private static matchService = new MatchService();
   // private static pendingChannels: Set<TwitchUsername> = new Set(); // channels that aren't being listened to
   // private static ongoingChannels: Set<{twitchUsername: TwitchUsername, startTime: number}> = new Set(); TODO stretch goal, if stream count starts getting too high
-  private static readonly TWITCH_CHANNEL_CHECK_INTERVAL_MINUTES = 2;
+  private static readonly TWITCH_CHANNEL_CHECK_INTERVAL_MINUTES = 1.5;
 
   public static async start() {
     logger.info("starting server");
@@ -73,15 +74,23 @@ export default class Server {
               return;
             }
 
+            // parse match
             const match = this.parseMatchMessage(msg);
             const matchData = { match, author: user };
 
-            if (await TwitterService.isMatchTweeted(matchData)) {
-              logger.warn("match has already been tweeted", { match });
-            } else {
-              // TODO we could avoid this network call by doing inMatch checks in-memory (won't be perfect solution but would help)
-              await TwitterService.tweetMatch(matchData);
+            // check for match duplicates
+            const matchHashData = this.matchService.calcMatchHashData(match);
+            if (this.matchService.isMatchDuplicate(matchHashData)) {
+              logger.warn("recent duplicate match, not tweeting", {
+                channel,
+                user,
+                msg,
+              });
+              return;
             }
+            this.matchService.addHash(matchHashData);
+
+            await TwitterService.tweetMatch(matchData);
 
             // add channel to ongoing channels (set timeout for 20 min)
             // this.ongoingChannels.add(channel.substring(1)); // substring to remove #
@@ -118,6 +127,7 @@ export default class Server {
         allChannels: this.twitchPlayerData.size,
         listeningChannelCount: this.listeningChannels.size,
         listeningChannels: Array.from(this.listeningChannels),
+        matchHashSetSize: this.matchService.getMatchHashesSize(),
       });
 
       // TODO should break up batches into groups of 100 (will reduce duplication)
@@ -141,6 +151,7 @@ export default class Server {
         batchSize: channelBatch2.length,
         listeningChannelCount: this.listeningChannels.size,
         listeningChannels: Array.from(this.listeningChannels),
+        matchHashSetSize: this.matchService.getMatchHashesSize(),
       });
 
       await wait(this.TWITCH_CHANNEL_CHECK_INTERVAL_MINUTES * 60 * 1000);
