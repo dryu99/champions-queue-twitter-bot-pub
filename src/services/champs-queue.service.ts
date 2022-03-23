@@ -15,7 +15,7 @@ export default class ChampsQueueService {
   };
 
   public static getSplitDay() {
-    const currDate = dayjs().tz();
+    let currDate = dayjs().tz();
     const splitStartDate = dayjs()
       .tz()
       .year(this.CQ_CURR_SPLIT_DATE_DATA.year)
@@ -27,7 +27,7 @@ export default class ChampsQueueService {
 
     // account for fn calls past midnight
     if (currDate.hour() >= 0 && currDate.hour() <= this.CQ_END_HOUR) {
-      currDate.set("date", currDate.date() - 1);
+      currDate = currDate.date(currDate.date() - 1);
     }
 
     return Math.floor(
