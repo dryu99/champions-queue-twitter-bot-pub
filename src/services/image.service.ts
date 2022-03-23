@@ -3,9 +3,10 @@ import puppeteer from "puppeteer";
 
 const savePng = async (
   html: string,
-  savePath: string,
-  dimensions: { width: number; height: number } = { width: 706, height: 394 }
-): Promise<void> => {
+  dimensions: { width: number; height: number },
+  savePath?: string
+): Promise<Buffer> => {
+  logger.info("Saving PNG");
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
   await page.setViewport({
@@ -15,9 +16,15 @@ const savePng = async (
   });
   await page.setContent(html, { waitUntil: ["networkidle0"] });
 
-  logger.info("Saving png");
-  await page.screenshot({ path: savePath });
+  const buffer = await page.screenshot({
+    type: "png",
+    encoding: "binary",
+    path: savePath,
+  });
+
   await browser.close();
+  logger.info("Done Saving PNG");
+  return buffer as Buffer;
 };
 
 const ImageService = {
