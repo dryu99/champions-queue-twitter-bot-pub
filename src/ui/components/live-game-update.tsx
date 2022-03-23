@@ -18,7 +18,7 @@ const Container = styled.div`
   border: 3px solid hsl(205deg 15% 15%);
   margin: 0 auto;
   padding-top: 1em;
-  width: 700px;
+  width: 600px;
 `;
 
 const HeaderContainer = styled.div`
@@ -33,7 +33,7 @@ const HeaderContainer = styled.div`
 `;
 
 const HeaderLine = styled.hr`
-  width: 587px;
+  width: 542px;
   border-top: none;
   border-bottom: 2px solid white;
 `;
@@ -59,15 +59,25 @@ const Teams = styled.div`
   justify-content: space-around;
   align-items: center;
   font-family: "Source Sans Pro";
-  // width: 650px;
-  // background-color: hsl(205deg 15% 5%);
   margin: 0 auto;
-  padding: 1em;
+  padding: 0.5em 1em 1em 1em;
 `;
 
 const VsContainer = styled.div`
   font-size: 3em;
   font-family: "Bebas Neue", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const VsLine = styled.div`
+  border-left: 2px solid white;
+  height: 82.5px;
+`;
+
+const VsChar = styled.div`
+  margin: 0 0.15em;
 `;
 
 const LiveGameUpdate: React.FC<LiveGameUpdateProps> = ({ matchData }) => {
@@ -88,7 +98,11 @@ const LiveGameUpdate: React.FC<LiveGameUpdateProps> = ({ matchData }) => {
         <HeaderLine />
         <Teams>
           <Team players={match.blueTeam} teamSide="left" />
-          <VsContainer>VS</VsContainer>
+          <VsContainer>
+            <VsLine />
+            <VsChar>vs</VsChar>
+            <VsLine />
+          </VsContainer>
           <Team players={match.redTeam} teamSide="right" />
         </Teams>
       </Container>
