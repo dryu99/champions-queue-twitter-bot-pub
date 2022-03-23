@@ -9,7 +9,7 @@ import BugService from "./bug.service";
 class TwitchService {
   public static apiClient: ApiClient;
   public static chatClient: ChatClient;
-  private static readonly specialMods: string[] = ["wintersward"];
+  private static readonly specialMods: string[] = ["wintersward", "utpamas"];
 
   public static async init() {
     const tokenData = JSON.parse(
