@@ -126,7 +126,7 @@ export default class Server {
       logger.info("END Dequeueing hash", {
         matchHashesSize: this.matchService.getMatchHashesSize(),
       });
-    }, 0.2 * 60 * 1000);
+    }, 45 * 60 * 1000);
 
     // check channels interval (we use while here instead of setInterval to have more async control)
     while (true) {
