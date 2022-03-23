@@ -8,6 +8,7 @@ import TwitchLogoData from "../assets/twitch-logo.json";
 import Root from "./root";
 import { getTeamLogoBase64, parseTeamName } from "../../lib/team";
 import TeamLogo from "./team-logo";
+import ChampsQueueService from "../../services/champs-queue.service";
 
 interface LiveGameUpdateProps {
   matchData: MatchTweetData;
@@ -92,8 +93,9 @@ const LiveGameUpdate: React.FC<LiveGameUpdateProps> = ({ matchData }) => {
           </Header>
         </HeaderContainer>
         <SubHeader>
-          {/* {season} | Split {split} | {dateOffsetText} ({dateText}) */}
-          2022 Spring | Split 2 | Day 4
+          {ChampsQueueService.CQ_CURR_SEASON_TEXT} |{" "}
+          {ChampsQueueService.CQ_CURR_SPLIT_TEXT} | Day{" "}
+          {ChampsQueueService.getSplitDay()}
         </SubHeader>
         <HeaderLine />
         <Teams>

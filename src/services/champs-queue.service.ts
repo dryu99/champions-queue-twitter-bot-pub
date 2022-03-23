@@ -6,6 +6,31 @@ export default class ChampsQueueService {
   public static readonly CQ_START_HOUR_MONDAY = 10;
   public static readonly CQ_END_HOUR = 1;
   public static readonly CQ_CURR_PATCH = "12.5";
+  public static readonly CQ_CURR_SEASON_TEXT = "2022 Spring";
+  public static readonly CQ_CURR_SPLIT_TEXT = "Split 2";
+  public static readonly CQ_CURR_SPLIT_START_DATE = new Date(
+    2022,
+    2,
+    14,
+    0,
+    0,
+    0
+  );
+
+  public static getSplitDay() {
+    const currDate = dayjs().tz();
+
+    // account for fn calls past midnight
+    if (currDate.hour() >= 0 && currDate.hour() <= this.CQ_END_HOUR) {
+      currDate.set("date", currDate.date() - 1);
+    }
+
+    return Math.floor(
+      (currDate.toDate().getTime() - this.CQ_CURR_SPLIT_START_DATE.getTime()) /
+        (3600 * 24 * 1000) +
+        1
+    );
+  }
 
   public static isQueueLive(): boolean {
     const currDate = dayjs().tz();
