@@ -16,7 +16,7 @@ interface LiveGameUpdateProps {
 
 const Container = styled.div`
   background-color: hsl(205deg 15% 5%);
-  border: 3px solid hsl(205deg 15% 15%);
+  // border: 3px solid hsl(205deg 15% 15%);
   margin: 0 auto;
   padding-top: 1em;
   width: 600px;
@@ -81,6 +81,12 @@ const VsChar = styled.div`
   margin: 0 0.15em;
 `;
 
+const WaterMark = styled.div`
+  text-align: center;
+  font-size: 0.75em;
+  margin-top: -1.25em;
+`;
+
 const LiveGameUpdate: React.FC<LiveGameUpdateProps> = ({ matchData }) => {
   const { match, author } = matchData;
   return (
@@ -107,6 +113,7 @@ const LiveGameUpdate: React.FC<LiveGameUpdateProps> = ({ matchData }) => {
           </VsContainer>
           <Team players={match.redTeam} teamSide="right" />
         </Teams>
+        <WaterMark>@ChampQueueBot</WaterMark>
       </Container>
     </Root>
   );

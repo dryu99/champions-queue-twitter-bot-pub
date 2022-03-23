@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { BG_COLOR } from "../common";
 
 const Body = styled.body`
-  background-color: hsl(205deg 15% 15%);
+  background-color: hsl(205deg 15% 5%);
   color: white;
   font-size: 14px;
   font-family: "Bebas Neue", sans-serif;
@@ -29,11 +29,7 @@ const Root: React.FC = ({ children }) => {
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro"
         />
       </head>
-      <Body>
-        {children}
-        {/* <WaterMark>@ChampionsQueue</WaterMark> */}
-        {/* TODO include twitter logo */}
-      </Body>
+      <Body>{children}</Body>
     </html>
   );
 };
