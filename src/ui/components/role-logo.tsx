@@ -1,31 +1,32 @@
 import React from "react";
 import styled from "styled-components";
-import { getTeamLogoBase64 } from "../../lib/team";
+import { getRoleLogoBase64 } from "../../lib/role";
+
 import { TeamSide } from "./live-game-update";
 
-const TeamLogoImg = styled.img<{ teamSide: TeamSide }>`
+const RoleLogoImg = styled.img<{ teamSide: TeamSide }>`
   display: inline-block;
   ${(props) => props.teamSide === "left" && "margin-right: 0.25em;"}
   ${(props) => props.teamSide === "right" && "margin-left: 0.25em;"}
-  width: 37.5px;
+  width: 17.5px;
 `;
 
 const EmptyLogo = styled.div<{ teamSide: TeamSide }>`
-  width: 37.5px;
-  height: 37.5px;
+  width: 17.5px;
+  height: 17.5px;
   ${(props) => props.teamSide === "left" && "margin-right: 0.25em;"}
   ${(props) => props.teamSide === "right" && "margin-left: 0.25em;"}
 `;
 
-interface TeamLogoProps {
+interface RoleLogoProps {
+  roleIndex: number;
   teamSide: TeamSide;
-  team: string;
 }
 
-const TeamLogo: React.FC<TeamLogoProps> = ({ teamSide, team }) => {
-  const teamLogoBase64 = getTeamLogoBase64(team);
-  if (!teamLogoBase64) return <EmptyLogo teamSide={teamSide} />;
-  return <TeamLogoImg teamSide={teamSide} src={teamLogoBase64} />;
+const RoleLogo: React.FC<RoleLogoProps> = ({ teamSide, roleIndex }) => {
+  const roleLogoBase64 = getRoleLogoBase64(roleIndex);
+  if (!roleLogoBase64) return <EmptyLogo teamSide={teamSide} />;
+  return <RoleLogoImg teamSide={teamSide} src={roleLogoBase64} />;
 };
 
-export default TeamLogo;
+export default RoleLogo;

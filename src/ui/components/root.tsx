@@ -11,11 +11,6 @@ const Body = styled.body`
   text-align: center;
 `;
 
-const WaterMark = styled.div`
-  text-align: center;
-  font-size: 1.5em;
-`;
-
 const Root: React.FC = ({ children }) => {
   return (
     <html>

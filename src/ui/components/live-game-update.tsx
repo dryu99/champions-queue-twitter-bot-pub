@@ -9,6 +9,8 @@ import Root from "./root";
 import { getTeamLogoBase64, parseTeamName } from "../../lib/team";
 import TeamLogo from "./team-logo";
 import ChampsQueueService from "../../services/champs-queue.service";
+import { getRoleLogoBase64 } from "../../lib/role";
+import RoleLogo from "./role-logo";
 
 interface LiveGameUpdateProps {
   matchData: MatchTweetData;
@@ -34,7 +36,7 @@ const HeaderContainer = styled.div`
 `;
 
 const HeaderLine = styled.hr`
-  width: 542px;
+  width: 556px;
   border-top: none;
   border-bottom: 2px solid white;
 `;
@@ -101,7 +103,8 @@ const LiveGameUpdate: React.FC<LiveGameUpdateProps> = ({ matchData }) => {
         <SubHeader>
           {ChampsQueueService.CQ_CURR_SEASON_TEXT} |{" "}
           {ChampsQueueService.CQ_CURR_SPLIT_TEXT} | Day{" "}
-          {ChampsQueueService.getSplitDay()}
+          {ChampsQueueService.getSplitDay()} | Patch{" "}
+          {ChampsQueueService.CQ_CURR_PATCH}
         </SubHeader>
         <HeaderLine />
         <Teams>
@@ -154,10 +157,13 @@ const Team: React.FC<TeamProps> = ({ players, teamSide }) => {
   return (
     <TeamContainer teamSide={teamSide}>
       <div>
-        {players.map((player) => {
+        {players.map((player, i) => {
           const team = parseTeamName(player.summonerNameWithTeam);
           return (
             <PlayerContainer key={player.summonerNameWithTeam}>
+              {teamSide === "left" && (
+                <RoleLogo teamSide={teamSide} roleIndex={i} />
+              )}
               {teamSide === "left" && (
                 <TeamLogo teamSide={teamSide} team={team} />
               )}
@@ -172,6 +178,9 @@ const Team: React.FC<TeamProps> = ({ players, teamSide }) => {
               </PlayerName>
               {teamSide === "right" && (
                 <TeamLogo teamSide={teamSide} team={team} />
+              )}
+              {teamSide === "right" && (
+                <RoleLogo teamSide={teamSide} roleIndex={i} />
               )}
             </PlayerContainer>
           );

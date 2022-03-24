@@ -1,5 +1,7 @@
 twitch-tokens.json
 team-logos.json
+role-logos.json
+.DS_Store
 
 # Logs
 logs
