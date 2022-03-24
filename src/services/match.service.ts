@@ -28,14 +28,11 @@ export default class MatchService {
   }
 
   public calcMatchHashData(match: Match): MatchHashData {
-    // const isMatchDuplicate =
-    // this.matchHashes.has(matchHash.hash) ||
-    // this.matchHashes.has(matchHash.reverseHash);
-    const blueTeamNames = match.blueTeam.map(
-      (player) => player.summonerNameWithTeam
+    const blueTeamNames = match.blueTeam.map((player) =>
+      player.summonerNameWithTeam.toLowerCase()
     );
-    const redTeamNames = match.redTeam.map(
-      (player) => player.summonerNameWithTeam
+    const redTeamNames = match.redTeam.map((player) =>
+      player.summonerNameWithTeam.toLowerCase()
     );
 
     const matchText = [...blueTeamNames, ...redTeamNames].join();
