@@ -1,6 +1,5 @@
 import logger from "../utils/logger";
 import puppeteer from "puppeteer";
-import Config from "../utils/config";
 
 const savePng = async (
   html: string,
@@ -10,7 +9,7 @@ const savePng = async (
   logger.info("Saving PNG");
 
   const launchOptions =
-    Config.NODE_ENV === "production"
+    process.platform === "linux"
       ? {
           // needed for vultr server
           args: ["--no-sandbox", "--disable-setuid-sandbox"],
