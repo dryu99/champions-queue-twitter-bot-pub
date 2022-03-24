@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import Config from "../utils/config";
 import logger from "../utils/logger";
 
 export default class ChampsQueueService {
@@ -38,6 +39,8 @@ export default class ChampsQueueService {
   }
 
   public static isQueueLive(): boolean {
+    if (Config.NODE_ENV === "development") return true;
+
     const currDate = dayjs().tz();
     const cqStartHour =
       currDate.day() === 1 ? this.CQ_START_HOUR_MONDAY : this.CQ_START_HOUR;

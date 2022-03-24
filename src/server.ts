@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import Config from "./utils/config";
 import PlayerService, { TwitchPlayer } from "./services/player.service";
 import TwitchService from "./services/twitch.service";
-import TwitterService from "./services/twitter.service";
+import TwitterService, { MatchTweetData } from "./services/twitter.service";
 import {
   LowerCaseSummonerNameWithTeam,
   Match,
@@ -53,67 +53,54 @@ export default class Server {
         msg: string,
         privateMsg: PrivateMessage
       ) => {
-        if (msg.includes("!editcom !teams")) {
-          logger.info("received new match message", { channel, user, msg });
-          BugService.captureMessage(
-            `user used !editcom !teams command: ${JSON.stringify({
+        // check for keywords
+        if (!msg.includes("!editcom !teams") && !msg.includes("| vs. |")) {
+          return;
+        }
+
+        logger.info("received new match message", { channel, user, msg });
+        BugService.captureMessage(
+          `user sent a live match update command: ${JSON.stringify({
+            channel,
+            user,
+            msg,
+          })}`
+        );
+
+        try {
+          // check mod status
+          const isUserMod = await TwitchService.isUserMod(channel, user);
+          if (!isUserMod) {
+            logger.warn("user is not a mod, not tweeting", {
               channel,
               user,
               msg,
-            })}`
-          );
-
-          try {
-            const isUserMod = await TwitchService.isUserMod(channel, user);
-            if (!isUserMod) {
-              logger.warn("user is not a mod, not tweeting", {
-                channel,
-                user,
-                msg,
-              });
-              return;
-            }
-
-            // parse match
-            const match = this.parseMatchMessage(msg);
-            const matchData = { match, author: user };
-
-            // check for match duplicates
-            const matchHashData = this.matchService.calcMatchHashData(match);
-            if (this.matchService.isMatchDuplicate(matchHashData)) {
-              logger.warn("recent duplicate match, not tweeting", {
-                channel,
-                user,
-                msg,
-              });
-              return;
-            }
-            this.matchService.enqueueHash(matchHashData);
-
-            await TwitterService.tweetMatch(matchData);
-
-            // add channel to ongoing channels (set timeout for 20 min)
-            // this.ongoingChannels.add(channel.substring(1)); // substring to remove #
-
-            // stop listening to channel
-            // this.listeningChannels.delete(channel);
-            // try {
-            //   TwitchService.chatClient.part(channel);
-            // } catch (error) {
-            //   console.error("failed to stop listening to channel", {
-            //     error,
-            //     channel,
-            //   });
-            // }
-          } catch (error) {
-            logger.error("something went wrong while parsing chat: ", error);
-            BugService.captureException(error);
+            });
+            return;
           }
-        }
 
-        // else if (msg.includes("| vs. |")) {
-        //   // TODO do this (for winters ward :^))
-        // }
+          // parse match
+          let matchData: MatchTweetData | undefined;
+          if (msg.includes("!editcom !teams")) {
+            const commandInput = this.parseEditCommandMessage(msg);
+            const match = this.parseMatchMessage(commandInput);
+            matchData = { match, author: user };
+          } else if (msg.includes("| vs. |")) {
+            // msg didn't contain !editcom !teams but is still a game update msg (for winters ward lol)
+            const match = this.parseMatchMessage(msg);
+            matchData = { match, author: user };
+          }
+
+          if (!matchData) {
+            logger.error("match data doesn't exist, this should never print");
+            return;
+          }
+
+          await this.tweetMatch(matchData);
+        } catch (error) {
+          logger.error("something went wrong while parsing chat: ", error);
+          BugService.captureException(error);
+        }
       }
     );
 
@@ -241,18 +228,24 @@ export default class Server {
     logger.info("connected to db");
   }
 
-  // !editcom !teams Lourlo / TL Armao / GG ry0ma / EG Kaori / TSM Shenyi | vs. | TL Bwipo / DNHA Svmmy / BOG rjs / CLG Luger / EST Mia
-  private static parseMatchMessage(message: string): Match {
-    const messageParts = message.split("!editcom !teams");
-    const commandInput = messageParts[1];
-
-    if (!commandInput) {
-      throw new Error(
-        "parseMatchMessage message formatted incorrectly: " + message
-      );
+  private static tweetMatch(matchData: MatchTweetData) {
+    // check for match duplicates
+    const matchHashData = this.matchService.calcMatchHashData(matchData.match);
+    if (this.matchService.isMatchDuplicate(matchHashData)) {
+      logger.warn("recent duplicate match, not tweeting", {
+        user: matchData.author,
+      });
+      // TODO maybe throw error here?
+      return;
     }
+    this.matchService.enqueueHash(matchHashData);
 
-    const teams = commandInput.split("| vs. |");
+    return TwitterService.tweetMatch(matchData);
+  }
+
+  // Lourlo / TL Armao / GG ry0ma / EG Kaori / TSM Shenyi | vs. | TL Bwipo / DNHA Svmmy / BOG rjs / CLG Luger / EST Mia
+  private static parseMatchMessage(message: string): Match {
+    const teams = message.split("| vs. |");
     if (teams.length !== 2) {
       throw new Error(
         "parseMatchMessage message formatted incorrectly: " + message
@@ -275,6 +268,20 @@ export default class Server {
       blueTeam: this.getMatchPlayers(blueTeamNames),
       redTeam: this.getMatchPlayers(redTeamNames),
     };
+  }
+
+  // !editcom !teams ...
+  private static parseEditCommandMessage(message: string): string {
+    const messageParts = message.split("!editcom !teams");
+    const commandInput = messageParts[1];
+
+    if (!commandInput) {
+      throw new Error(
+        "parseEditCommandMessage message formatted incorrectly: " + message
+      );
+    }
+
+    return commandInput;
   }
 
   private static getMatchPlayers(
