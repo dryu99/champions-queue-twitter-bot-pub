@@ -225,6 +225,9 @@ export default class Server {
       return map;
     }, new Map<SummonerNameWithTeam, TwitchUsername | undefined>());
 
+    // special exceptions lol
+    this.playerLcNameMap.set("gg pridestalker", "pridestalkerrlol");
+
     // init pending channels list
     // this.pendingChannels = new Set(
     //   players.map((player) => player.twitchUsername)
