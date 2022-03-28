@@ -59,13 +59,6 @@ export default class Server {
         }
 
         logger.info("received new match message", { channel, user, msg });
-        BugService.captureMessage(
-          `user sent a live match update command: ${JSON.stringify({
-            channel,
-            user,
-            msg,
-          })}`
-        );
 
         try {
           // check mod status
@@ -78,6 +71,14 @@ export default class Server {
             });
             return;
           }
+
+          BugService.captureMessage(
+            `user sent a live match update command: ${JSON.stringify({
+              channel,
+              user,
+              msg,
+            })}`
+          );
 
           // parse match
           let matchData: MatchTweetData | undefined;
