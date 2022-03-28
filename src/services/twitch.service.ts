@@ -57,6 +57,7 @@ class TwitchService {
     channel: string, // starts with #
     modUsername: string
   ): Promise<boolean> {
+    if (modUsername === 'nightbot') return false;
     if (modUsername === channel.slice(1)) return true;
     if (this.isUserSpecialMod(modUsername)) return true;
 
