@@ -48,18 +48,25 @@ TODOS
   - [ ] add cron job for restarts lol, sometimes the program doesn't exit??
   - [ ] check if streamer is playing cq (must have champions queue, cq, champ queue, etc in the title of their stream)
   - [ ] dm every cq streamer to let them know their mods can use this command to advertise their streams
-    - [ ] dm peter dunn
-  - [ ] MAKE THE SCREENSHOT THINGY WORK
+    - [x] dm peter dunn
+    - [ ] go into discords$$
+  - [x] MAKE THE SCREENSHOT THINGY WORK
   - [ ] go open source
     - [ ] remove mongodb and create an inline player db
     - [ ] make prs mandatory
+    - [ ] no push to master
 - [ ] add team logo build script
-- [ ] finish new tweet image service implementation
-  - [ ] in tweet fn: TODO create html + save png + use png in tweet + delete png (maybe stream it?)
-  - [ ] have to handle duplicates differently now since we cant use tweet text. save games in-memory? create hash based on summoner names?
-    - [ ] we can restart periodically to avoid memory issues
-    - [ ] is it okay to not persist map on restart? should be okay unless mods are tweeting >20 min apart
-    - [ ] only other way to persist it to use db (which isn't an awful idea but would like to avoid doing that)
+- [x] finish new tweet image service implementation
+  - [x] in tweet fn: TODO create html + save png + use png in tweet + delete png (maybe stream it?)
+  - [x] have to handle duplicates differently now since we cant use tweet text. save games in-memory? create hash based on summoner names?
+    - [x] we can restart periodically to avoid memory issues
+    - [x] is it okay to not persist map on restart? should be okay unless mods are tweeting >20 min apart
+    - [x] only other way to persist it to use db (which isn't an awful idea but would like to avoid doing that)
+- [ ] in pinned tweet you should also mention that there are streamers who stream but dont get a lot of mod attention, you can find live streamers on championsqueue.gg
+- [ ] have to figure out why load fn in svelete app isnt working
+- [ ] consider !changecom and !champmatch (diff msgs)
+- [ ] why is date not working lol (after midnight)
+- [ ] add role icons in component
 
 Workflow
 - currently our server wakes up every 15 seconds to check if CQ is live (going by 10am/6pm - 1am blocks)
