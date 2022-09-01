@@ -2,7 +2,7 @@
 
 Twitter bot that posts live game updates for Champion's Queue ([@ChampQueueBot](https://twitter.com/)).
 
-Servers have been shut down since April 2022 since [@ChampionsQueue](https://twitter.com/ChampionsQueue) has received official dev support.
+*Servers have been shut down since April 2022 since [@ChampionsQueue](https://twitter.com/ChampionsQueue) has received official dev support.*
 
 ## What is Champion's Queue?
 
@@ -13,7 +13,9 @@ Originally live game updates were being done manually by [@ChampionsQueue](https
 
 ## How it works
 
-Because real-time CQ game data is not available to the public I opted to make this bot entirely community driven by Twitch mods. Whenever a mod enters the `!editcom !teams` command in a CQ streamer's Twitch chat, the bot validates the command and automatically tweets a live game update. Mods can use [this web tool](https://champions-queue-cmd-builder.vercel.app) to help generate the command.
+Because real-time CQ game data is not available to the public I opted to make this bot entirely community driven by Twitch mods. Not truly automated, but an alternative to help the current situation until official dev support steps in.
+
+Each day when CQ opens, the bot starts up and tries to listen to each live CQ streamer's Twitch chat (which is automatically refreshed to account for streamers that leave/join later). Whenever a mod enters the `!editcom !teams` command, the bot validates the command, generates an image with the given players, and tweets a live game update. Mods can use [this web tool](https://champions-queue-cmd-builder.vercel.app) to help generate the command.
 
 ## Development
 
