@@ -1,6 +1,6 @@
 # Champion's Queue Stream Updates Twitter Bot
 
-Twitter bot that posts live game updates for Champion's Queue ([@ChampQueueBot](https://twitter.com/)).
+Twitter bot that posts live game updates for Champion's Queue ([@ChampQueueBot](https://twitter.com/ChampQueueBot)).
 
 *Servers have been shut down since April 2022 since [@ChampionsQueue](https://twitter.com/ChampionsQueue) has received official dev support.*
 
