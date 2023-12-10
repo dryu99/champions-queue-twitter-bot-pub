@@ -16,9 +16,9 @@
   "dependencies": {
     "@sentry/node": "^6.18.2",
     "@sentry/tracing": "^6.18.2",
-    "@twurple/api": "^5.0.18",
-    "@twurple/auth": "^5.0.18",
-    "@twurple/chat": "^5.0.18",
+    "@twurple/api": "^7.0.0",
+    "@twurple/auth": "^7.0.0",
+    "@twurple/chat": "^7.0.0",
     "@types/tmi.js": "^1.8.1",
     "@types/utf8": "^3.0.1",
     "dayjs": "^1.10.8",

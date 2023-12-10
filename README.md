@@ -22,7 +22,7 @@ Each day when CQ opens, the bot starts up and tries to listen to each live CQ st
 Clone the repo and run `yarn` or `npm install` to install dependencies.
 
 - **Twitch Tokens**: 
-  - Create a file called [`twitch-tokens.json`](https://twurple.js.org/docs/auth/providers/refreshing.html) (be mindful to look at documentation that matches our twurple version)
+  - Create a file called [`twitch-tokens.<TWITCH_ID>.json`](https://twurple.js.org/docs/auth/providers/refreshing.html) (be mindful to look at documentation that matches our twurple version)
     - ```
       {
         "accessToken": "INITIAL_ACCESS_TOKEN",
@@ -49,6 +49,7 @@ Clone the repo and run `yarn` or `npm install` to install dependencies.
   ```
   # Get tokens from: https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#client-credentials-grant-flow
   TWITCH_USERNAME=*
+  TWITCH_ID=* # get this from a tool like: https://www.streamweasels.com/tools/convert-twitch-username-to-user-id/
   TWITCH_CLIENT_ID=*
   TWITCH_SECRET=*
   TWITCH_REDIRECT_URI=*

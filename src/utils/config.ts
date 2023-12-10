@@ -6,12 +6,16 @@ dotenv.config({
 });
 
 const getTwitchTokensPath = (): string => {
-  return path.resolve(__dirname, "../../twitch-tokens.json");
+  return path.resolve(
+    __dirname,
+    `../../twitch-tokens.${process.env.TWITCH_ID}.json`
+  );
 };
 
 const Config = {
   TWITCH_CLIENT_ID: process.env.TWITCH_CLIENT_ID as string,
   TWITCH_SECRET: process.env.TWITCH_SECRET as string,
+  TWITCH_ID: process.env.TWITCH_ID as string,
   TWITTER_USERNAME: process.env.TWITTER_USERNAME as string,
   TWITTER_API_KEY: process.env.TWITTER_API_KEY as string,
   TWITTER_API_KEY_SECRET: process.env.TWITTER_API_KEY_SECRET as string,

@@ -23,19 +23,19 @@ class TwitchService {
     );
 
     logger.info("initializing twitch auth provider");
-    const authProvider = new RefreshingAuthProvider(
-      {
-        clientId: Config.TWITCH_CLIENT_ID,
-        clientSecret: Config.TWITCH_SECRET,
-        onRefresh: (newTokenData) =>
-          fs.writeFileSync(
-            Config.getTwitchTokensPath(),
-            JSON.stringify(newTokenData, null, 4),
-            { encoding: "utf-8" }
-          ),
-      },
-      tokenData
+    const authProvider = new RefreshingAuthProvider({
+      clientId: Config.TWITCH_CLIENT_ID,
+      clientSecret: Config.TWITCH_SECRET,
+    });
+
+    authProvider.onRefresh(async (userId, newTokenData) =>
+      fs.writeFileSync(
+        Config.getTwitchTokensPath(),
+        JSON.stringify(newTokenData, null, 4),
+        "utf-8"
+      )
     );
+    await authProvider.addUser(Config.TWITCH_ID, tokenData, ["chat"]);
 
     this.apiClient = new ApiClient({ authProvider });
     this.chatClient = new ChatClient({ authProvider });
@@ -65,8 +65,11 @@ class TwitchService {
     if (modUsername === channel.slice(1)) return true;
     if (this.isUserSpecialMod(modUsername)) return true;
 
-    const mods = await this.chatClient.getMods(channel);
-    return mods.includes(modUsername);
+    const modsResult = await this.apiClient.moderation.getModerators(channel);
+
+    return (
+      modsResult.data.findIndex((mod) => mod.userName === modUsername) !== -1
+    );
   }
 
   public static isUserSpecialMod(twitchUsername: string): boolean {

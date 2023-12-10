@@ -1,4 +1,3 @@
-import { PrivateMessage } from "@twurple/chat/lib";
 import mongoose from "mongoose";
 import Config from "./utils/config";
 import PlayerService, { TwitchPlayer } from "./services/player.service";
@@ -47,12 +46,7 @@ export default class Server {
 
     // setup channel message listener
     TwitchService.chatClient.onMessage(
-      async (
-        channel: string,
-        user: string,
-        msg: string,
-        privateMsg: PrivateMessage
-      ) => {
+      async (channel: string, user: string, msg: string) => {
         // check for keywords
         if (!msg.includes("!editcom !teams") && !msg.includes("| vs. |")) {
           return;

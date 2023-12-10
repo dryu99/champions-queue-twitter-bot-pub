@@ -1,4 +1,4 @@
-twitch-tokens.json
+twitch-tokens.*.json
 team-logos.json
 role-logos.json
 .DS_Store
