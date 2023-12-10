@@ -9,7 +9,11 @@ import BugService from "./bug.service";
 class TwitchService {
   public static apiClient: ApiClient;
   public static chatClient: ChatClient;
-  private static readonly specialMods: string[] = ["wintersward", "utpamas"];
+  private static readonly specialMods: string[] = [
+    "wintersward",
+    "utpamas",
+    "byongarikong",
+  ];
 
   public static async init() {
     const tokenData = JSON.parse(
@@ -57,7 +61,7 @@ class TwitchService {
     channel: string, // starts with #
     modUsername: string
   ): Promise<boolean> {
-    if (modUsername === 'nightbot') return false;
+    if (modUsername === "nightbot") return false;
     if (modUsername === channel.slice(1)) return true;
     if (this.isUserSpecialMod(modUsername)) return true;
 
