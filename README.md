@@ -21,15 +21,37 @@ Each day when CQ opens, the bot starts up and tries to listen to each live CQ st
 
 Clone the repo and run `yarn` or `npm install` to install dependencies.
 
-- **Twitch Tokens**: Create a file called `twitch-tokens.json` and follow instructions [here](https://twurple.js.org/docs/auth/providers/refreshing.html) to set up Twitch auth
+- **Twitch Tokens**: 
+  - Create a file called [`twitch-tokens.json`](https://twurple.js.org/docs/auth/providers/refreshing.html) (be mindful to look at documentation that matches our twurple version)
+    - ```
+      {
+        "accessToken": "INITIAL_ACCESS_TOKEN",
+        "refreshToken": "INITIAL_REFRESH_TOKEN",
+        "expiresIn": 0,
+        "obtainmentTimestamp": 0
+      }
+      ```
+  - Create a twitch app on the developer dashboard and remember `CLIENT_ID`, `REDIRECT_URI`, and `CLIENT_SECRET`
+  - Enter this link into the browser and remember code in response url: https://id.twitch.tv/oauth2/authorize?client_id=CLIENT_ID&redirect_uri=REDIRECT_URI&response_type=code&scope=chat:read chat:edit
+    - See scopes here: https://dev.twitch.tv/docs/authentication/scopes/
+  - Make a POST request to get access and refresh tokens:
+    - ```
+      curl -X POST 'https://id.twitch.tv/oauth2/token' \
+      -d 'client_id=YOUR_CLIENT_ID' \
+      -d 'client_secret=YOUR_CLIENT_SECRET' \
+      -d 'code=YOUR_CODE' \
+      -d 'grant_type=authorization_code' \
+      -d 'redirect_uri=YOUR_REDIRECT_URI'
+      ```  
 - **Database**: Scrape player data from https://championsqueue.lolesports.com/en-us/ and persist data in a MongoDB instance (see `player.service.ts` for schema)
 - **Environment Variables**: create `.env.development` file with the following variables
 
   ```
-  # Get tokens from: https://dev.twitch.tv/docs/authentication/
+  # Get tokens from: https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#client-credentials-grant-flow
   TWITCH_USERNAME=*
   TWITCH_CLIENT_ID=*
   TWITCH_SECRET=*
+  TWITCH_REDIRECT_URI=*
 
   # Get tokens from: https://developer.twitter.com/en/portal/dashboard
   TWITTER_USERNAME=*
@@ -46,3 +68,4 @@ Clone the repo and run `yarn` or `npm install` to install dependencies.
   # Optional
   SENTRY_DSN=*
   ```
+
