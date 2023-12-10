@@ -6,7 +6,7 @@
   "author": "Daniel Ryu <rujjiryu99@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "build": "rm -rf ./dist/ && yarn tsc",
+    "build": "rm -rf ./dist/ && npx tsc",
     "start": "cross-env NODE_ENV=production node ./dist/index.js",
     "dev": "cross-env NODE_ENV=development ts-node ./src/index.ts",
     "watch": "cross-env NODE_ENV=development ts-node-dev --respawn",
