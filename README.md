@@ -19,7 +19,7 @@ Each day when CQ opens, the bot starts up and tries to listen to each live CQ st
 
 ## Development
 
-Clone the repo and run `yarn` or `npm install` to install dependencies.
+Clone the repo and run `npm install` to install dependencies.
 
 - **Twitch Tokens**: 
   - Create a file called [`twitch-tokens.<TWITCH_ID>.json`](https://twurple.js.org/docs/auth/providers/refreshing.html) (be mindful to look at documentation that matches our twurple version)
@@ -68,5 +68,10 @@ Clone the repo and run `yarn` or `npm install` to install dependencies.
 
   # Optional
   SENTRY_DSN=*
+  ```
+- **Linux**: if you're working on linux, make sure to install `chromium-browser`, otherwise `puppeteer` won't work.
+  ```
+  sudo apt update
+  sudo apt install chromium-browser
   ```
 
