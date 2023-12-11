@@ -33,8 +33,7 @@ export default class Server {
     logger.info("starting server");
 
     if (!ChampsQueueService.isQueueLive()) {
-      logger.warn("champions queue not live, stopping server");
-      process.exit(0);
+      await this.stop();
     }
 
     try {
@@ -113,8 +112,7 @@ export default class Server {
     // check channels interval (we use while here instead of setInterval to have more async control)
     while (true) {
       if (!ChampsQueueService.isQueueLive()) {
-        logger.info("champions queue not live anymore, stopping server");
-        process.exit(0);
+        await this.stop();
       }
 
       logger.info("START checking pending channels", {
@@ -150,6 +148,13 @@ export default class Server {
 
       await wait(this.TWITCH_CHANNEL_CHECK_INTERVAL_MINUTES * 60 * 1000);
     }
+  }
+
+  public static async stop() {
+    logger.info("stopping server");
+    await mongoose.disconnect();
+    logger.info("disconnected from db");
+    process.exit(0);
   }
 
   // has side effects
