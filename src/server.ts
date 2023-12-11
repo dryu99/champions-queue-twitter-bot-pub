@@ -10,7 +10,7 @@ import {
   SummonerNameWithTeam,
   TwitchUsername,
 } from "./types";
-import logger from "./utils/logger";
+import logger, { waitForLoggerToComplete } from "./utils/logger";
 import { wait } from "./utils/wait";
 import ChampsQueueService from "./services/champs-queue.service";
 import BugService from "./services/bug.service";
@@ -154,6 +154,7 @@ export default class Server {
     logger.info("stopping server");
     await mongoose.disconnect();
     logger.info("disconnected from db");
+    await waitForLoggerToComplete(logger);
     process.exit(0);
   }
 

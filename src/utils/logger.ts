@@ -45,4 +45,10 @@ export const taggedLogger = (loggerName: string) => {
   };
 };
 
+export const waitForLoggerToComplete = (logger: winston.Logger) => {
+  return new Promise((resolve) => {
+    logger.on("finish", resolve);
+  });
+};
+
 export default logger;
