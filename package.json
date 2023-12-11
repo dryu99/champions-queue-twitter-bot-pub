@@ -11,7 +11,7 @@
     "dev": "cross-env NODE_ENV=development ts-node ./src/index.ts",
     "watch": "cross-env NODE_ENV=development ts-node-dev --respawn",
     "dev:build-logos": "cross-env NODE_ENV=development ts-node ./src/scripts/build-base64-img-json.ts",
-    "run:test-tweet": "cross-env NODE_ENV=development ts-node ./src/scripts/post-test-tweet.ts"
+    "dev:test-tweet": "cross-env NODE_ENV=development ts-node ./src/scripts/post-test-tweet.ts"
   },
   "dependencies": {
     "@sentry/node": "^6.18.2",

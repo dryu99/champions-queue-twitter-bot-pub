@@ -5,49 +5,61 @@ import timezone from "dayjs/plugin/timezone";
 import advanced from "dayjs/plugin/advancedFormat";
 
 const matchData: MatchTweetData = {
-  author: "testuser",
+  author: "PhreakStream",
   match: {
     blueTeam: [
       {
         isStreaming: true,
-        summonerNameWithTeam: "CLG Dhokla",
-        twitchUsername: "dhoklalol",
+        summonerNameWithTeam: "C9 jojopyun",
+        twitchUsername: "jojopyun",
       },
       {
         isStreaming: false,
-        summonerNameWithTeam: "CLG RoseThorn",
-        twitchUsername: "rosethornlol",
+        summonerNameWithTeam: "C9 jojopyun",
+        twitchUsername: "jojopyun",
       },
-      {
-        isStreaming: true,
-        summonerNameWithTeam: "WCA Crazy Goose",
-        twitchUsername: "thepowerofevil",
-      },
-      { isStreaming: false, summonerNameWithTeam: "Keith" },
       {
         isStreaming: false,
-        summonerNameWithTeam: "C9 Isles",
-        twitchUsername: "islesworld",
+        summonerNameWithTeam: "C9 jojopyun",
+        twitchUsername: "jojopyun",
+      },
+      {
+        isStreaming: false,
+        summonerNameWithTeam: "C9 jojopyun",
+        twitchUsername: "jojopyun",
+      },
+      {
+        isStreaming: false,
+        summonerNameWithTeam: "C9 jojopyun",
+        twitchUsername: "jojopyun",
       },
     ],
     redTeam: [
       {
         isStreaming: true,
-        summonerNameWithTeam: "Pobelter",
-        twitchUsername: "pobelter",
+        summonerNameWithTeam: "NRG Palafox",
+        twitchUsername: "palafox",
       },
       {
         isStreaming: false,
-        summonerNameWithTeam: "FLY josedeodo",
-        twitchUsername: "josedeodo",
+        summonerNameWithTeam: "NRG Palafox",
+        twitchUsername: "palafox",
       },
       {
         isStreaming: false,
-        summonerNameWithTeam: "FLY Toucouille",
-        twitchUsername: "toucouille_lol",
+        summonerNameWithTeam: "NRG Palafox",
+        twitchUsername: "palafox",
       },
-      { isStreaming: false, summonerNameWithTeam: "EST Bvoy" },
-      { isStreaming: false, summonerNameWithTeam: "EST Mia" },
+      {
+        isStreaming: false,
+        summonerNameWithTeam: "NRG Palafox",
+        twitchUsername: "palafox",
+      },
+      {
+        isStreaming: false,
+        summonerNameWithTeam: "NRG Palafox",
+        twitchUsername: "palafox",
+      },
     ],
   },
 };

@@ -62,7 +62,7 @@ export default class TwitterService {
       text += `📺 www.twitch.tv/${player.twitchUsername}\n`;
     }
 
-    text += `\nThank you www.twitch.tv/${matchData.author} for generating this update! 👑`;
+    text += `\n👑 Thank you www.twitch.tv/${matchData.author} for generating this update 👑`;
     return text;
   }
 }

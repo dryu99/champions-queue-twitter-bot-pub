@@ -97,12 +97,11 @@ const LiveGameUpdate: React.FC<LiveGameUpdateProps> = ({ matchData }) => {
         <HeaderContainer>
           <img src={ChampionsQueueLogoData.base64} />
           <Header>
-            <HighlightText>CHAMPION'S</HighlightText> QUEUE
+            <HighlightText>CHAMPIONS</HighlightText> QUEUE
           </Header>
         </HeaderContainer>
         <SubHeader>
-          {ChampsQueueService.CQ_CURR_SEASON_TEXT} |{" "}
-          {ChampsQueueService.CQ_CURR_SPLIT_TEXT} | Day{" "}
+          {ChampsQueueService.CQ_CURR_SEASON_TEXT} | Day{" "}
           {ChampsQueueService.getSplitDay()} | Patch{" "}
           {ChampsQueueService.CQ_CURR_PATCH}
         </SubHeader>
@@ -116,7 +115,7 @@ const LiveGameUpdate: React.FC<LiveGameUpdateProps> = ({ matchData }) => {
           </VsContainer>
           <Team players={match.redTeam} teamSide="right" />
         </Teams>
-        <WaterMark>@ChampQueueBot</WaterMark>
+        <WaterMark>@ChampQueueWard</WaterMark>
       </Container>
     </Root>
   );
