@@ -11,6 +11,11 @@ const logger = winston.createLogger({
       ),
       filename: path.resolve(__dirname, `../../logs/${Config.NODE_ENV}.log`),
     }),
+  ],
+});
+
+if (Config.NODE_ENV !== "production") {
+  logger.add(
     new winston.transports.Console({
       format: winston.format.combine(
         winston.format.colorize(),
@@ -24,9 +29,9 @@ const logger = winston.createLogger({
           }`;
         })
       ),
-    }),
-  ],
-});
+    })
+  );
+}
 
 export const taggedLogger = (loggerName: string) => {
   return {
