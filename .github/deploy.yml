@@ -21,6 +21,6 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
           script: |
-            `cd ~/programming/boon-we-gig/event-scraper
+            `cd ~/programming/champions-queue-stream-updates-twitter-bot
             git pull origin main
             ./scripts/deploy.sh
