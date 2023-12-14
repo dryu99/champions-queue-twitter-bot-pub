@@ -216,6 +216,11 @@ export default class Server {
       return map;
     }, new Map<SummonerNameWithTeam, TwitchUsername | undefined>());
 
+    logger.info("cache state", {
+      twitchPlayerData: this.twitchPlayerData,
+      playerLcNameMap: this.playerLcNameMap,
+    });
+
     // special exceptions lol
     this.playerLcNameMap.set("gg pridestalker", "pridestalkerrlol");
 
