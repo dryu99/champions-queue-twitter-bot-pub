@@ -5,13 +5,13 @@ import logger from "../utils/logger";
 export default class ChampsQueueService {
   public static readonly CQ_START_HOUR = 17;
   public static readonly CQ_END_HOUR = 23;
-  public static readonly CQ_CURR_PATCH = "?";
+  public static readonly CQ_CURR_PATCH = "14.1";
   public static readonly CQ_CURR_SEASON_TEXT = "Preseason";
   // public static readonly CQ_CURR_SPLIT_TEXT = "Split 1";
   public static readonly CQ_CURR_SPLIT_DATE_DATA = {
     year: 2023,
     month: 11,
-    date: 11,
+    date: 13,
   };
 
   public static getSplitDay() {
