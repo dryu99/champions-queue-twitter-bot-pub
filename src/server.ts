@@ -20,7 +20,7 @@ export default class Server {
   private static twitchPlayerData: Map<TwitchUsername, TwitchPlayer> =
     new Map(); // only contains players with twitch channels
   private static playerLcNameMap: Map<
-    LowerCaseSummonerNameWithTeam,
+    string, // lc summoner name (no team)
     TwitchUsername | undefined
   > = new Map(); // contains name mappings for ALL players (if no twitch channel, val is undefined)
   private static listeningChannels: Set<TwitchUsername> = new Set();
@@ -212,10 +212,7 @@ export default class Server {
 
     // init name map
     this.playerLcNameMap = twitchPlayers.reduce((map, currPlayer) => {
-      map.set(
-        currPlayer.summonerNameWithTeam.toLowerCase(),
-        currPlayer.twitchUsername
-      );
+      map.set(currPlayer.summonerName.toLowerCase(), currPlayer.twitchUsername);
       return map;
     }, new Map<SummonerNameWithTeam, TwitchUsername | undefined>());
 
@@ -294,36 +291,40 @@ export default class Server {
   private static getMatchPlayers(
     summonerNamesWithTeams: string[]
   ): MatchPlayer[] {
-    return summonerNamesWithTeams.map((name) => {
-      if (!this.playerLcNameMap.has(name.toLowerCase())) {
+    return summonerNamesWithTeams.map((summonerNameWithTeam) => {
+      const summonerName = summonerNameWithTeam.split(" ").slice(1).join(" ");
+
+      if (!this.playerLcNameMap.has(summonerName.toLowerCase())) {
         logger.warn(
           "getMatchPlayers invalid summoner name, check db if player exists",
-          { name }
+          { summonerNameWithTeam, summonerName }
         );
 
         return {
-          summonerNameWithTeam: name,
+          summonerNameWithTeam,
           isStreaming: false,
         };
       }
 
-      const twitchUsername = this.playerLcNameMap.get(name.toLowerCase());
+      const twitchUsername = this.playerLcNameMap.get(
+        summonerName.toLowerCase()
+      );
       if (!twitchUsername)
         return {
-          summonerNameWithTeam: name,
+          summonerNameWithTeam,
           isStreaming: false,
         };
 
       const player = this.twitchPlayerData.get(twitchUsername);
       if (!player)
         return {
-          summonerNameWithTeam: name,
+          summonerNameWithTeam,
           twitchUsername,
           isStreaming: false,
         };
 
       return {
-        summonerNameWithTeam: name,
+        summonerNameWithTeam,
         twitchUsername,
         isStreaming: player.isStreaming,
       };

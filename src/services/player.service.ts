@@ -20,6 +20,7 @@ interface Player {
 
 export interface TwitchPlayer {
   summonerNameWithTeam: string;
+  summonerName: string;
   twitchUsername?: string;
   isStreaming: boolean;
 }
@@ -51,6 +52,7 @@ export default class PlayerService {
     return mongoPlayers.map((mongoPlayer) => {
       if (!mongoPlayer.twitchLink) {
         return {
+          summonerName: mongoPlayer.summonerName,
           summonerNameWithTeam: mongoPlayer.summonerNameWithTeam,
           isStreaming: false,
         };
@@ -59,9 +61,10 @@ export default class PlayerService {
       const urlParts = mongoPlayer.twitchLink.split("/");
       const twitchUsername = urlParts[urlParts.length - 1]
         ? urlParts[urlParts.length - 1]
-        : urlParts[urlParts.length - 2]; // prob '/' at end
+        : urlParts[urlParts.length - 2];
 
       return {
+        summonerName: mongoPlayer.summonerName,
         summonerNameWithTeam: mongoPlayer.summonerNameWithTeam,
         twitchUsername,
         isStreaming: false,
