@@ -315,19 +315,25 @@ export default class Server {
       const twitchUsername = this.playerLcNameMap.get(
         summonerName.toLowerCase()
       );
-      if (!twitchUsername)
+      if (!twitchUsername) {
+        logger.info("getMatchPlayers no twitch username", {
+          summonerNameWithTeam,
+        });
         return {
           summonerNameWithTeam,
           isStreaming: false,
         };
+      }
 
       const player = this.twitchPlayerData.get(twitchUsername);
-      if (!player)
+      logger.info("getMatchPlayers player", { player });
+      if (!player) {
         return {
           summonerNameWithTeam,
           twitchUsername,
           isStreaming: false,
         };
+      }
 
       return {
         summonerNameWithTeam,
