@@ -5,12 +5,12 @@ import timezone from "dayjs/plugin/timezone";
 import advanced from "dayjs/plugin/advancedFormat";
 
 const matchData: MatchTweetData = {
-  author: "PhreakStream",
+  authorUrl: "www.twitch.tv/PhreakStream",
   match: {
     blueTeam: [
       {
         isStreaming: true,
-        summonerNameWithTeam: "C9 jojopyun",
+        summonerNameWithTeam: "SR jojopyun",
         twitchUsername: "jojopyun",
       },
       {
@@ -42,7 +42,7 @@ const matchData: MatchTweetData = {
       },
       {
         isStreaming: false,
-        summonerNameWithTeam: "NRG Palafox",
+        summonerNameWithTeam: "SR Palafox",
         twitchUsername: "palafox",
       },
       {

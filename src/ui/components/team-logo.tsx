@@ -8,6 +8,7 @@ const TeamLogoImg = styled.img<{ teamSide: TeamSide }>`
   ${(props) => props.teamSide === "left" && "margin-right: 0.25em;"}
   ${(props) => props.teamSide === "right" && "margin-left: 0.25em;"}
   width: 37.5px;
+  height: 37.5px;
 `;
 
 const EmptyLogo = styled.div<{ teamSide: TeamSide }>`
