@@ -14,11 +14,20 @@ type SpecialMod = {
 class TwitchService {
   public static apiClient: ApiClient;
   public static chatClient: ChatClient;
-  private static readonly specialMods: string[] = [
-    "wintersward",
-    "utpamas",
-    "byongarikong",
-    "jbryu99",
+  private static readonly specialMods: SpecialMod[] = [
+    {
+      twitchUsername: "wintersward",
+    },
+    {
+      twitchUsername: "utpamas",
+    },
+    {
+      twitchUsername: "byongarikong",
+    },
+    {
+      twitchUsername: "jbryu99",
+      twitterUsername: "jbryu99",
+    },
   ];
 
   public static async init() {
@@ -79,7 +88,17 @@ class TwitchService {
   }
 
   public static isUserSpecialMod(twitchUsername: string): boolean {
-    return this.specialMods.includes(twitchUsername);
+    return (
+      this.specialMods.findIndex(
+        (mod) => mod.twitchUsername === twitchUsername
+      ) !== -1
+    );
+  }
+
+  public static getSpecialMod(twitchUsername: string): SpecialMod | undefined {
+    return this.specialMods.find(
+      (mod) => mod.twitchUsername === twitchUsername
+    );
   }
 }
 

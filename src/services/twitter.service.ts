@@ -9,7 +9,7 @@ import ImageService from "./image.service";
 
 export type MatchTweetData = {
   match: Match;
-  author: TwitchUsername;
+  authorUrl: TwitchUsername;
 };
 
 export default class TwitterService {
@@ -62,7 +62,7 @@ export default class TwitterService {
       text += `📺 www.twitch.tv/${player.twitchUsername}\n`;
     }
 
-    text += `\n👑 Thank you www.twitch.tv/${matchData.author} for generating this update 👑`;
+    text += `\n👑 Thank you ${matchData.authorUrl} for generating this update 👑`;
     return text;
   }
 }

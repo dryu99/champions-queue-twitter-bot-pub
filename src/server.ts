@@ -73,16 +73,22 @@ export default class Server {
             })}`
           );
 
+          const specialMod = TwitchService.getSpecialMod(user);
+          const authorUrl = specialMod?.twitterUsername
+            ? `@${specialMod?.twitterUsername}`
+            : `www.twitch.tv/${user}`;
+
           // parse match
           let matchData: MatchTweetData | undefined;
           if (msg.includes("!editcom !teams")) {
             const commandInput = this.parseEditCommandMessage(msg);
             const match = this.parseMatchMessage(commandInput);
-            matchData = { match, author: user };
+
+            matchData = { match, authorUrl };
           } else if (msg.includes("| vs. |")) {
             // msg didn't contain !editcom !teams but is still a game update msg (for winters ward lol)
             const match = this.parseMatchMessage(msg);
-            matchData = { match, author: user };
+            matchData = { match, authorUrl };
           }
 
           if (!matchData) {
@@ -234,7 +240,7 @@ export default class Server {
     const matchHashData = this.matchService.calcMatchHashData(matchData.match);
     if (this.matchService.isMatchDuplicate(matchHashData)) {
       logger.warn("recent duplicate match, not tweeting", {
-        user: matchData.author,
+        user: matchData.authorUrl,
       });
       // TODO maybe throw error here?
       return;
