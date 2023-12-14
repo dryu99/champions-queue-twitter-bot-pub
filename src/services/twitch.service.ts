@@ -28,6 +28,10 @@ class TwitchService {
       twitchUsername: "jbryu99",
       twitterUsername: "jbryu99",
     },
+    {
+      twitchUsername: "numiiigoesrawrz",
+      twitterUsername: "numiii",
+    },
   ];
 
   public static async init() {
