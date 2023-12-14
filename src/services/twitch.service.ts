@@ -6,6 +6,11 @@ import Config from "../utils/config";
 import logger from "../utils/logger";
 import BugService from "./bug.service";
 
+type SpecialMod = {
+  twitchUsername: string;
+  twitterUsername?: string;
+};
+
 class TwitchService {
   public static apiClient: ApiClient;
   public static chatClient: ChatClient;
@@ -13,6 +18,7 @@ class TwitchService {
     "wintersward",
     "utpamas",
     "byongarikong",
+    "jbryu99",
   ];
 
   public static async init() {
