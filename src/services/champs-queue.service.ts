@@ -11,7 +11,7 @@ export default class ChampsQueueService {
   public static readonly CQ_CURR_SPLIT_DATE_DATA = {
     year: 2023,
     month: 11,
-    date: 13,
+    date: 12,
   };
 
   public static getSplitDay() {
