@@ -217,8 +217,8 @@ export default class Server {
     }, new Map<SummonerNameWithTeam, TwitchUsername | undefined>());
 
     logger.info("cache state", {
-      twitchPlayerData: this.twitchPlayerData,
-      playerLcNameMap: this.playerLcNameMap,
+      twitchPlayerData: this.twitchPlayerData.entries(),
+      playerLcNameMap: this.playerLcNameMap.entries(),
     });
 
     // special exceptions lol
