@@ -201,7 +201,7 @@ export default class Server {
 
   private static async initCache() {
     const twitchPlayers = await PlayerService.getAllTwitch();
-    logger.info("twitchPlayers", twitchPlayers);
+    logger.info("twitchPlayers", twitchPlayers.slice(0, 5));
 
     // init player data map
     this.twitchPlayerData = twitchPlayers.reduce((map, currPlayer) => {
@@ -218,8 +218,8 @@ export default class Server {
     }, new Map<SummonerNameWithTeam, TwitchUsername | undefined>());
 
     logger.info("cache state", {
-      twitchPlayerData: Array.from(this.twitchPlayerData.entries()),
-      playerLcNameMap: Array.from(this.playerLcNameMap.keys()),
+      twitchPlayerData: Array.from(this.twitchPlayerData.entries()).slice(0, 5),
+      playerLcNameMap: Array.from(this.playerLcNameMap.entries()).slice(0, 5),
     });
 
     // special exceptions lol
