@@ -18,7 +18,7 @@ dayjs.extend(advanced);
 dayjs.tz.setDefault("America/Los_Angeles");
 
 const matchData: MatchTweetData = {
-  author: "test",
+  authorUrl: "test",
   match: {
     blueTeam: [
       {

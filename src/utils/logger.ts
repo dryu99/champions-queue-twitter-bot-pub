@@ -1,37 +1,53 @@
 import winston from "winston";
-import path from "path";
 import Config from "./config";
+import DailyRotateFile from "winston-daily-rotate-file";
 
-const logger = winston.createLogger({
-  transports: [
-    new winston.transports.File({
-      format: winston.format.combine(
-        winston.format.timestamp(),
-        winston.format.json()
-      ),
-      filename: path.resolve(__dirname, `../../logs/${Config.NODE_ENV}.log`),
-    }),
-  ],
-});
+// TODO would be nice to make this file a class but w/e
 
-if (Config.NODE_ENV !== "production") {
-  logger.add(
-    new winston.transports.Console({
-      format: winston.format.combine(
-        winston.format.colorize(),
-        winston.format.timestamp(),
-        winston.format.printf((info) => {
-          const { timestamp, level, message, ...args } = info;
+const createLogger = (loggerName?: string) => {
+  const logger = winston.createLogger({
+    transports: [
+      new DailyRotateFile({
+        format: winston.format.combine(
+          winston.format.timestamp(),
+          winston.format.json()
+        ),
+        filename: `${loggerName ? loggerName + "." : ""}${
+          Config.NODE_ENV
+        }-%DATE%.log`,
+        dirname: "./logs/",
+        datePattern: "YYYY-MM-DD",
+        maxSize: "20m",
+        maxFiles: "14d",
+        utc: true,
+      }),
+    ],
+  });
 
-          const ts = timestamp.slice(0, 19).replace("T", " ");
-          return `${ts} [${level}]: ${message} ${
-            Object.keys(args).length ? JSON.stringify(args, null, 2) : ""
-          }`;
-        })
-      ),
-    })
-  );
-}
+  // only log to console in development
+  if (Config.NODE_ENV !== "production") {
+    logger.add(
+      new winston.transports.Console({
+        format: winston.format.combine(
+          winston.format.colorize(),
+          winston.format.timestamp(),
+          winston.format.printf((info) => {
+            const { timestamp, level, message, ...args } = info;
+
+            const ts = timestamp.slice(0, 19).replace("T", " ");
+            return `${ts} [${level}]: ${message} ${
+              Object.keys(args).length ? JSON.stringify(args, null, 2) : ""
+            }`;
+          })
+        ),
+      })
+    );
+  }
+
+  return logger;
+};
+
+const logger = createLogger();
 
 export const taggedLogger = (loggerName: string) => {
   return {

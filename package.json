@@ -31,7 +31,8 @@
     "tmi.js": "^1.8.5",
     "twitter-api-v2": "^1.11.0",
     "utf8": "^3.0.0",
-    "winston": "^3.6.0"
+    "winston": "^3.6.0",
+    "winston-daily-rotate-file": "^4.7.1"
   },
   "devDependencies": {
     "@types/node": "^17.0.19",
