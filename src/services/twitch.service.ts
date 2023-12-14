@@ -14,6 +14,7 @@ type SpecialMod = {
 class TwitchService {
   public static apiClient: ApiClient;
   public static chatClient: ChatClient;
+  public static readonly specialChannels: string[] = ["cubbyxx", "kobe"];
   private static readonly specialMods: SpecialMod[] = [
     {
       twitchUsername: "wintersward",
