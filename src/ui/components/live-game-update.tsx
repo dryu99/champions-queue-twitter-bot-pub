@@ -90,7 +90,7 @@ const WaterMark = styled.div`
 `;
 
 const LiveGameUpdate: React.FC<LiveGameUpdateProps> = ({ matchData }) => {
-  const { match, author } = matchData;
+  const { match, authorUrl } = matchData;
   return (
     <Root>
       <Container>
