@@ -77,8 +77,10 @@ export default class Server {
           const authorUrl = specialMod?.twitterUsername
             ? `@${specialMod?.twitterUsername}`
             : `www.twitch.tv/${user}`;
-          const communityChannels = TwitchService.isChannelSpecial(channel)
-            ? [user]
+
+          const communityChannel = TwitchService.getSpecialChannel(channel);
+          const communityChannels = communityChannel
+            ? [communityChannel]
             : undefined;
 
           logger.info("determined message data", {
@@ -139,7 +141,7 @@ export default class Server {
 
       // TODO should break up batches into groups of 100 (will reduce duplication)
       const channels = Array.from(this.twitchPlayerData.keys()).concat(
-        TwitchService.specialChannels
+        TwitchService.specialChannels.map((channel) => channel.twitchUsername)
       );
       const midIndex = Math.floor(channels.length / 2);
       const channelBatch1 = channels.slice(0, midIndex);
@@ -182,7 +184,8 @@ export default class Server {
       // this promise updates channel list states if the channel is live
       const checkChannelPromise = TwitchService.isChannelLive(channel)
         .then((isChannelLive) => {
-          const isSpecialChannel = TwitchService.isChannelSpecial(channel);
+          const isSpecialChannel =
+            TwitchService.getSpecialChannel(channel) !== undefined;
 
           const player = this.twitchPlayerData.get(channel)!;
           if (!isChannelLive) {

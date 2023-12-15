@@ -6,11 +6,12 @@ import logger from "../utils/logger";
 import BugService from "./bug.service";
 import HtmlService from "./html.service";
 import ImageService from "./image.service";
+import { SpecialChannel } from "./twitch.service";
 
 export type MatchTweetData = {
   match: Match;
   authorUrl: TwitchUsername;
-  communityChannels?: string[];
+  communityChannels?: SpecialChannel[];
 };
 
 export default class TwitterService {
@@ -71,7 +72,7 @@ export default class TwitterService {
 
     if (matchData.communityChannels) {
       for (const communityChannel of matchData.communityChannels) {
-        text += `📺 www.twitch.tv/${communityChannel}\n`;
+        text += `📺 www.twitch.tv/${communityChannel} | @${communityChannel}\n`;
       }
     }
 

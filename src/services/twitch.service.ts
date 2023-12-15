@@ -11,10 +11,24 @@ type SpecialMod = {
   twitterUsername?: string;
 };
 
+export type SpecialChannel = {
+  twitchUsername: string;
+  twitterUsername: string;
+};
+
 class TwitchService {
   public static apiClient: ApiClient;
   public static chatClient: ChatClient;
-  public static readonly specialChannels: string[] = ["cubbyxx", "kobe"];
+  public static readonly specialChannels: SpecialChannel[] = [
+    {
+      twitchUsername: "cubbyxx",
+      twitterUsername: "Cubbyxx",
+    },
+    {
+      twitchUsername: "kobe",
+      twitterUsername: "esports_kobe",
+    },
+  ];
   private static readonly specialMods: SpecialMod[] = [
     {
       twitchUsername: "wintersward",
@@ -106,10 +120,12 @@ class TwitchService {
     );
   }
 
-  public static isChannelSpecial(twitchUsername: string): boolean {
-    return this.specialChannels
-      .map((c) => c.toLowerCase())
-      .includes(twitchUsername.toLowerCase());
+  public static getSpecialChannel(
+    twitchUsername: string
+  ): SpecialChannel | undefined {
+    return this.specialChannels.find(
+      (channel) => channel.twitchUsername === twitchUsername
+    );
   }
 }
 
