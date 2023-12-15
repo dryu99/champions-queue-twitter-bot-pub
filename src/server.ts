@@ -176,15 +176,14 @@ export default class Server {
       // this promise updates channel list states if the channel is live
       const checkChannelPromise = TwitchService.isChannelLive(channel)
         .then((isChannelLive) => {
-          if (TwitchService.specialChannels.includes(channel)) {
-            // special channels are always live
-            return;
-          }
+          const isSpecialChannel = TwitchService.isChannelSpecial(channel);
 
           const player = this.twitchPlayerData.get(channel)!;
           if (!isChannelLive) {
             // toggle live flag
-            player.isStreaming = false;
+            if (!isSpecialChannel) {
+              player.isStreaming = false;
+            }
 
             // stop listening to channel
             TwitchService.chatClient.part(channel);
@@ -192,8 +191,10 @@ export default class Server {
             return;
           }
 
-          // toggle live flag
-          player.isStreaming = true;
+          if (!isSpecialChannel) {
+            // toggle live flag
+            player.isStreaming = true;
+          }
 
           // listen to channel
           return TwitchService.chatClient.join(channel).then(() => {
