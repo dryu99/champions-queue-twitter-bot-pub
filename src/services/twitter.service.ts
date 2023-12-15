@@ -59,15 +59,18 @@ export default class TwitterService {
     const { blueTeam, redTeam } = matchData.match;
     let text = "";
 
+    // try twitter username text
     for (const player of [...blueTeam, ...redTeam]) {
       if (!player.isStreaming) continue;
       if (player.twitchUsername) {
-        text += `📺 www.twitch.tv/${player.twitchUsername}\n`;
+        text += `📺 www.twitch.tv/${player.twitchUsername}`;
       }
 
-      // if (player.twitterUsername) {
-      //   text += ` | @${player.twitterUsername}\n`;
-      // }
+      if (player.twitterUsername) {
+        text += ` | @${player.twitterUsername}\n`;
+      } else {
+        text += `\n`;
+      }
     }
 
     if (matchData.communityChannels) {
@@ -76,7 +79,26 @@ export default class TwitterService {
       }
     }
 
-    text += `\n👑 Thank you ${matchData.authorUrl} for generating this update 👑`;
+    text += `\nUpdate by ${matchData.authorUrl} 👑`;
+
+    if (text.length <= 280) return text;
+
+    // try again with more succinct text
+    text = "";
+    for (const player of [...blueTeam, ...redTeam]) {
+      if (!player.isStreaming) continue;
+      if (player.twitchUsername) {
+        text += `📺 www.twitch.tv/${player.twitchUsername}\n`;
+      }
+    }
+
+    if (matchData.communityChannels) {
+      for (const communityChannel of matchData.communityChannels) {
+        text += `📺 www.twitch.tv/${communityChannel.twitchUsername}\n`;
+      }
+    }
+
+    text += `\nUpdate by ${matchData.authorUrl} 👑`;
     return text;
   }
 }
