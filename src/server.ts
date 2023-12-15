@@ -176,6 +176,11 @@ export default class Server {
       // this promise updates channel list states if the channel is live
       const checkChannelPromise = TwitchService.isChannelLive(channel)
         .then((isChannelLive) => {
+          if (TwitchService.specialChannels.includes(channel)) {
+            // special channels are always live
+            return;
+          }
+
           const player = this.twitchPlayerData.get(channel)!;
           if (!isChannelLive) {
             // toggle live flag
