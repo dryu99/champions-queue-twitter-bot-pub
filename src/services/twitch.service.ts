@@ -47,6 +47,10 @@ class TwitchService {
       twitchUsername: "numiiigoesrawrz",
       twitterUsername: "numiii",
     },
+    {
+      twitchUsername: "megafreshlemons",
+      twitterUsername: "thejasonlemons",
+    },
   ];
 
   public static async init() {
@@ -92,7 +96,7 @@ class TwitchService {
   }
 
   public static async isUserMod(
-    channel: string, // starts with #
+    channel: string,
     modUsername: string
   ): Promise<boolean> {
     if (modUsername === "nightbot") return false;
