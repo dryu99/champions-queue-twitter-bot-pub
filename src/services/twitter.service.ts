@@ -72,7 +72,7 @@ export default class TwitterService {
 
     if (matchData.communityChannels) {
       for (const communityChannel of matchData.communityChannels) {
-        text += `📺 www.twitch.tv/${communityChannel} | @${communityChannel}\n`;
+        text += `📺 www.twitch.tv/${communityChannel.twitchUsername} | @${communityChannel.twitterUsername}\n`;
       }
     }
 
