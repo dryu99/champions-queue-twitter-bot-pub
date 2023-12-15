@@ -62,12 +62,12 @@ export default class TwitterService {
     for (const player of [...blueTeam, ...redTeam]) {
       if (!player.isStreaming) continue;
       if (player.twitchUsername) {
-        text += `📺 www.twitch.tv/${player.twitchUsername}`;
+        text += `📺 www.twitch.tv/${player.twitchUsername}\n`;
       }
 
-      if (player.twitterUsername) {
-        text += ` | @${player.twitterUsername}\n`;
-      }
+      // if (player.twitterUsername) {
+      //   text += ` | @${player.twitterUsername}\n`;
+      // }
     }
 
     if (matchData.communityChannels) {
