@@ -81,6 +81,12 @@ export default class Server {
             ? [user]
             : undefined;
 
+          logger.info("determined message data", {
+            specialMod,
+            authorUrl,
+            communityChannels,
+          });
+
           // parse match
           let matchData: MatchTweetData | undefined;
           if (msg.includes("!editcom !teams")) {
@@ -182,6 +188,7 @@ export default class Server {
           if (!isChannelLive) {
             // toggle live flag
             if (!isSpecialChannel) {
+              // no player for special channels
               player.isStreaming = false;
             }
 
@@ -191,8 +198,9 @@ export default class Server {
             return;
           }
 
+          // toggle live flag
           if (!isSpecialChannel) {
-            // toggle live flag
+            // no player for special channels
             player.isStreaming = true;
           }
 
