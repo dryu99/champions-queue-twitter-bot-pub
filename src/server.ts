@@ -46,10 +46,12 @@ export default class Server {
     // setup channel message listener
     TwitchService.chatClient.onMessage(
       async (channel: string, user: string, msg: string) => {
-        // check for keywords
-        if (!msg.includes("!editcom !teams") && !msg.includes("| vs. |")) {
-          return;
-        }
+        const isValidCommand =
+          (msg.includes(TwitchService.TEAM_COMMAND) ||
+            msg.includes(TwitchService.CQ_COMMAND)) &&
+          msg.includes(TwitchService.VS_SPLIT_MESSAGE);
+
+        if (!isValidCommand) return;
 
         logger.info("received new match message", { channel, user, msg });
 
@@ -91,12 +93,23 @@ export default class Server {
 
           // parse match
           let matchData: MatchTweetData | undefined;
-          if (msg.includes("!editcom !teams")) {
-            const commandInput = this.parseEditCommandMessage(msg);
+          if (msg.includes(TwitchService.TEAM_COMMAND)) {
+            const commandInput = this.parseEditCommandMessage(
+              msg,
+              TwitchService.TEAM_COMMAND
+            );
             const match = this.parseMatchMessage(commandInput);
 
             matchData = { match, authorUrl, communityChannels };
-          } else if (msg.includes("| vs. |")) {
+          } else if (msg.includes(TwitchService.CQ_COMMAND)) {
+            const commandInput = this.parseEditCommandMessage(
+              msg,
+              TwitchService.CQ_COMMAND
+            );
+            const match = this.parseMatchMessage(commandInput);
+
+            matchData = { match, authorUrl, communityChannels };
+          } else if (msg.includes(TwitchService.VS_SPLIT_MESSAGE)) {
             // msg didn't contain !editcom !teams but is still a game update msg (for winters ward lol)
             const match = this.parseMatchMessage(msg);
             matchData = { match, authorUrl, communityChannels };
@@ -115,7 +128,8 @@ export default class Server {
       }
     );
 
-    // hash clear interval
+    // hash is used to prevent duplicate posts from being tweeted
+    // we dequeue hashes every 45 min i.e. avg game time
     setInterval(() => {
       logger.info("START Dequeueing hash", {
         matchHashesSize: this.matchService.getMatchHashesSize(),
@@ -278,7 +292,7 @@ export default class Server {
 
   // Lourlo / TL Armao / GG ry0ma / EG Kaori / TSM Shenyi | vs. | TL Bwipo / DNHA Svmmy / BOG rjs / CLG Luger / EST Mia
   private static parseMatchMessage(message: string): Match {
-    const teams = message.split("| vs. |");
+    const teams = message.split(TwitchService.VS_SPLIT_MESSAGE);
     if (teams.length !== 2) {
       throw new Error(
         "parseMatchMessage message formatted incorrectly: " + message
@@ -304,8 +318,11 @@ export default class Server {
   }
 
   // !editcom !teams ...
-  private static parseEditCommandMessage(message: string): string {
-    const messageParts = message.split("!editcom !teams");
+  private static parseEditCommandMessage(
+    message: string,
+    splitText: string
+  ): string {
+    const messageParts = message.split(splitText);
     const commandInput = messageParts[1];
 
     if (!commandInput) {

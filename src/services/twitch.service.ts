@@ -19,6 +19,9 @@ export type SpecialChannel = {
 class TwitchService {
   public static apiClient: ApiClient;
   public static chatClient: ChatClient;
+  public static readonly TEAM_COMMAND = "!editcom !teams";
+  public static readonly CQ_COMMAND = "!editcom !cq";
+  public static readonly VS_SPLIT_MESSAGE = "| vs. |";
   public static readonly specialChannels: SpecialChannel[] = [
     {
       twitchUsername: "cubbyxx",
