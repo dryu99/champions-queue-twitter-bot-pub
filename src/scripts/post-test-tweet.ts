@@ -12,6 +12,7 @@ const matchData: MatchTweetData = {
         isStreaming: true,
         summonerNameWithTeam: "SR jojopyun",
         twitchUsername: "jojopyun",
+        twitterUsername: "jojolol",
       },
       {
         isStreaming: false,
@@ -39,6 +40,7 @@ const matchData: MatchTweetData = {
         isStreaming: true,
         summonerNameWithTeam: "NRG Palafox",
         twitchUsername: "palafox",
+        twitterUsername: "palafox",
       },
       {
         isStreaming: false,

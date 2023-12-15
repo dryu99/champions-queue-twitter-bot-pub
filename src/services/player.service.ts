@@ -22,6 +22,7 @@ export interface TwitchPlayer {
   summonerNameWithTeam: string;
   summonerName: string;
   twitchUsername?: string;
+  twitterUsername?: string;
   isStreaming: boolean;
 }
 
@@ -50,25 +51,24 @@ export default class PlayerService {
   public static async getAllTwitch(): Promise<TwitchPlayer[]> {
     const mongoPlayers = await PlayerModel.find({});
     return mongoPlayers.map((mongoPlayer) => {
-      if (!mongoPlayer.twitchLink) {
-        return {
-          summonerName: mongoPlayer.summonerName,
-          summonerNameWithTeam: mongoPlayer.summonerNameWithTeam,
-          isStreaming: false,
-        };
-      }
-
-      const urlParts = mongoPlayer.twitchLink.split("/");
-      const twitchUsername = urlParts[urlParts.length - 1]
-        ? urlParts[urlParts.length - 1]
-        : urlParts[urlParts.length - 2];
-
       return {
         summonerName: mongoPlayer.summonerName,
         summonerNameWithTeam: mongoPlayer.summonerNameWithTeam,
-        twitchUsername,
+        twitterUsername: this.getUsernameFromLink(mongoPlayer.twitterLink),
+        twitchUsername: this.getUsernameFromLink(mongoPlayer.twitchLink),
         isStreaming: false,
       };
     });
+  }
+
+  private static getUsernameFromLink(
+    link: string | undefined
+  ): string | undefined {
+    if (!link) return undefined;
+
+    const urlParts = link.split("/");
+    return urlParts[urlParts.length - 1]
+      ? urlParts[urlParts.length - 1]
+      : urlParts[urlParts.length - 2];
   }
 }

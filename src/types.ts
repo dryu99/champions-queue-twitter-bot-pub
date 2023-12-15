@@ -9,6 +9,7 @@ export interface MatchPlayer {
   summonerNameWithTeam: SummonerNameWithTeam;
   isStreaming: boolean;
   twitchUsername?: string;
+  twitterUsername?: string;
 }
 
 export type TwitchUsername = string;

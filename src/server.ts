@@ -357,6 +357,7 @@ export default class Server {
       return {
         summonerNameWithTeam,
         twitchUsername,
+        twitterUsername: player.twitterUsername,
         isStreaming: player.isStreaming,
       };
     });
