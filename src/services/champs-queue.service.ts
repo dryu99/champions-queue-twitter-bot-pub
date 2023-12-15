@@ -38,7 +38,7 @@ export default class ChampsQueueService {
   }
 
   public static isQueueLive(): boolean {
-    // if (Config.NODE_ENV === "development") return true;
+    if (Config.NODE_ENV === "development") return true;
 
     const currDate = dayjs().tz();
     const result =
