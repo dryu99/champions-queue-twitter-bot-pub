@@ -10,6 +10,7 @@ import ImageService from "./image.service";
 export type MatchTweetData = {
   match: Match;
   authorUrl: TwitchUsername;
+  communityChannels?: string[];
 };
 
 export default class TwitterService {
@@ -60,6 +61,12 @@ export default class TwitterService {
     for (const player of [...blueTeam, ...redTeam]) {
       if (!player.isStreaming || !player.twitchUsername) continue;
       text += `📺 www.twitch.tv/${player.twitchUsername}\n`;
+    }
+
+    if (matchData.communityChannels) {
+      for (const communityChannel of matchData.communityChannels) {
+        text += `📺 www.twitch.tv/${communityChannel}\n`;
+      }
     }
 
     text += `\n👑 Thank you ${matchData.authorUrl} for generating this update 👑`;

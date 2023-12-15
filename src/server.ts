@@ -77,6 +77,9 @@ export default class Server {
           const authorUrl = specialMod?.twitterUsername
             ? `@${specialMod?.twitterUsername}`
             : `www.twitch.tv/${user}`;
+          const communityChannels = TwitchService.isChannelSpecial(user)
+            ? [user]
+            : undefined;
 
           // parse match
           let matchData: MatchTweetData | undefined;
@@ -84,11 +87,11 @@ export default class Server {
             const commandInput = this.parseEditCommandMessage(msg);
             const match = this.parseMatchMessage(commandInput);
 
-            matchData = { match, authorUrl };
+            matchData = { match, authorUrl, communityChannels };
           } else if (msg.includes("| vs. |")) {
             // msg didn't contain !editcom !teams but is still a game update msg (for winters ward lol)
             const match = this.parseMatchMessage(msg);
-            matchData = { match, authorUrl };
+            matchData = { match, authorUrl, communityChannels };
           }
 
           if (!matchData) {

@@ -105,6 +105,12 @@ class TwitchService {
       (mod) => mod.twitchUsername === twitchUsername
     );
   }
+
+  public static isChannelSpecial(twitchUsername: string): boolean {
+    return this.specialChannels
+      .map((c) => c.toLowerCase())
+      .includes(twitchUsername.toLowerCase());
+  }
 }
 
 export default TwitchService;
