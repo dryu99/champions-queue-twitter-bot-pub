@@ -27,7 +27,7 @@ export default class Server {
   private static matchService = new MatchService();
   // private static pendingChannels: Set<TwitchUsername> = new Set(); // channels that aren't being listened to
   // private static ongoingChannels: Set<{twitchUsername: TwitchUsername, startTime: number}> = new Set(); TODO stretch goal, if stream count starts getting too high
-  private static readonly TWITCH_CHANNEL_CHECK_INTERVAL_MINUTES = 1.5;
+  private static readonly TWITCH_CHANNEL_CHECK_INTERVAL_MINUTES = 1;
 
   public static async start() {
     logger.info("starting server");
