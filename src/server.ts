@@ -77,7 +77,7 @@ export default class Server {
           const authorUrl = specialMod?.twitterUsername
             ? `@${specialMod?.twitterUsername}`
             : `www.twitch.tv/${user}`;
-          const communityChannels = TwitchService.isChannelSpecial(user)
+          const communityChannels = TwitchService.isChannelSpecial(channel)
             ? [user]
             : undefined;
 
@@ -239,6 +239,7 @@ export default class Server {
     logger.info("cache state", {
       twitchPlayerData: Array.from(this.twitchPlayerData.entries()).slice(0, 5),
       playerLcNameMap: Array.from(this.playerLcNameMap.entries()).slice(0, 5),
+      specialChannels: TwitchService.specialChannels,
     });
 
     // special exceptions lol

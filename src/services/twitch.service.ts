@@ -82,7 +82,7 @@ class TwitchService {
     modUsername: string
   ): Promise<boolean> {
     if (modUsername === "nightbot") return false;
-    if (modUsername === channel.slice(1)) return true;
+    if (modUsername === channel) return true;
     if (this.isUserSpecialMod(modUsername)) return true;
 
     const modsResult = await this.apiClient.moderation.getModerators(channel);
