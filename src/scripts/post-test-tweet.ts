@@ -6,7 +6,7 @@ import advanced from "dayjs/plugin/advancedFormat";
 
 const matchData: MatchTweetData = {
   authorUrl: "www.twitch.tv/PhreakStream",
-  region: "NA",
+  region: "EU",
   match: {
     blueTeam: [
       {

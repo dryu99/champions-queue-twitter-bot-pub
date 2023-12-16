@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { MatchTweetData } from "../../services/twitter.service";
 import { MatchPlayer, Region } from "../../types";
-import { PRIMARY_COLOR } from "../common";
+import { PRIMARY_COLOR, PRIMARY_COLOR_EU } from "../common";
 import ChampionsQueueLogoData from "../assets/champions-queue-logo.json";
 import TwitchLogoData from "../assets/twitch-logo.json";
 import Root from "./root";
@@ -53,8 +53,8 @@ const SubHeader = styled.h2`
   margin-bottom: 1em;
 `;
 
-const HighlightText = styled.span`
-  color: ${PRIMARY_COLOR};
+const HighlightText = styled.span<{ region: Region }>`
+  color: ${(p) => (p.region === "NA" ? PRIMARY_COLOR : PRIMARY_COLOR_EU)};
 `;
 
 const Teams = styled.div`
@@ -95,9 +95,9 @@ const LiveGameUpdate: React.FC<LiveGameUpdateProps> = ({ matchData }) => {
     <Root>
       <Container>
         <HeaderContainer>
-          <img src={ChampionsQueueLogoData.base64} />
+          <img src={ChampionsQueueLogoData[region].base64} />
           <Header>
-            <HighlightText>CHAMPIONS</HighlightText> QUEUE
+            <HighlightText region={region}>CHAMPIONS</HighlightText> QUEUE
           </Header>
         </HeaderContainer>
         <SubHeader>
