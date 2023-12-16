@@ -14,3 +14,5 @@ export interface MatchPlayer {
 
 export type TwitchUsername = string;
 export type LowerCaseSummonerNameWithTeam = string;
+
+export type Region = "NA" | "EU";

@@ -74,4 +74,3 @@ Clone the repo and run `npm install` to install dependencies.
   sudo apt update
   sudo apt install chromium-browser
   ```
-

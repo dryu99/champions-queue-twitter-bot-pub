@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { MatchTweetData } from "../../services/twitter.service";
-import { MatchPlayer } from "../../types";
+import { MatchPlayer, Region } from "../../types";
 import { PRIMARY_COLOR } from "../common";
 import ChampionsQueueLogoData from "../assets/champions-queue-logo.json";
 import TwitchLogoData from "../assets/twitch-logo.json";
@@ -90,7 +90,7 @@ const WaterMark = styled.div`
 `;
 
 const LiveGameUpdate: React.FC<LiveGameUpdateProps> = ({ matchData }) => {
-  const { match, authorUrl } = matchData;
+  const { match, authorUrl, region } = matchData;
   return (
     <Root>
       <Container>
@@ -101,6 +101,7 @@ const LiveGameUpdate: React.FC<LiveGameUpdateProps> = ({ matchData }) => {
           </Header>
         </HeaderContainer>
         <SubHeader>
+          {region === "NA" ? "🇺🇸" : "🇪🇺"} |{" "}
           {ChampsQueueService.CQ_CURR_SEASON_TEXT} | Day{" "}
           {ChampsQueueService.getSplitDay()} | Patch{" "}
           {ChampsQueueService.CQ_CURR_PATCH}
@@ -122,6 +123,10 @@ const LiveGameUpdate: React.FC<LiveGameUpdateProps> = ({ matchData }) => {
 };
 
 export type TeamSide = "left" | "right";
+
+const RegionSpan = styled.span<{ region: Region }>`
+  color: ${(props) => (props.region === "NA" ? "red" : "blue")};
+`;
 
 const TeamContainer = styled.div<{ teamSide: TeamSide }>`
   margin: 0;

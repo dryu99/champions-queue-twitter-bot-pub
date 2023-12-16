@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import Config from "../utils/config";
 import logger from "../utils/logger";
+import { Region } from "../types";
 
 export default class ChampsQueueService {
   public static readonly CQ_START_HOUR = 17;

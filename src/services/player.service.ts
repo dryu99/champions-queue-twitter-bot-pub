@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { Region } from "../types";
 
 // should reflect contents of leaderboard API endpoint
 interface Player {
@@ -48,8 +49,8 @@ PlayerSchema.set("timestamps", true);
 const PlayerModel = mongoose.model("Player", PlayerSchema);
 
 export default class PlayerService {
-  public static async getAllTwitch(): Promise<TwitchPlayer[]> {
-    const mongoPlayers = await PlayerModel.find({});
+  public static async getAllTwitch(region: Region): Promise<TwitchPlayer[]> {
+    const mongoPlayers = await PlayerModel.find({ region });
     return mongoPlayers.map((mongoPlayer) => {
       return {
         summonerName: mongoPlayer.summonerName,

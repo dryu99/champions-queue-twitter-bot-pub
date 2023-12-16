@@ -6,6 +6,7 @@ import advanced from "dayjs/plugin/advancedFormat";
 
 const matchData: MatchTweetData = {
   authorUrl: "www.twitch.tv/PhreakStream",
+  region: "NA",
   match: {
     blueTeam: [
       {
@@ -15,50 +16,57 @@ const matchData: MatchTweetData = {
         twitterUsername: "jojolol",
       },
       {
-        isStreaming: false,
-        summonerNameWithTeam: "C9 jojopyun",
+        isStreaming: true,
+        summonerNameWithTeam: "FEAR jojopy",
         twitchUsername: "jojopyun",
+        twitterUsername: "jojolol",
       },
       {
         isStreaming: false,
-        summonerNameWithTeam: "C9 jojopyun",
+        summonerNameWithTeam: "LIT jojopn",
         twitchUsername: "jojopyun",
+        twitterUsername: "jojolol",
       },
       {
-        isStreaming: false,
-        summonerNameWithTeam: "C9 jojopyun",
+        isStreaming: true,
+        summonerNameWithTeam: "C9 joyun",
         twitchUsername: "jojopyun",
+        twitterUsername: "jojolol",
       },
       {
-        isStreaming: false,
-        summonerNameWithTeam: "C9 jojopyun",
+        isStreaming: true,
+        summonerNameWithTeam: "C9 jojon",
         twitchUsername: "jojopyun",
+        twitterUsername: "jojolol",
       },
     ],
     redTeam: [
       {
         isStreaming: true,
-        summonerNameWithTeam: "NRG Palafox",
+        summonerNameWithTeam: "NRG Paafox",
         twitchUsername: "palafox",
         twitterUsername: "palafox",
       },
       {
-        isStreaming: false,
-        summonerNameWithTeam: "SR Palafox",
+        isStreaming: true,
+        summonerNameWithTeam: "SR Palox",
         twitchUsername: "palafox",
+        twitterUsername: "palafox",
       },
       {
-        isStreaming: false,
-        summonerNameWithTeam: "NRG Palafox",
+        isStreaming: true,
+        summonerNameWithTeam: "NRG Pfox",
         twitchUsername: "palafox",
+        twitterUsername: "palafox",
       },
       {
-        isStreaming: false,
-        summonerNameWithTeam: "NRG Palafox",
+        isStreaming: true,
+        summonerNameWithTeam: "NRG P",
         twitchUsername: "palafox",
+        twitterUsername: "palafox",
       },
       {
-        isStreaming: false,
+        isStreaming: true,
         summonerNameWithTeam: "NRG Palafox",
         twitchUsername: "palafox",
       },

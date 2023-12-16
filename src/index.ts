@@ -5,13 +5,27 @@ import timezone from "dayjs/plugin/timezone";
 import advanced from "dayjs/plugin/advancedFormat";
 import dayjs from "dayjs";
 import BugService from "./services/bug.service";
+import { Region } from "./types";
 
-dayjs.extend(utc);
-dayjs.extend(timezone);
-dayjs.extend(advanced);
-dayjs.tz.setDefault("America/Los_Angeles");
+// get command line args
+const args = process.argv.slice(2);
+const region = args[0] as Region;
 
-Server.start().catch((error) => {
+if (region === "NA") {
+  dayjs.extend(utc);
+  dayjs.extend(timezone);
+  dayjs.extend(advanced);
+  dayjs.tz.setDefault("America/Los_Angeles");
+} else if (region === "EU") {
+  dayjs.extend(utc);
+  dayjs.extend(timezone);
+  dayjs.extend(advanced);
+  dayjs.tz.setDefault("Europe/Berlin");
+} else {
+  throw new Error("invalid region: " + region);
+}
+
+Server.start(region).catch((error) => {
   logger.error("something went wrong in the server", error);
   BugService.captureException(error);
   return BugService.close(2000).then(() => process.exit(1));

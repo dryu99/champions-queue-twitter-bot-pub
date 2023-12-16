@@ -7,6 +7,7 @@ import {
   LowerCaseSummonerNameWithTeam,
   Match,
   MatchPlayer,
+  Region,
   SummonerNameWithTeam,
   TwitchUsername,
 } from "./types";
@@ -29,7 +30,7 @@ export default class Server {
   // private static ongoingChannels: Set<{twitchUsername: TwitchUsername, startTime: number}> = new Set(); TODO stretch goal, if stream count starts getting too high
   private static readonly TWITCH_CHANNEL_CHECK_INTERVAL_MINUTES = 1;
 
-  public static async start() {
+  public static async start(region: Region) {
     logger.info("starting server");
 
     if (!ChampsQueueService.isQueueLive()) {
@@ -38,7 +39,7 @@ export default class Server {
 
     try {
       await this.connectToServices();
-      await this.initCache();
+      await this.initCache(region);
     } catch (error) {
       console.error("error in server initialization", error);
     }
@@ -100,7 +101,7 @@ export default class Server {
             );
             const match = this.parseMatchMessage(commandInput);
 
-            matchData = { match, authorUrl, communityChannels };
+            matchData = { match, authorUrl, communityChannels, region };
           } else if (msg.includes(TwitchService.CQ_COMMAND)) {
             const commandInput = this.parseEditCommandMessage(
               msg,
@@ -108,11 +109,11 @@ export default class Server {
             );
             const match = this.parseMatchMessage(commandInput);
 
-            matchData = { match, authorUrl, communityChannels };
+            matchData = { match, authorUrl, communityChannels, region };
           } else if (msg.includes(TwitchService.VS_SPLIT_MESSAGE)) {
             // msg didn't contain !editcom !teams but is still a game update msg (for winters ward lol)
             const match = this.parseMatchMessage(msg);
-            matchData = { match, authorUrl, communityChannels };
+            matchData = { match, authorUrl, communityChannels, region };
           }
 
           if (!matchData) {
@@ -235,8 +236,8 @@ export default class Server {
     return Promise.allSettled(checkChannelPromises);
   }
 
-  private static async initCache() {
-    const twitchPlayers = await PlayerService.getAllTwitch();
+  private static async initCache(region: Region) {
+    const twitchPlayers = await PlayerService.getAllTwitch(region);
     logger.info("twitchPlayers", twitchPlayers.slice(0, 5));
 
     // init player data map
@@ -258,9 +259,6 @@ export default class Server {
       playerLcNameMap: Array.from(this.playerLcNameMap.entries()).slice(0, 5),
       specialChannels: TwitchService.specialChannels,
     });
-
-    // special exceptions lol
-    this.playerLcNameMap.set("gg pridestalker", "pridestalkerrlol");
 
     // init pending channels list
     // this.pendingChannels = new Set(

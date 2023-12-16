@@ -1,5 +1,5 @@
 import { TwitterApi, TwitterApiReadWrite } from "twitter-api-v2";
-import { Match, TwitchUsername } from "../types";
+import { Match, Region, TwitchUsername } from "../types";
 import LiveGameUpdate from "../ui/components/live-game-update";
 import Config from "../utils/config";
 import logger from "../utils/logger";
@@ -12,6 +12,7 @@ export type MatchTweetData = {
   match: Match;
   authorUrl: TwitchUsername;
   communityChannels?: SpecialChannel[];
+  region: Region;
 };
 
 export default class TwitterService {
