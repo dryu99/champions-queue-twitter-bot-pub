@@ -57,6 +57,7 @@ class TwitchService {
     },
     {
       twitchUsername: "croccc",
+      twitterUsername: "crocccccc",
     },
     {
       twitchUsername: "kasinozz",
