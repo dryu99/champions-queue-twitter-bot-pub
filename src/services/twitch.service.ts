@@ -35,6 +35,7 @@ class TwitchService {
   private static readonly specialMods: SpecialMod[] = [
     {
       twitchUsername: "wintersward",
+      twitterUsername: "WintersWard_",
     },
     {
       twitchUsername: "utpamas",
