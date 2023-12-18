@@ -5,6 +5,7 @@ import { Region } from "../types";
 
 export default class ChampsQueueService {
   public static readonly CQ_START_HOUR = 17;
+  public static readonly CQ_START_HOUR_EU = 16;
   public static readonly CQ_END_HOUR = 23;
   public static readonly CQ_CURR_PATCH = "14.1";
   public static readonly CQ_CURR_SEASON_TEXT = "Preseason";
@@ -38,12 +39,13 @@ export default class ChampsQueueService {
     );
   }
 
-  public static isQueueLive(): boolean {
+  public static isQueueLive(region: Region): boolean {
     if (Config.NODE_ENV === "development") return true;
 
     const currDate = dayjs().tz();
     const result =
-      currDate.hour() >= this.CQ_START_HOUR &&
+      currDate.hour() >=
+        (region === "NA" ? this.CQ_START_HOUR : this.CQ_START_HOUR_EU) &&
       currDate.hour() <= this.CQ_END_HOUR;
 
     logger.info("isChampsQueueLive", {

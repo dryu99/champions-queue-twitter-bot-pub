@@ -33,7 +33,7 @@ export default class Server {
   public static async start(region: Region) {
     logger.info("starting server");
 
-    if (!ChampsQueueService.isQueueLive()) {
+    if (!ChampsQueueService.isQueueLive(region)) {
       await this.stop();
     }
 
@@ -143,7 +143,7 @@ export default class Server {
 
     // check channels interval (we use while here instead of setInterval to have more async control)
     while (true) {
-      if (!ChampsQueueService.isQueueLive()) {
+      if (!ChampsQueueService.isQueueLive(region)) {
         await this.stop();
       }
 
