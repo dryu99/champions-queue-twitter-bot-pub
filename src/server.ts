@@ -16,6 +16,7 @@ import { wait } from "./utils/wait";
 import ChampsQueueService from "./services/champs-queue.service";
 import BugService from "./services/bug.service";
 import MatchService from "./services/match.service";
+import { parseSummonerName } from "./lib/summoner-name";
 
 export default class Server {
   private static twitchPlayerData: Map<TwitchUsername, TwitchPlayer> =
@@ -336,16 +337,8 @@ export default class Server {
     summonerNamesWithTeams: string[]
   ): MatchPlayer[] {
     return summonerNamesWithTeams.map((summonerNameWithTeam) => {
-      const summonerNameParts = summonerNameWithTeam.split(" ");
-      const hasTeam =
-        summonerNameParts.length !== 1 ||
-        summonerNameParts[0].length === 2 ||
-        summonerNameParts[0].length === 3;
-
       // we do this since playerLcName cache doesnt contain teams. have to extract only the summonername somehow
-      const summonerName = hasTeam
-        ? summonerNameParts.slice(1).join(" ") // get summoner name only
-        : summonerNameWithTeam;
+      const summonerName = parseSummonerName(summonerNameWithTeam);
 
       if (!this.playerLcNameMap.has(summonerName.toLowerCase())) {
         logger.warn(

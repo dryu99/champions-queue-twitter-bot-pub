@@ -1,9 +1,9 @@
 import { Match, MatchPlayer } from "../types";
 import { calcStrHash } from "../lib/str-hash";
+import { parseSummonerName } from "../lib/summoner-name";
 
 interface MatchHashData {
   hash: number;
-  reverseHash: number;
 }
 
 export default class MatchService {
@@ -11,36 +11,29 @@ export default class MatchService {
   private matchHashes: number[] = []; // TODO not scalable, should hover around 120 - 160 items atm. Can use ordered set later
 
   public isMatchDuplicate(hashData: MatchHashData): boolean {
-    return (
-      this.matchHashes.includes(hashData.hash) ||
-      this.matchHashes.includes(hashData.reverseHash)
-    );
+    return this.matchHashes.includes(hashData.hash);
   }
 
   public enqueueHash(hashData: MatchHashData) {
     this.matchHashes.push(hashData.hash);
-    this.matchHashes.push(hashData.reverseHash);
   }
 
   public dequeueHash() {
-    const hash1 = this.matchHashes.shift();
-    const hash2 = this.matchHashes.shift();
+    const hash = this.matchHashes.shift();
   }
 
   public calcMatchHashData(match: Match): MatchHashData {
-    const blueTeamNames = match.blueTeam.map((player) =>
-      player.summonerNameWithTeam.toLowerCase()
-    );
-    const redTeamNames = match.redTeam.map((player) =>
-      player.summonerNameWithTeam.toLowerCase()
-    );
+    const allSummonerNamesInMatch = match.blueTeam
+      .concat(match.redTeam)
+      .map((player) =>
+        parseSummonerName(player.summonerNameWithTeam).toLowerCase()
+      )
+      .sort();
 
-    const matchText = [...blueTeamNames, ...redTeamNames].join();
-    const reverseMatchText = [...redTeamNames, ...blueTeamNames].join();
+    const matchText = allSummonerNamesInMatch.join();
 
     return {
       hash: calcStrHash(matchText),
-      reverseHash: calcStrHash(reverseMatchText),
     };
   }
 
