@@ -78,6 +78,10 @@ class TwitchService {
     {
       twitchUsername: "shadowymisstep",
     },
+    {
+      twitchUsername: "applesloi",
+      twitterUsername: "ApplesloI",
+    },
   ];
 
   public static async init() {
