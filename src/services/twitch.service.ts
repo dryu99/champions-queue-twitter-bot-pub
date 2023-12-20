@@ -43,6 +43,10 @@ class TwitchService {
       twitchUsername: "beatdowncasts",
       twitterUsername: "BeatDownCasts",
     },
+    {
+      twitchUsername: "applesloi",
+      twitterUsername: "ApplesloI",
+    },
   ];
   private static readonly specialMods: SpecialMod[] = [
     {
@@ -77,10 +81,6 @@ class TwitchService {
     },
     {
       twitchUsername: "shadowymisstep",
-    },
-    {
-      twitchUsername: "applesloi",
-      twitterUsername: "ApplesloI",
     },
   ];
 
