@@ -35,7 +35,7 @@ export default class Server {
     logger.info("starting server");
 
     if (!ChampsQueueService.isQueueLive(region)) {
-      await this.stop();
+      await this.stop(region);
     }
 
     try {
@@ -145,7 +145,7 @@ export default class Server {
     // check channels interval (we use while here instead of setInterval to have more async control)
     while (true) {
       if (!ChampsQueueService.isQueueLive(region)) {
-        await this.stop();
+        await this.stop(region);
       }
 
       logger.info("START checking pending channels", {
@@ -185,11 +185,12 @@ export default class Server {
     }
   }
 
-  public static async stop() {
-    logger.info("stopping server");
+  public static async stop(region: Region) {
+    logger.info("stopping server", { region });
     await mongoose.disconnect();
     logger.info("disconnected from db");
-    await waitForLoggerToComplete(logger);
+    // await waitForLoggerToComplete(logger);
+    logger.info("ending");
     process.exit(0);
   }
 

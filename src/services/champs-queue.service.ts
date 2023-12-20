@@ -49,6 +49,7 @@ export default class ChampsQueueService {
       currDate.hour() <= this.CQ_END_HOUR;
 
     logger.info("isChampsQueueLive", {
+      region,
       currDate: currDate.format("MM/DD/YYYY HH:mm z"),
       currHour: currDate.hour(),
       cqStartHour: this.CQ_START_HOUR,
