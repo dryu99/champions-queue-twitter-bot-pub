@@ -156,9 +156,10 @@ export default class Server {
       });
 
       // TODO should break up batches into groups of 100 (will reduce duplication)
-      const channels = Array.from(this.twitchPlayerData.keys()).concat(
-        TwitchService.specialChannels.map((channel) => channel.twitchUsername)
-      );
+      const channels = TwitchService.specialChannels
+        .map((channel) => channel.twitchUsername)
+        .concat(Array.from(this.twitchPlayerData.keys()));
+
       const midIndex = Math.floor(channels.length / 2);
       const channelBatch1 = channels.slice(0, midIndex);
       const channelBatch2 = channels.slice(midIndex);
