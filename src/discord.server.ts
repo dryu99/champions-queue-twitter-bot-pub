@@ -1,12 +1,14 @@
 import { Client, Events, GatewayIntentBits } from "discord.js";
 import mongoose from "mongoose";
 import { parseSummonerName } from "./lib/summoner-name";
+import ChampsQueueService from "./services/champs-queue.service";
 import PlayerService, { TwitchPlayer } from "./services/player.service";
 import TwitchService from "./services/twitch.service";
 import TwitterService, { MatchTweetData } from "./services/twitter.service";
 import { Region } from "./types";
 import Config from "./utils/config";
 import logger from "./utils/logger";
+import { wait } from "./utils/wait";
 
 type LowerCaseSummonerName = string;
 
@@ -73,15 +75,27 @@ export class DiscordServer {
 
       const discordMatch: DiscordMatch = JSON.parse(matchJsonString);
 
-      const twitterMatch = this.toTwitterMatch(discordMatch);
+      const twitterMatch = await this.toTwitterMatch(discordMatch);
       TwitterService.tweetMatch(twitterMatch);
     });
 
     // Log in to Discord with your client's token
     this.client.login(Config.DISCORD_API_TOKEN);
+
+    // check every 30 min to see if queue is live
+    while (true) {
+      if (!ChampsQueueService.isQueueLive(region)) {
+        await this.stop(region);
+      }
+
+      // check every 30 min
+      await wait(30 * 60 * 1000);
+    }
   }
 
-  private static toTwitterMatch(discordMatch: DiscordMatch): MatchTweetData {
+  private static async toTwitterMatch(
+    discordMatch: DiscordMatch
+  ): Promise<MatchTweetData> {
     const { teams } = discordMatch;
     const blueTeam = teams.find((team) => team.side === "Blue")?.players ?? [];
     const redTeam = teams.find((team) => team.side === "Red")?.players ?? [];
@@ -97,15 +111,41 @@ export class DiscordServer {
         positionOrder.indexOf(a.position) - positionOrder.indexOf(b.position)
     );
 
+    // TODO can optimize this to check all channels in parallel
+    //      can also further optimize by caching channels tto avoid future checks like in twitch server
+    const blueTeamTwitterPlayers = [];
+    for (const player of blueTeam) {
+      const twitterPlayer = this.toTwitterPlayer(player);
+
+      if (twitterPlayer.twitchUsername) {
+        const isChannelLive = await TwitchService.isChannelLive(
+          twitterPlayer.twitchUsername
+        );
+        twitterPlayer.isStreaming = isChannelLive;
+      }
+
+      blueTeamTwitterPlayers.push(twitterPlayer);
+    }
+
+    const redTeamTwitterPlayers = [];
+    for (const player of redTeam) {
+      const twitterPlayer = this.toTwitterPlayer(player);
+
+      if (twitterPlayer.twitchUsername) {
+        const isChannelLive = await TwitchService.isChannelLive(
+          twitterPlayer.twitchUsername
+        );
+        twitterPlayer.isStreaming = isChannelLive;
+      }
+
+      redTeamTwitterPlayers.push(twitterPlayer);
+    }
+
     return {
       region: "NA",
       match: {
-        blueTeam: blueTeam.map((discordPlayer) =>
-          this.toTwitterPlayer(discordPlayer)
-        ),
-        redTeam: redTeam.map((discordPlayer) =>
-          this.toTwitterPlayer(discordPlayer)
-        ),
+        blueTeam: blueTeamTwitterPlayers,
+        redTeam: redTeamTwitterPlayers,
       },
     };
   }
@@ -123,5 +163,14 @@ export class DiscordServer {
       twitchUsername: dbPlayer?.twitchUsername,
       twitterUsername: dbPlayer?.twitterUsername,
     };
+  }
+
+  private static async stop(region: Region) {
+    logger.info("stopping server", { region });
+    await mongoose.disconnect();
+    logger.info("disconnected from db");
+    // await waitForLoggerToComplete(logger);
+    logger.info("ending");
+    process.exit(0);
   }
 }
