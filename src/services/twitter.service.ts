@@ -10,7 +10,7 @@ import { SpecialChannel } from "./twitch.service";
 
 export type MatchTweetData = {
   match: Match;
-  authorUrl: TwitchUsername;
+  authorUrl?: TwitchUsername;
   communityChannels?: SpecialChannel[];
   region: Region;
 };
@@ -80,7 +80,9 @@ export default class TwitterService {
       }
     }
 
-    text += `\nUpdate by ${matchData.authorUrl} 👑`;
+    if (matchData.authorUrl) {
+      text += `\nUpdate by ${matchData.authorUrl} 👑`;
+    }
 
     if (text.length <= 280) return text;
 
@@ -99,7 +101,10 @@ export default class TwitterService {
       }
     }
 
-    text += `\nUpdate by ${matchData.authorUrl} 👑`;
+    if (matchData.authorUrl) {
+      text += `\nUpdate by ${matchData.authorUrl} 👑`;
+    }
+
     return text;
   }
 }

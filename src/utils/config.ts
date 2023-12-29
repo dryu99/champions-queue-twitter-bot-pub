@@ -28,6 +28,7 @@ const Config = {
   ATLAS_URL: process.env.ATLAS_URL as string,
   NODE_ENV: process.env.NODE_ENV as string,
   SENTRY_DSN: process.env.SENTRY_DSN as string,
+  DISCORD_API_TOKEN: process.env.DISCORD_API_TOKEN as string,
   getTwitchTokensPath,
 };
 
