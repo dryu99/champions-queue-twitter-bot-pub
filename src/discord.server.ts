@@ -67,6 +67,7 @@ export class DiscordServer {
           message: message.content,
         });
 
+      if (message.content.includes("!editcom !teams")) return;
       if (!message.content.includes("```json")) return;
 
       const matchJsonString = message.content

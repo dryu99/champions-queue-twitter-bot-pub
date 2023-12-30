@@ -3,7 +3,7 @@ import TeamsLogoJSON from "../ui/assets/team-logos.json";
 const TeamsLogoData = TeamsLogoJSON as Record<string, { base64: string }>;
 
 export const getTeamLogoBase64 = (team: string): string | undefined => {
-  let realTeam = team;
+  let realTeam = team.toUpperCase();
 
   if (team === "EG") {
     realTeam = "EG";
@@ -23,8 +23,7 @@ export const parseTeamName = (summonerNameWithTeam: string): string => {
 
   // might include team
   const teamName = words[0];
-  const isValidTeamName =
-    teamName === teamName.toUpperCase() && teamName.length <= 4;
+  const isValidTeamName = teamName.length <= 4;
   if (!isValidTeamName) return "";
 
   return teamName;
