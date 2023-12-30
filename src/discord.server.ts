@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import { parseSummonerName } from "./lib/summoner-name";
 import ChampsQueueService from "./services/champs-queue.service";
 import PlayerService, { TwitchPlayer } from "./services/player.service";
-import TwitchService from "./services/twitch.service";
+import TwitchService, { SpecialChannel } from "./services/twitch.service";
 import TwitterService, { MatchTweetData } from "./services/twitter.service";
 import { Region } from "./types";
 import Config from "./utils/config";
@@ -142,8 +142,23 @@ export class DiscordServer {
       redTeamTwitterPlayers.push(twitterPlayer);
     }
 
+    const communityChannels: SpecialChannel[] = [];
+    for (const specialChannel of TwitchService.specialChannels) {
+      const isChannelLive = await TwitchService.isChannelLive(
+        specialChannel.twitchUsername
+      );
+
+      if (isChannelLive) {
+        communityChannels.push({
+          twitchUsername: specialChannel.twitchUsername,
+          twitterUsername: specialChannel.twitterUsername,
+        });
+      }
+    }
+
     return {
       region: "NA",
+      communityChannels,
       match: {
         blueTeam: blueTeamTwitterPlayers,
         redTeam: redTeamTwitterPlayers,

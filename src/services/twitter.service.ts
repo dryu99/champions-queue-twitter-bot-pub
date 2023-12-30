@@ -58,10 +58,11 @@ export default class TwitterService {
   // TODO maybe this should live in match service
   private static buildMatchTweetText(matchData: MatchTweetData): string {
     const { blueTeam, redTeam } = matchData.match;
-    let text = "";
+    const players = [...blueTeam, ...redTeam];
+    let text = players.some((p) => p.isStreaming) ? "Player streams:\n" : "";
 
     // try twitter username text
-    for (const player of [...blueTeam, ...redTeam]) {
+    for (const player of players) {
       if (!player.isStreaming) continue;
       if (player.twitchUsername) {
         text += `📺 www.twitch.tv/${player.twitchUsername}`;
@@ -75,6 +76,7 @@ export default class TwitterService {
     }
 
     if (matchData.communityChannels) {
+      text += `\nCommunity streams:\n`;
       for (const communityChannel of matchData.communityChannels) {
         text += `📺 www.twitch.tv/${communityChannel.twitchUsername} | @${communityChannel.twitterUsername}\n`;
       }
@@ -87,7 +89,7 @@ export default class TwitterService {
     if (text.length <= 280) return text;
 
     // try again with more succinct text
-    text = "";
+    text = players.some((p) => p.isStreaming) ? "Player streams:\n" : "";
     for (const player of [...blueTeam, ...redTeam]) {
       if (!player.isStreaming) continue;
       if (player.twitchUsername) {
@@ -96,6 +98,7 @@ export default class TwitterService {
     }
 
     if (matchData.communityChannels) {
+      text += `\nCommunity streams:\n`;
       for (const communityChannel of matchData.communityChannels) {
         text += `📺 www.twitch.tv/${communityChannel.twitchUsername}\n`;
       }

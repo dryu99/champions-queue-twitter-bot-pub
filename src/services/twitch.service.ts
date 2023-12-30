@@ -1,7 +1,7 @@
-import { RefreshingAuthProvider } from "@twurple/auth";
 import { ApiClient } from "@twurple/api";
-import fs from "fs";
+import { RefreshingAuthProvider } from "@twurple/auth";
 import { ChatClient } from "@twurple/chat";
+import fs from "fs";
 import Config from "../utils/config";
 import logger from "../utils/logger";
 import BugService from "./bug.service";
@@ -31,10 +31,10 @@ class TwitchService {
       twitchUsername: "kobe",
       twitterUsername: "esports_kobe",
     },
-    {
-      twitchUsername: "traytonlol",
-      twitterUsername: "TraYt0N",
-    },
+    // {
+    //   twitchUsername: "traytonlol",
+    //   twitterUsername: "TraYt0N",
+    // },
     {
       twitchUsername: "raafaacasts",
       twitterUsername: "RaafaaCasts",
@@ -43,10 +43,10 @@ class TwitchService {
       twitchUsername: "beatdowncasts",
       twitterUsername: "BeatDownCasts",
     },
-    {
-      twitchUsername: "applesloi",
-      twitterUsername: "ApplesloI",
-    },
+    // {
+    //   twitchUsername: "applesloi",
+    //   twitterUsername: "ApplesloI",
+    // },
     {
       twitchUsername: "kangascasts",
       twitterUsername: "KangasCasts",
