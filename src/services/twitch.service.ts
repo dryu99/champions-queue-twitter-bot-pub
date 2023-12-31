@@ -23,38 +23,38 @@ class TwitchService {
   public static readonly CQ_COMMAND = "!editcom !cq";
   public static readonly VS_SPLIT_MESSAGE = "| vs. |";
   public static readonly specialChannels: SpecialChannel[] = [
-    {
-      twitchUsername: "cubbyxx",
-      twitterUsername: "Cubbyxx",
-    },
-    {
-      twitchUsername: "kobe",
-      twitterUsername: "esports_kobe",
-    },
     // {
-    //   twitchUsername: "traytonlol",
-    //   twitterUsername: "TraYt0N",
+    //   twitchUsername: "cubbyxx",
+    //   twitterUsername: "Cubbyxx",
     // },
-    {
-      twitchUsername: "raafaacasts",
-      twitterUsername: "RaafaaCasts",
-    },
-    {
-      twitchUsername: "beatdowncasts",
-      twitterUsername: "BeatDownCasts",
-    },
     // {
-    //   twitchUsername: "applesloi",
-    //   twitterUsername: "ApplesloI",
+    //   twitchUsername: "kobe",
+    //   twitterUsername: "esports_kobe",
     // },
-    {
-      twitchUsername: "kangascasts",
-      twitterUsername: "KangasCasts",
-    },
-    {
-      twitchUsername: "karonmoser",
-      twitterUsername: "karonmoser",
-    },
+    // // {
+    // //   twitchUsername: "traytonlol",
+    // //   twitterUsername: "TraYt0N",
+    // // },
+    // {
+    //   twitchUsername: "raafaacasts",
+    //   twitterUsername: "RaafaaCasts",
+    // },
+    // {
+    //   twitchUsername: "beatdowncasts",
+    //   twitterUsername: "BeatDownCasts",
+    // },
+    // // {
+    // //   twitchUsername: "applesloi",
+    // //   twitterUsername: "ApplesloI",
+    // // },
+    // {
+    //   twitchUsername: "kangascasts",
+    //   twitterUsername: "KangasCasts",
+    // },
+    // {
+    //   twitchUsername: "karonmoser",
+    //   twitterUsername: "karonmoser",
+    // },
   ];
   private static readonly specialMods: SpecialMod[] = [
     {
