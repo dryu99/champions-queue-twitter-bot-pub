@@ -75,7 +75,7 @@ export default class TwitterService {
       }
     }
 
-    if (matchData.communityChannels) {
+    if (matchData.communityChannels && matchData.communityChannels.length > 0) {
       text += `\nCommunity streams:\n`;
       for (const communityChannel of matchData.communityChannels) {
         text += `📺 www.twitch.tv/${communityChannel.twitchUsername} | @${communityChannel.twitterUsername}\n`;
