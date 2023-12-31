@@ -1,14 +1,12 @@
 import { Client, Events, GatewayIntentBits } from "discord.js";
 import mongoose from "mongoose";
 import { parseSummonerName } from "./lib/summoner-name";
-import ChampsQueueService from "./services/champs-queue.service";
 import PlayerService, { TwitchPlayer } from "./services/player.service";
 import TwitchService, { SpecialChannel } from "./services/twitch.service";
 import TwitterService, { MatchTweetData } from "./services/twitter.service";
 import { Region } from "./types";
 import Config from "./utils/config";
 import logger from "./utils/logger";
-import { wait } from "./utils/wait";
 
 type LowerCaseSummonerName = string;
 
@@ -83,15 +81,15 @@ export class DiscordServer {
     // Log in to Discord with your client's token
     this.client.login(Config.DISCORD_API_TOKEN);
 
-    // check every 30 min to see if queue is live
-    while (true) {
-      if (!ChampsQueueService.isQueueLive(region)) {
-        await this.stop(region);
-      }
+    // // check every 30 min to see if queue is live
+    // while (true) {
+    //   if (!ChampsQueueService.isQueueLive(region)) {
+    //     await this.stop(region);
+    //   }
 
-      // check every 30 min
-      await wait(30 * 60 * 1000);
-    }
+    //   // check every 30 min
+    //   await wait(30 * 60 * 1000);
+    // }
   }
 
   private static async toTwitterMatch(
