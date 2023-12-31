@@ -122,6 +122,11 @@ export class DiscordServer {
         const isChannelLive = await TwitchService.isChannelLive(
           twitterPlayer.twitchUsername
         );
+        logger.info("isChannelLive", {
+          isChannelLive,
+          summonerNameWithTeam: twitterPlayer.summonerNameWithTeam,
+          twitchUsername: twitterPlayer.twitchUsername,
+        });
         twitterPlayer.isStreaming = isChannelLive;
       }
 
@@ -136,6 +141,11 @@ export class DiscordServer {
         const isChannelLive = await TwitchService.isChannelLive(
           twitterPlayer.twitchUsername
         );
+        logger.info("isChannelLive", {
+          isChannelLive,
+          summonerNameWithTeam: twitterPlayer.summonerNameWithTeam,
+          twitchUsername: twitterPlayer.twitchUsername,
+        });
         twitterPlayer.isStreaming = isChannelLive;
       }
 
