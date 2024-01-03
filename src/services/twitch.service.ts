@@ -130,13 +130,15 @@ class TwitchService {
       if (!user) return false;
       const stream = await user.getStream();
 
+      const streamTitleLowerCase = stream?.title.toLowerCase() ?? "";
+
       return (
         stream !== null &&
         (!checkTitle ||
-          stream.title.includes("CQ") ||
-          stream.title.includes("Champ Queue") ||
-          stream.title.includes("Champs Queue") ||
-          stream.title.includes("Champions Queue"))
+          streamTitleLowerCase.includes("cq") ||
+          streamTitleLowerCase.includes("champ queue") ||
+          streamTitleLowerCase.includes("champs queue") ||
+          streamTitleLowerCase.includes("champions queue"))
       );
     } catch (err) {
       logger.error("error checking stream live", err);
