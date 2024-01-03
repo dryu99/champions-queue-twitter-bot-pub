@@ -46,7 +46,7 @@ const PlayerSchema = new mongoose.Schema<Player>({
 
 PlayerSchema.set("timestamps", true);
 
-const PlayerModel = mongoose.model("Player", PlayerSchema);
+export const PlayerModel = mongoose.model("Player", PlayerSchema);
 
 export default class PlayerService {
   public static async getAllTwitch(region: Region): Promise<TwitchPlayer[]> {
