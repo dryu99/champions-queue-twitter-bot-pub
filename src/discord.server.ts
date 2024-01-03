@@ -155,7 +155,8 @@ export class DiscordServer {
     const communityChannels: SpecialChannel[] = [];
     for (const specialChannel of TwitchService.specialChannels) {
       const isChannelLive = await TwitchService.isChannelLive(
-        specialChannel.twitchUsername
+        specialChannel.twitchUsername,
+        true
       );
 
       if (isChannelLive) {

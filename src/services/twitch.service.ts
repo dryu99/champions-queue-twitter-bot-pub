@@ -23,38 +23,38 @@ class TwitchService {
   public static readonly CQ_COMMAND = "!editcom !cq";
   public static readonly VS_SPLIT_MESSAGE = "| vs. |";
   public static readonly specialChannels: SpecialChannel[] = [
+    {
+      twitchUsername: "cubbyxx",
+      twitterUsername: "Cubbyxx",
+    },
+    {
+      twitchUsername: "kobe",
+      twitterUsername: "esports_kobe",
+    },
     // {
-    //   twitchUsername: "cubbyxx",
-    //   twitterUsername: "Cubbyxx",
+    //   twitchUsername: "traytonlol",
+    //   twitterUsername: "TraYt0N",
     // },
+    {
+      twitchUsername: "raafaacasts",
+      twitterUsername: "RaafaaCasts",
+    },
+    {
+      twitchUsername: "beatdowncasts",
+      twitterUsername: "BeatDownCasts",
+    },
     // {
-    //   twitchUsername: "kobe",
-    //   twitterUsername: "esports_kobe",
+    //   twitchUsername: "applesloi",
+    //   twitterUsername: "ApplesloI",
     // },
-    // // {
-    // //   twitchUsername: "traytonlol",
-    // //   twitterUsername: "TraYt0N",
-    // // },
-    // {
-    //   twitchUsername: "raafaacasts",
-    //   twitterUsername: "RaafaaCasts",
-    // },
-    // {
-    //   twitchUsername: "beatdowncasts",
-    //   twitterUsername: "BeatDownCasts",
-    // },
-    // // {
-    // //   twitchUsername: "applesloi",
-    // //   twitterUsername: "ApplesloI",
-    // // },
-    // {
-    //   twitchUsername: "kangascasts",
-    //   twitterUsername: "KangasCasts",
-    // },
-    // {
-    //   twitchUsername: "karonmoser",
-    //   twitterUsername: "karonmoser",
-    // },
+    {
+      twitchUsername: "kangascasts",
+      twitterUsername: "KangasCasts",
+    },
+    {
+      twitchUsername: "karonmoser",
+      twitterUsername: "karonmoser",
+    },
   ];
   private static readonly specialMods: SpecialMod[] = [
     {
@@ -121,12 +121,23 @@ class TwitchService {
     return this.chatClient.connect();
   }
 
-  public static async isChannelLive(twitchUsername: string): Promise<boolean> {
+  public static async isChannelLive(
+    twitchUsername: string,
+    checkTitle: boolean = false
+  ): Promise<boolean> {
     try {
       const user = await this.apiClient.users.getUserByName(twitchUsername);
       if (!user) return false;
       const stream = await user.getStream();
-      return stream !== null;
+
+      return (
+        stream !== null &&
+        (!checkTitle ||
+          stream.title.includes("CQ") ||
+          stream.title.includes("Champ Queue") ||
+          stream.title.includes("Champs Queue") ||
+          stream.title.includes("Champions Queue"))
+      );
     } catch (err) {
       logger.error("error checking stream live", err);
       BugService.captureException(err);
