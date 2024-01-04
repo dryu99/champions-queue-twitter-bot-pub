@@ -43,10 +43,11 @@ export default class ChampsQueueService {
     if (Config.NODE_ENV === "development") return true;
 
     const currDate = dayjs().tz();
+
+    const currHour = currDate.hour();
+
     const result =
-      currDate.hour() >=
-        (region === "NA" ? this.CQ_START_HOUR : this.CQ_START_HOUR_EU) &&
-      currDate.hour() <= this.CQ_END_HOUR;
+      (currHour >= 16 && currHour <= 23) || (currHour >= 0 && currHour < 1);
 
     logger.info("isChampsQueueLive", {
       region,
