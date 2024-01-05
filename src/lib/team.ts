@@ -9,6 +9,8 @@ export const getTeamLogoBase64 = (team: string): string | undefined => {
     realTeam = "EG";
   } else if (team === "100X") {
     realTeam = "100";
+  } else if (team === "FLYC") {
+    realTeam = "FLY";
   }
 
   const teamLogoBase64 = TeamsLogoData[realTeam]?.base64;
