@@ -138,7 +138,9 @@ class TwitchService {
           streamTitleLowerCase.includes("cq") ||
           streamTitleLowerCase.includes("champ queue") ||
           streamTitleLowerCase.includes("champs queue") ||
-          streamTitleLowerCase.includes("champions queue"))
+          streamTitleLowerCase.includes("champions queue") ||
+          streamTitleLowerCase.includes("champion's queue") ||
+          streamTitleLowerCase.includes("champ's queue"))
       );
     } catch (err) {
       logger.error("error checking stream live", err);
