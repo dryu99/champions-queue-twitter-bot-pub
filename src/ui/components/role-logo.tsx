@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { getRoleLogoBase64 } from "../../lib/role";
+import { getRoleLogoBase64ByIndex } from "../../lib/role";
 
 import { TeamSide } from "./live-game-update";
 
@@ -24,7 +24,7 @@ interface RoleLogoProps {
 }
 
 const RoleLogo: React.FC<RoleLogoProps> = ({ teamSide, roleIndex }) => {
-  const roleLogoBase64 = getRoleLogoBase64(roleIndex);
+  const roleLogoBase64 = getRoleLogoBase64ByIndex(roleIndex);
   if (!roleLogoBase64) return <EmptyLogo teamSide={teamSide} />;
   return <RoleLogoImg teamSide={teamSide} src={roleLogoBase64} />;
 };

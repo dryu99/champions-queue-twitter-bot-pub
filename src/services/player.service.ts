@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { Region } from "../types";
 
 // should reflect contents of leaderboard API endpoint
-interface Player {
+export interface DbPlayer {
   summonerId: number;
   summonerName: string;
   summonerNameWithTeam: string;
@@ -27,7 +27,7 @@ export interface TwitchPlayer {
   isStreaming: boolean;
 }
 
-const PlayerSchema = new mongoose.Schema<Player>({
+const PlayerSchema = new mongoose.Schema<DbPlayer>({
   summonerId: { type: Number, required: true },
   summonerName: { type: String, required: true },
   summonerNameWithTeam: { type: String, required: true },

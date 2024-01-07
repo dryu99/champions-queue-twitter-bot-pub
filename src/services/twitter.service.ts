@@ -1,6 +1,8 @@
 import { TwitterApi, TwitterApiReadWrite } from "twitter-api-v2";
+import { LeaderboardPlayer } from "../scripts/post-lp-leaderboard-tweet";
 import { Match, Region, TwitchUsername } from "../types";
 import LiveGameUpdate from "../ui/components/live-game-update";
+import LpLeaderboard from "../ui/components/lp-leaderboard";
 import Config from "../utils/config";
 import logger from "../utils/logger";
 import BugService from "./bug.service";
@@ -27,6 +29,52 @@ export default class TwitterService {
     }).readWrite;
 
     logger.info("connected to twitter");
+  }
+
+  public static async tweetLeaderboard(
+    players: LeaderboardPlayer[]
+  ): Promise<void> {
+    const tweetText = this.buildLeaderboardTweetText(players);
+    const html = HtmlService.buildComponentHtml(LpLeaderboard, {
+      players: players,
+      region: "NA",
+    });
+
+    logger.info("tweeting leaderboard", { tweetText });
+
+    // height formula:
+    // 1. first calculate desired_height in pixels (brute force) for LCS + LLA graphics
+    // 2. then calculate 10x + y = LCS_desired_height and 8x + y = LLA_desired_height (number of rows may differ)
+    // 3. then calculate x by doing -10x + LCS_desired_height = -8x + LLA_desired_height
+    // 4. voila you have y and x
+    const baseHeight = 300;
+    const rowScale = 60;
+    const height = rowScale * players.length + baseHeight;
+    const width = 730;
+
+    return ImageService.savePng(
+      html,
+      {
+        width,
+        height,
+      },
+      "lp-leaderboard.png"
+    )
+      .then((imgBuffer) =>
+        this.twitterClient.v1.uploadMedia(imgBuffer, { mimeType: "png" })
+      )
+      .then((mediaId) =>
+        this.twitterClient.v2.tweet(tweetText, {
+          media: { media_ids: [mediaId] },
+        })
+      )
+      .then((result) => {
+        logger.info("tweet successfully created", { result });
+      })
+      .catch((error) => {
+        logger.error("tweet creation failed", error);
+        BugService.captureException(error);
+      });
   }
 
   public static async tweetMatch(matchData: MatchTweetData): Promise<void> {
@@ -109,5 +157,11 @@ export default class TwitterService {
     }
 
     return text;
+  }
+
+  private static buildLeaderboardTweetText(
+    players: LeaderboardPlayer[]
+  ): string {
+    return "test tweet text";
   }
 }
