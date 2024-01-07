@@ -91,7 +91,7 @@ const WaterMark = styled.div`
 const LiveGameUpdate: React.FC<LiveGameUpdateProps> = ({ matchData }) => {
   const { match, authorUrl, region } = matchData;
   return (
-    <Root>
+    <Root bgColor={"hsl(205deg 15% 5%)"}>
       <Container>
         <HeaderContainer>
           <img src={ChampionsQueueLogoData[region].base64} />

@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { Role } from "../lib/role";
 import { parseSummonerName } from "../lib/summoner-name";
 import { parseTeamName } from "../lib/team";
-import { DbPlayer, PlayerModel } from "../services/player.service";
+import PlayerService from "../services/player.service";
 import TwitterService from "../services/twitter.service";
 import Config from "../utils/config";
 import { initApp } from "../utils/init";
@@ -32,6 +32,7 @@ export type LeaderboardPlayer = {
   team: string;
   role?: Role;
   rank: number;
+  twitterUsername?: string;
 };
 
 const main = async () => {
@@ -54,9 +55,9 @@ const main = async () => {
 
     console.log("Processing api player", { summonerNameWithTeam });
 
-    const dbPlayer = (await PlayerModel.findOne({
-      lcSummonerName: summonerName.toLowerCase(),
-    })) as unknown as DbPlayer;
+    const dbPlayer = await PlayerService.getOneBySummonerName(
+      summonerName.toLowerCase()
+    );
 
     leaderboardPlayers.push({
       id: apiPlayer.id,
@@ -67,6 +68,7 @@ const main = async () => {
       team,
       role: dbPlayer?.role as Role | undefined,
       rank: -1,
+      twitterUsername: dbPlayer?.twitterLink,
     });
   }
 

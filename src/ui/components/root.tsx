@@ -1,9 +1,8 @@
 import React from "react";
 import styled from "styled-components";
-import { BG_COLOR } from "../common";
 
-const Body = styled.body`
-  background-color: hsl(205deg 15% 5%);
+const Body = styled.body<{ bgColor: string }>`
+  background-color: ${(p) => p.bgColor};
   color: white;
   font-size: 14px;
   font-family: "Bebas Neue", sans-serif;
@@ -11,7 +10,13 @@ const Body = styled.body`
   text-align: center;
 `;
 
-const Root: React.FC = ({ children }) => {
+const Root = ({
+  children,
+  bgColor,
+}: {
+  children: React.ReactNode;
+  bgColor: string;
+}) => {
   return (
     <html>
       <head>
@@ -24,7 +29,7 @@ const Root: React.FC = ({ children }) => {
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro"
         />
       </head>
-      <Body>{children}</Body>
+      <Body bgColor={bgColor}>{children}</Body>
     </html>
   );
 };

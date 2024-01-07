@@ -6,6 +6,7 @@ import LpLeaderboard from "../ui/components/lp-leaderboard";
 import Config from "../utils/config";
 import logger from "../utils/logger";
 import BugService from "./bug.service";
+import ChampsQueueService from "./champs-queue.service";
 import HtmlService from "./html.service";
 import ImageService from "./image.service";
 import { SpecialChannel } from "./twitch.service";
@@ -34,7 +35,7 @@ export default class TwitterService {
   public static async tweetLeaderboard(
     players: LeaderboardPlayer[]
   ): Promise<void> {
-    const tweetText = this.buildLeaderboardTweetText(players);
+    const tweetText = this.buildLeaderboardTweetText(players, "NA");
     const html = HtmlService.buildComponentHtml(LpLeaderboard, {
       players: players,
       region: "NA",
@@ -160,8 +161,29 @@ export default class TwitterService {
   }
 
   private static buildLeaderboardTweetText(
-    players: LeaderboardPlayer[]
+    players: LeaderboardPlayer[],
+    region: Region
   ): string {
-    return "test tweet text";
+    let postText = `Preseason | Day ${ChampsQueueService.getSplitDay()} | Current Standings\n`;
+
+    for (let i = 0; i < players.length; i++) {
+      const currPlayer = players[i];
+      const prevPlayer = players[i - 1] as LeaderboardPlayer | undefined;
+
+      const rankText =
+        currPlayer.rank === prevPlayer?.rank ? "   " : currPlayer.rank + ".";
+      const suffix = currPlayer.rank === 1 ? " 👑" : "";
+
+      if (!currPlayer.twitterUsername) {
+        postText += `${rankText} ${currPlayer.summonerNameWithTeam}${suffix}\n`;
+        continue;
+      }
+
+      postText += `${rankText} @${currPlayer.twitterUsername}${suffix}\n`;
+    }
+
+    const tweetText = postText.trim();
+
+    return tweetText;
   }
 }

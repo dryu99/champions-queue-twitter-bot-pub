@@ -5,6 +5,7 @@ import ChampsQueueService from "../../services/champs-queue.service";
 import { Region } from "../../types";
 import ChampionsQueueLogoData from "../assets/champions-queue-logo.json";
 import {
+  BG_COLOR,
   Header,
   HeaderContainer,
   HighlightText,
@@ -41,7 +42,7 @@ interface LpLeaderboardProps {
 
 const LpLeaderboard: React.FC<LpLeaderboardProps> = ({ players, region }) => {
   return (
-    <Root>
+    <Root bgColor={BG_COLOR}>
       <HeaderContainer>
         <img src={ChampionsQueueLogoData.NA.base64} />
         <Header>
@@ -55,7 +56,7 @@ const LpLeaderboard: React.FC<LpLeaderboardProps> = ({ players, region }) => {
         {ChampsQueueService.CQ_CURR_PATCH}
       </SubHeader>
       <TeamTitleContainer>
-        <TableTitle>Player Standings</TableTitle>
+        <TableTitle>Current Standings</TableTitle>
       </TeamTitleContainer>
       {/* TODO dont use unknown */}
       <LpPlayerTable players={players} />

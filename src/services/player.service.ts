@@ -62,6 +62,22 @@ export default class PlayerService {
     });
   }
 
+  public static async getOneBySummonerName(
+    summonerName: string
+  ): Promise<DbPlayer | undefined> {
+    const mongoPlayer = await PlayerModel.findOne({
+      lcSummonerName: summonerName.toLowerCase(),
+    });
+
+    if (!mongoPlayer) return undefined;
+
+    return {
+      ...mongoPlayer,
+      twitterLink: this.getUsernameFromLink(mongoPlayer?.twitterLink),
+      twitchLink: this.getUsernameFromLink(mongoPlayer?.twitchLink),
+    };
+  }
+
   private static getUsernameFromLink(
     link: string | undefined
   ): string | undefined {
