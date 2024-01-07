@@ -59,7 +59,7 @@ export default class TwitterService {
         width,
         height,
       },
-      "lp-leaderboard.png"
+      Config.NODE_ENV === "development" ? "lp-leaderboard.png" : undefined
     )
       .then((imgBuffer) =>
         this.twitterClient.v1.uploadMedia(imgBuffer, { mimeType: "png" })

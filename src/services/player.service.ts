@@ -72,7 +72,18 @@ export default class PlayerService {
     if (!mongoPlayer) return undefined;
 
     return {
-      ...mongoPlayer,
+      summonerName: mongoPlayer.summonerName,
+      summonerNameWithTeam: mongoPlayer.summonerNameWithTeam,
+      lcSummonerName: mongoPlayer.lcSummonerName,
+      summonerId: mongoPlayer.summonerId,
+      team: mongoPlayer.team,
+      org: mongoPlayer.org,
+      seasonId: mongoPlayer.seasonId,
+      splitId: mongoPlayer.splitId,
+      year: mongoPlayer.year,
+      league: mongoPlayer.league,
+      role: mongoPlayer.role,
+      region: mongoPlayer.region,
       twitterLink: this.getUsernameFromLink(mongoPlayer?.twitterLink),
       twitchLink: this.getUsernameFromLink(mongoPlayer?.twitchLink),
     };

@@ -58,7 +58,6 @@ const LpLeaderboard: React.FC<LpLeaderboardProps> = ({ players, region }) => {
       <TeamTitleContainer>
         <TableTitle>Current Standings</TableTitle>
       </TeamTitleContainer>
-      {/* TODO dont use unknown */}
       <LpPlayerTable players={players} />
     </Root>
   );

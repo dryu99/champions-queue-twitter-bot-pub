@@ -12,7 +12,8 @@
     "watch": "cross-env NODE_ENV=development ts-node-dev --respawn",
     "dev:build-logos": "cross-env NODE_ENV=development ts-node ./src/scripts/build-base64-img-json.ts",
     "dev:stream-tweet": "cross-env NODE_ENV=development ts-node ./src/scripts/post-test-tweet.ts",
-    "dev:lp-tweet": "cross-env NODE_ENV=development ts-node ./src/scripts/post-lp-leaderboard-tweet.ts"
+    "dev:lp-tweet": "cross-env NODE_ENV=development ts-node ./src/scripts/post-lp-leaderboard-tweet.ts",
+    "prod:lp-tweet": "cross-env NODE_ENV=production ts-node ./src/scripts/post-lp-leaderboard-tweet.ts"
   },
   "dependencies": {
     "@sentry/node": "^6.18.2",
