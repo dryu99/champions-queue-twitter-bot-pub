@@ -3,20 +3,23 @@ import { Region } from "../types";
 
 // should reflect contents of leaderboard API endpoint
 export interface DbPlayer {
-  summonerId: number;
+  id: string;
   summonerName: string;
   summonerNameWithTeam: string;
-  team: string;
   twitterLink?: string;
   twitchLink?: string;
   lcSummonerName: string; // lowercase
-  seasonId: number;
-  splitId: number;
-  year: number;
-  league: string;
-  org: string;
   role?: string;
   region: string;
+
+  // outdated fields we don't need
+  summonerId?: number;
+  team?: string;
+  org?: string;
+  seasonId?: number;
+  splitId?: number;
+  year?: number;
+  league?: string;
 }
 
 export interface TwitchPlayer {
@@ -28,7 +31,7 @@ export interface TwitchPlayer {
 }
 
 const PlayerSchema = new mongoose.Schema<DbPlayer>({
-  summonerId: { type: Number, required: true },
+  summonerId: { type: Number, required: false },
   summonerName: { type: String, required: true },
   summonerNameWithTeam: { type: String, required: true },
   lcSummonerName: { type: String, required: true },
@@ -36,10 +39,10 @@ const PlayerSchema = new mongoose.Schema<DbPlayer>({
   org: { type: String, required: false },
   twitterLink: { type: String, required: false },
   twitchLink: { type: String, required: false },
-  seasonId: { type: Number, required: true },
-  splitId: { type: Number, required: true },
-  year: { type: Number, required: true },
-  league: { type: String, required: true },
+  seasonId: { type: Number, required: false },
+  splitId: { type: Number, required: false },
+  year: { type: Number, required: false },
+  league: { type: String, required: false },
   role: { type: String, required: false },
   region: { type: String, required: true },
 });
@@ -49,6 +52,13 @@ PlayerSchema.set("timestamps", true);
 export const PlayerModel = mongoose.model("Player", PlayerSchema);
 
 export default class PlayerService {
+  public static async addOne(
+    newPlayer: Omit<DbPlayer, "id">
+  ): Promise<DbPlayer> {
+    const mongoPlayer = new PlayerModel(newPlayer);
+    return mongoPlayer.save();
+  }
+
   public static async getAllTwitch(region: Region): Promise<TwitchPlayer[]> {
     const mongoPlayers = await PlayerModel.find({ region });
     return mongoPlayers.map((mongoPlayer) => {
@@ -72,16 +82,10 @@ export default class PlayerService {
     if (!mongoPlayer) return undefined;
 
     return {
+      id: mongoPlayer.id,
       summonerName: mongoPlayer.summonerName,
       summonerNameWithTeam: mongoPlayer.summonerNameWithTeam,
       lcSummonerName: mongoPlayer.lcSummonerName,
-      summonerId: mongoPlayer.summonerId,
-      team: mongoPlayer.team,
-      org: mongoPlayer.org,
-      seasonId: mongoPlayer.seasonId,
-      splitId: mongoPlayer.splitId,
-      year: mongoPlayer.year,
-      league: mongoPlayer.league,
       role: mongoPlayer.role,
       region: mongoPlayer.region,
       twitterLink: this.getUsernameFromLink(mongoPlayer?.twitterLink),

@@ -22,6 +22,10 @@ const main = async () => {
 
   const leaderboardPlayers: LeaderboardPlayer[] = [];
   for (const apiPlayer of topApiPlayers) {
+    if (apiPlayer.wins === null || apiPlayer.losses === null) {
+      continue;
+    }
+
     const summonerNameWithTeam = apiPlayer.username.split("#")[0];
     const summonerName = parseSummonerName(summonerNameWithTeam);
     const team = parseTeamName(summonerNameWithTeam);

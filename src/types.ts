@@ -18,6 +18,7 @@ export type TwitchUsername = string;
 export type LowerCaseSummonerNameWithTeam = string;
 
 export type Region = "NA" | "EU";
+
 export type ApiPlayer = {
   id: number;
   username: string;
@@ -26,8 +27,8 @@ export type ApiPlayer = {
   twitter: string | null;
   youtube: string | null;
   elo: number;
-  wins: number;
-  losses: number;
+  wins: number | null;
+  losses: number | null;
   totalOffset: number | null;
   dodgeTotal: number;
   decayTotal: number;
