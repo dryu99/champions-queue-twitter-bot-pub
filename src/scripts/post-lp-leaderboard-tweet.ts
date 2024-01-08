@@ -23,7 +23,7 @@ const main = async () => {
   const apiPlayers = await MatchBotService.fetchPlayers();
   const topApiPlayers = apiPlayers.slice(0, 10);
 
-  const now = dayjs();
+  const now = dayjs().tz();
   const midnightYesterday = now
     .subtract(1, "day")
     .startOf("day")
@@ -89,12 +89,6 @@ const main = async () => {
       (p) =>
         p.summonerNameWithTeam === currLeaderboardPlayer.summonerNameWithTeam
     );
-
-    console.log({
-      name: currLeaderboardPlayer.summonerNameWithTeam,
-      curr: currLeaderboardPlayer.rank,
-      prev: prevLeaderboardPlayer?.rank,
-    });
 
     if (!prevLeaderboardPlayer || prevLeaderboardPlayer.rank === -1) {
       currLeaderboardPlayer.rankChangeStatus = "same";

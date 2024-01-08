@@ -24,6 +24,8 @@ const main = async () => {
   const apiPlayers = await MatchBotService.fetchPlayers();
 
   const playerSnapshots: NewPlayerSnapshot[] = [];
+  const now = dayjs().tz();
+  const midnightToday = now.startOf("day").utc().toDate();
 
   for (const apiPlayer of apiPlayers) {
     if (apiPlayer.wins === null || apiPlayer.losses === null) {
@@ -32,10 +34,7 @@ const main = async () => {
 
     const summonerNameWithTeam = apiPlayer.username.split("#")[0].trim();
     const summonerName = parseSummonerName(summonerNameWithTeam);
-    logger.info("Processing api player", {
-      apiPlayer: summonerName,
-      teamname: summonerNameWithTeam,
-    });
+    logger.info("Processing api player", { apiPlayer: summonerName });
 
     const dbPlayer = await PlayerService.getOneBySummonerName(
       summonerName.toLowerCase()
@@ -51,18 +50,17 @@ const main = async () => {
       });
     }
 
-    const now = dayjs();
-    const midnightLocal = now.startOf("day");
-    const midnightUTC = midnightLocal.utc();
-
     playerSnapshots.push({
       summonerNameWithTeam,
       lp: apiPlayer.elo,
       wins: apiPlayer.wins,
       losses: apiPlayer.losses,
-      date: midnightUTC.toDate(),
+      date: midnightToday,
       region,
     });
+
+    // TODO add this when you add rank field to snapshot
+    // rankPlayers(playerSnapshots);
   }
 
   const results = await PlayerSnapshotService.addMany(playerSnapshots);
