@@ -2,49 +2,22 @@ import mongoose from "mongoose";
 import { Role } from "../lib/role";
 import { parseSummonerName } from "../lib/summoner-name";
 import { parseTeamName } from "../lib/team";
+import { MatchBotService } from "../services/matchbot.service";
 import PlayerService from "../services/player.service";
 import TwitterService from "../services/twitter.service";
+import { LeaderboardPlayer } from "../types";
 import Config from "../utils/config";
-import { initApp } from "../utils/init";
-
-type ApiPlayer = {
-  id: number;
-  username: string;
-  discordId: string;
-  twitch: string | null;
-  twitter: string | null;
-  youtube: string | null;
-  elo: number;
-  wins: number;
-  losses: number;
-  totalOffset: number | null;
-  dodgeTotal: number;
-  decayTotal: number;
-  live: boolean;
-};
-
-export type LeaderboardPlayer = {
-  id: number;
-  summonerNameWithTeam: string;
-  elo: number;
-  wins: number;
-  losses: number;
-  team: string;
-  role?: Role;
-  rank: number;
-  twitterUsername?: string;
-};
+import { initDayjs } from "../utils/init";
+import logger from "../utils/logger";
 
 const main = async () => {
-  initApp("NA");
+  logger.info("Starting post-lp-leaderboard-tweet");
+
+  initDayjs("NA");
   TwitterService.init();
   await mongoose.connect(Config.ATLAS_URL);
 
-  const apiPlayersRaw = await fetch(
-    "https://riot-nae-strapi-app.azurewebsites.net/api/ladder/3/1/1"
-  );
-
-  const apiPlayers = (await apiPlayersRaw.json()) as ApiPlayer[];
+  const apiPlayers = await MatchBotService.fetchPlayers();
   const topApiPlayers = apiPlayers.slice(0, 10);
 
   const leaderboardPlayers: LeaderboardPlayer[] = [];

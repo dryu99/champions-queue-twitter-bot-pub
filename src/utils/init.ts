@@ -4,7 +4,7 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { Region } from "../types";
 
-export const initApp = (region: Region) => {
+export const initDayjs = (region: Region) => {
   if (region === "NA") {
     dayjs.extend(utc);
     dayjs.extend(timezone);

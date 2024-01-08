@@ -1,13 +1,13 @@
 import { DiscordServer } from "./discord.server";
 import { Region } from "./types";
-import { initApp } from "./utils/init";
+import { initDayjs } from "./utils/init";
 import logger from "./utils/logger";
 
 // get command line args
 const args = process.argv.slice(2);
 const region = args[0] as Region;
 
-initApp(region);
+initDayjs(region);
 logger.info("Starting server...", { region });
 
 DiscordServer.start(region);

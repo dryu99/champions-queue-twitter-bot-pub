@@ -1,6 +1,5 @@
 import { TwitterApi, TwitterApiReadWrite } from "twitter-api-v2";
-import { LeaderboardPlayer } from "../scripts/post-lp-leaderboard-tweet";
-import { Match, Region, TwitchUsername } from "../types";
+import { LeaderboardPlayer, Match, Region, TwitchUsername } from "../types";
 import LiveGameUpdate from "../ui/components/live-game-update";
 import LpLeaderboard from "../ui/components/lp-leaderboard";
 import Config from "../utils/config";

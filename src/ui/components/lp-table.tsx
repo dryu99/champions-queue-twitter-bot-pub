@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { getRoleLogoBase64ByRole } from "../../lib/role";
 import { getTeamLogoBase64 } from "../../lib/team";
-import { LeaderboardPlayer } from "../../scripts/post-lp-leaderboard-tweet";
+import { LeaderboardPlayer } from "../../types";
 import { BG_COLOR, DownArrowText } from "../common";
 // import ArrowDownIcon from "./icons/arrow-down-icon";
 // import ArrowUpIcon from "./icons/arrow-up-icon";

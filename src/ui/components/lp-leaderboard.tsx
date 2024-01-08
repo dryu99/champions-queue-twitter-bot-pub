@@ -1,8 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import { LeaderboardPlayer } from "../../scripts/post-lp-leaderboard-tweet";
 import ChampsQueueService from "../../services/champs-queue.service";
-import { Region } from "../../types";
+import { LeaderboardPlayer, Region } from "../../types";
 import ChampionsQueueLogoData from "../assets/champions-queue-logo.json";
 import {
   BG_COLOR,
