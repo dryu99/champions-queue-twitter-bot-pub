@@ -6,7 +6,7 @@ import { MatchTweetData } from "../../services/twitter.service";
 import { MatchPlayer, Region } from "../../types";
 import ChampionsQueueLogoData from "../assets/champions-queue-logo.json";
 import TwitchLogoData from "../assets/twitch-logo.json";
-import { PRIMARY_COLOR, PRIMARY_COLOR_EU } from "../common";
+import { PRIMARY_COLOR, PRIMARY_COLOR_EU, WaterMark } from "../common";
 import RoleLogo from "./role-logo";
 import Root from "./root";
 import TeamLogo from "./team-logo";
@@ -80,12 +80,6 @@ const VsLine = styled.div`
 
 const VsChar = styled.div`
   margin: 0 0.15em;
-`;
-
-const WaterMark = styled.div`
-  text-align: center;
-  font-size: 0.75em;
-  margin-top: -1em;
 `;
 
 const LiveGameUpdate: React.FC<LiveGameUpdateProps> = ({ matchData }) => {

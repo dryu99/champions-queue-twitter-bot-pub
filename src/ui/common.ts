@@ -43,3 +43,9 @@ export const HighlightText = styled.span<{ region: Region }>`
 export const DownArrowText = styled.span`
   font-size: 0.75em;
 `;
+
+export const WaterMark = styled.div`
+  text-align: center;
+  font-size: 0.75em;
+  margin-top: -1em;
+`;
