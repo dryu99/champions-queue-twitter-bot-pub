@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import mongoose from "mongoose";
+import { rankPlayers } from "../lib/rank";
 import { parseSummonerName } from "../lib/summoner-name";
 import { MatchBotService } from "../services/matchbot.service";
 import {
@@ -57,11 +58,11 @@ const main = async () => {
       losses: apiPlayer.losses,
       date: midnightToday,
       region,
+      rank: -1,
     });
-
-    // TODO add this when you add rank field to snapshot
-    // rankPlayers(playerSnapshots);
   }
+
+  rankPlayers(playerSnapshots);
 
   const results = await PlayerSnapshotService.addMany(playerSnapshots);
   logger.info("done", { results });

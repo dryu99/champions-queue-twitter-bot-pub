@@ -23,18 +23,7 @@ const main = async () => {
   const apiPlayers = await MatchBotService.fetchPlayers();
   const topApiPlayers = apiPlayers.slice(0, 10);
 
-  const now = dayjs().tz();
-  const midnightYesterday = now
-    .subtract(1, "day")
-    .startOf("day")
-    .utc()
-    .toDate();
-
   const leaderboardPlayers: LeaderboardPlayer[] = [];
-  const prevLeaderboardPlayers: Pick<
-    LeaderboardPlayer,
-    "rank" | "lp" | "summonerNameWithTeam"
-  >[] = []; // TODO delete this in faovur of persissting ranks in db
   for (const apiPlayer of topApiPlayers) {
     if (apiPlayer.wins === null || apiPlayer.losses === null) {
       continue;
@@ -50,17 +39,6 @@ const main = async () => {
       summonerName.toLowerCase()
     );
 
-    const snapshot = await PlayerSnapshotService.getOneByLcSummonerNameAndDate(
-      summonerNameWithTeam,
-      midnightYesterday
-    );
-
-    prevLeaderboardPlayers.push({
-      summonerNameWithTeam,
-      lp: snapshot?.lp ?? -1,
-      rank: -1,
-    });
-
     leaderboardPlayers.push({
       id: apiPlayer.id,
       summonerNameWithTeam,
@@ -75,29 +53,32 @@ const main = async () => {
     });
   }
 
-  // sort prev players by lp first
-  prevLeaderboardPlayers.sort((a, b) => b.lp - a.lp);
-
   // calc ranks
   rankPlayers(leaderboardPlayers);
-  rankPlayers(prevLeaderboardPlayers);
 
-  // iterate through leaderboard players and determine rank change status
+  // calc rank change status
+  const now = dayjs().tz();
+  const midnightYesterday = now
+    .subtract(1, "day")
+    .startOf("day")
+    .utc()
+    .toDate();
   for (let i = 0; i < leaderboardPlayers.length; i++) {
     const currLeaderboardPlayer = leaderboardPlayers[i];
-    const prevLeaderboardPlayer = prevLeaderboardPlayers.find(
-      (p) =>
-        p.summonerNameWithTeam === currLeaderboardPlayer.summonerNameWithTeam
+
+    const snapshot = await PlayerSnapshotService.getOneByLcSummonerNameAndDate(
+      currLeaderboardPlayer.summonerNameWithTeam,
+      midnightYesterday
     );
 
-    if (!prevLeaderboardPlayer || prevLeaderboardPlayer.rank === -1) {
+    if (!snapshot || snapshot.rank === -1) {
       currLeaderboardPlayer.rankChangeStatus = "same";
       continue;
     }
 
-    if (currLeaderboardPlayer.rank < prevLeaderboardPlayer.rank) {
+    if (currLeaderboardPlayer.rank < snapshot.rank) {
       currLeaderboardPlayer.rankChangeStatus = "up";
-    } else if (currLeaderboardPlayer.rank > prevLeaderboardPlayer.rank) {
+    } else if (currLeaderboardPlayer.rank > snapshot.rank) {
       currLeaderboardPlayer.rankChangeStatus = "down";
     } else {
       currLeaderboardPlayer.rankChangeStatus = "same";
