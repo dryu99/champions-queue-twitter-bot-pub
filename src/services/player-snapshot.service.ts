@@ -29,6 +29,27 @@ const PlayerSnapshotModel = mongoose.model(
 );
 
 export class PlayerSnapshotService {
+  public static async getOneByLcSummonerNameAndDate(
+    summonerNameWithTeam: string,
+    date: Date
+  ) {
+    const dbSnapshot = await PlayerSnapshotModel.findOne({
+      summonerNameWithTeam,
+      date,
+    });
+
+    if (!dbSnapshot) return undefined;
+
+    return {
+      summonerNameWithTeam: dbSnapshot.summonerNameWithTeam,
+      lp: dbSnapshot.lp,
+      wins: dbSnapshot.wins,
+      losses: dbSnapshot.losses,
+      date: dbSnapshot.date,
+      region: dbSnapshot.region,
+    };
+  }
+
   public static async addMany(newEntries: NewPlayerSnapshot[]) {
     return PlayerSnapshotModel.insertMany(newEntries);
   }

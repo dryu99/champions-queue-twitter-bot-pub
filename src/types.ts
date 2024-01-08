@@ -34,14 +34,16 @@ export type ApiPlayer = {
   decayTotal: number;
   live: boolean;
 };
+
 export type LeaderboardPlayer = {
   id: number;
   summonerNameWithTeam: string;
-  elo: number;
+  lp: number;
   wins: number;
   losses: number;
   team: string;
   role?: Role;
   rank: number;
   twitterUsername?: string;
+  rankChangeStatus: "up" | "down" | "same";
 };

@@ -183,6 +183,12 @@ export default class TwitterService {
 
     const tweetText = postText.trim();
 
+    // // write text to file
+    // writeFileSync(
+    //   path.join(__dirname, "../../lp-leaderboard-tweet.txt"),
+    //   tweetText
+    // );
+
     return tweetText;
   }
 }

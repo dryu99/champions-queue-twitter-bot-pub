@@ -3,6 +3,8 @@ import styled from "styled-components";
 import { getRoleLogoBase64ByRole } from "../../lib/role";
 import { getTeamLogoBase64 } from "../../lib/team";
 import { LeaderboardPlayer } from "../../types";
+import ArrowDownIcon from "../assets/icons/arrow-down-icon";
+import ArrowUpIcon from "../assets/icons/arrow-up-icon";
 import { BG_COLOR, DownArrowText } from "../common";
 // import ArrowDownIcon from "./icons/arrow-down-icon";
 // import ArrowUpIcon from "./icons/arrow-up-icon";
@@ -126,17 +128,16 @@ export const LpPlayerTable: React.FC<LpPlayerTableProps> = ({ players }) => {
               <IndexCell>
                 <IndexCellContent>
                   {player.rank}
-                  {/* {!isSplitEnd && (
-                    <RankChangeIconContainer>
-                      {player.rankChangeStatus === "up" ? (
-                        <ArrowUpIcon />
-                      ) : player.rankChangeStatus === "down" ? (
-                        <ArrowDownIcon />
-                      ) : (
-                        " "
-                      )}
-                    </RankChangeIconContainer>
-                  )} */}
+
+                  <RankChangeIconContainer>
+                    {player.rankChangeStatus === "up" ? (
+                      <ArrowUpIcon />
+                    ) : player.rankChangeStatus === "down" ? (
+                      <ArrowDownIcon />
+                    ) : (
+                      " "
+                    )}
+                  </RankChangeIconContainer>
                 </IndexCellContent>
               </IndexCell>
               <td>
@@ -153,7 +154,7 @@ export const LpPlayerTable: React.FC<LpPlayerTableProps> = ({ players }) => {
               <td>{totalGames}</td>
               <td>{winRate}%</td>
               <SpacingCell />
-              <td>{player.elo}</td>
+              <td>{player.lp}</td>
             </TableBodyRow>
           );
         })}
