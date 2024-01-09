@@ -59,7 +59,7 @@ const LpLeaderboard: React.FC<LpLeaderboardProps> = ({ players, region }) => {
       </TeamTitleContainer>
       <LpPlayerTable players={players} />
       <div style={{ marginTop: "8px", fontSize: "1.3em" }}>
-        <div>@ChampQueueWard</div>
+        <div>@ChampsQueueBot</div>
       </div>
     </Root>
   );

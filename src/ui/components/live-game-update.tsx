@@ -109,7 +109,7 @@ const LiveGameUpdate: React.FC<LiveGameUpdateProps> = ({ matchData }) => {
           </VsContainer>
           <Team players={match.redTeam} teamSide="right" />
         </Teams>
-        <WaterMark>@ChampQueueWard</WaterMark>
+        <WaterMark>@ChampsQueueBot</WaterMark>
       </Container>
     </Root>
   );
