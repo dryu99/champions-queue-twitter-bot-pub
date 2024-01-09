@@ -5,7 +5,7 @@ import ChampsQueueService from "../../services/champs-queue.service";
 import { MatchTweetData } from "../../services/twitter.service";
 import { MatchPlayer, Region } from "../../types";
 import ChampionsQueueLogoData from "../assets/champions-queue-logo.json";
-import TwitchLogoData from "../assets/twitch-logo.json";
+import { TwitchIcon } from "../assets/icons/twitch-icon";
 import { PRIMARY_COLOR, PRIMARY_COLOR_EU, WaterMark } from "../common";
 import RoleLogo from "./role-logo";
 import Root from "./root";
@@ -165,13 +165,9 @@ const Team: React.FC<TeamProps> = ({ players, teamSide }) => {
                 <TeamLogo teamSide={teamSide} team={team} />
               )}
               <PlayerName>
-                {teamSide === "right" && player.isStreaming && (
-                  <StreamLogoImg src={TwitchLogoData.base64} />
-                )}
+                {teamSide === "right" && player.isStreaming && <TwitchIcon />}
                 {player.summonerNameWithTeam}
-                {teamSide === "left" && player.isStreaming && (
-                  <StreamLogoImg src={TwitchLogoData.base64} />
-                )}
+                {teamSide === "left" && player.isStreaming && <TwitchIcon />}
               </PlayerName>
               {teamSide === "right" && (
                 <TeamLogo teamSide={teamSide} team={team} />
