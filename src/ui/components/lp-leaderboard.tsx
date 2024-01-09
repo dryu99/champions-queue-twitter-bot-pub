@@ -49,7 +49,7 @@ const LpLeaderboard: React.FC<LpLeaderboardProps> = ({ players, region }) => {
         </Header>
       </HeaderContainer>
       <SubHeader>
-        {region === "NA" ? "🇺🇸" : "🇪🇺"} |{" "}
+        {/* {region === "NA" ? "🇺🇸" : "🇪🇺"} |{" "} */}
         {ChampsQueueService.CQ_CURR_SEASON_TEXT} | Day{" "}
         {ChampsQueueService.getSplitDay()} | Patch{" "}
         {ChampsQueueService.CQ_CURR_PATCH}
