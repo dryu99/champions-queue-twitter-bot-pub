@@ -7,7 +7,7 @@ export const TwitchIcon = (props: any) => (
     viewBox="0 0 16 16"
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
-    style={{ margin: "0 0.25em", transform: `translate(0px, 7px)` }}
+    style={{ margin: "0 0.25em", transform: `translate(0px, 5px)` }}
     {...props}
   >
     <path fill="#ffffff" d="M13 7.5l-2 2H9l-1.75 1.75V9.5H5V2h8v5.5z" />
