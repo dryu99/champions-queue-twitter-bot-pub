@@ -85,7 +85,7 @@ const main = async () => {
     }
   }
 
-  await TwitterService.tweetLeaderboard(leaderboardPlayers);
+  await TwitterService.tweetLpLeaderboard(leaderboardPlayers);
   process.exit(0);
 };
 

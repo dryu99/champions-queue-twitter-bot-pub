@@ -1,6 +1,15 @@
+import { writeFileSync } from "fs";
+import path from "path";
 import { TwitterApi, TwitterApiReadWrite } from "twitter-api-v2";
-import { LeaderboardPlayer, Match, Region, TwitchUsername } from "../types";
+import {
+  LeaderboardPlayer,
+  LpGainLeaderboardPlayer,
+  Match,
+  Region,
+  TwitchUsername,
+} from "../types";
 import LiveGameUpdate from "../ui/components/live-game-update";
+import LpGainLeaderboard from "../ui/components/lp-gain-leaderboard";
 import LpLeaderboard from "../ui/components/lp-leaderboard";
 import Config from "../utils/config";
 import logger from "../utils/logger";
@@ -31,7 +40,7 @@ export default class TwitterService {
     logger.info("connected to twitter");
   }
 
-  public static async tweetLeaderboard(
+  public static async tweetLpLeaderboard(
     players: LeaderboardPlayer[]
   ): Promise<void> {
     const tweetText = this.buildLeaderboardTweetText(players, "NA");
@@ -40,7 +49,7 @@ export default class TwitterService {
       region: "NA",
     });
 
-    logger.info("tweeting leaderboard", { tweetText });
+    logger.info("tweeting lp leaderboard", { tweetText });
 
     // height formula:
     // 1. first calculate desired_height in pixels (brute force) for LCS + LLA graphics
@@ -59,6 +68,44 @@ export default class TwitterService {
         height,
       },
       Config.NODE_ENV === "development" ? "lp-leaderboard.png" : undefined
+    )
+      .then((imgBuffer) =>
+        this.twitterClient.v1.uploadMedia(imgBuffer, { mimeType: "png" })
+      )
+      .then((mediaId) =>
+        this.twitterClient.v2.tweet(tweetText, {
+          media: { media_ids: [mediaId] },
+        })
+      )
+      .then((result) => {
+        logger.info("tweet successfully created", { result });
+      })
+      .catch((error) => {
+        logger.error("tweet creation failed", error);
+        BugService.captureException(error);
+      });
+  }
+
+  public static async tweetLpGainLeaderboard(
+    players: LpGainLeaderboardPlayer[]
+  ): Promise<void> {
+    const tweetText = this.buildLpGainLeaderboardTweetText(players, "NA");
+    const html = HtmlService.buildComponentHtml(LpGainLeaderboard, {
+      players,
+      region: "NA",
+    });
+
+    logger.info("tweeting lp gain leaderboard", { tweetText });
+
+    const baseHeight = 310;
+    const rowScale = 70;
+    const height = rowScale * players.length + baseHeight;
+    const width = 875;
+
+    return ImageService.savePng(
+      html,
+      { width, height },
+      Config.NODE_ENV === "development" ? "lp-gain-leaderboard.png" : undefined
     )
       .then((imgBuffer) =>
         this.twitterClient.v1.uploadMedia(imgBuffer, { mimeType: "png" })
@@ -183,11 +230,48 @@ export default class TwitterService {
 
     const tweetText = postText.trim();
 
-    // // write text to file
-    // writeFileSync(
-    //   path.join(__dirname, "../../lp-leaderboard-tweet.txt"),
-    //   tweetText
-    // );
+    if (Config.NODE_ENV === "development") {
+      writeFileSync(
+        path.join(__dirname, "../../lp-leaderboard-tweet.txt"),
+        tweetText
+      );
+    }
+
+    return tweetText;
+  }
+
+  private static buildLpGainLeaderboardTweetText(
+    players: LpGainLeaderboardPlayer[],
+    region: Region
+  ): string {
+    let postText = `Preseason | Day ${ChampsQueueService.getSplitDay()} | Top Climbers of the Day\n`;
+
+    for (let i = 0; i < players.length; i++) {
+      const currPlayer = players[i];
+      const prevPlayer = players[i - 1] as LpGainLeaderboardPlayer | undefined;
+
+      const rankText =
+        currPlayer.lpGainRank === prevPlayer?.lpGainRank
+          ? "   "
+          : currPlayer.lpGainRank + ".";
+      const suffix = currPlayer.lpGainRank === 1 ? " 👑" : "";
+
+      if (!currPlayer.twitterUsername) {
+        postText += `${rankText} ${currPlayer.summonerNameWithTeam}${suffix}\n`;
+        continue;
+      }
+
+      postText += `${rankText} @${currPlayer.twitterUsername}${suffix}\n`;
+    }
+
+    const tweetText = postText.trim();
+
+    if (Config.NODE_ENV === "development") {
+      writeFileSync(
+        path.join(__dirname, "../../lp-gain-leaderboard-tweet.txt"),
+        tweetText
+      );
+    }
 
     return tweetText;
   }

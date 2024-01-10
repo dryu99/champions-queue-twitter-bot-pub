@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
+import { writeFileSync } from "fs";
 import mongoose from "mongoose";
-import { rankPlayersByLpGain } from "../lib/rank";
+import { rankPlayersByLp, rankPlayersByLpGain } from "../lib/rank";
 import { Role } from "../lib/role";
 import { parseSummonerName } from "../lib/summoner-name";
 import { parseTeamName } from "../lib/team";
@@ -53,34 +54,44 @@ const main = async () => {
       id: apiPlayer.id,
       summonerNameWithTeam,
       prevLp: snapshot?.lp ?? -1,
-      currLp: apiPlayer.elo,
-      prevWins: snapshot?.wins,
-      currWins: apiPlayer.wins,
-      prevLosses: snapshot?.losses,
-      currLosses: apiPlayer.losses,
+      lp: apiPlayer.elo,
+      prevWins: snapshot?.wins ?? -1,
+      wins: apiPlayer.wins,
+      prevLosses: snapshot?.losses ?? -1,
+      losses: apiPlayer.losses,
       team,
       role: dbPlayer?.role as Role | undefined,
       prevRank: snapshot?.rank,
-      currRank: -1,
+      rank: -1,
       twitterUsername: dbPlayer?.twitterLink,
+      lpGainRank: -1,
     });
   }
 
   const filteredLeaderboardPlayers = leaderboardPlayers.filter(
     (player) => player.prevLp !== -1
   );
-  const sortedLeaderboardPlayers = filteredLeaderboardPlayers.sort(
-    (a, b) => b.currLp - b.prevLp - (a.currLp - a.prevLp)
+
+  // calc lp ranks
+  const sortedLeaderboardPlayersByLp = filteredLeaderboardPlayers.sort(
+    (a, b) => b.lp - a.lp
+  );
+  rankPlayersByLp(sortedLeaderboardPlayersByLp);
+
+  // calc lp gain ranks
+  const sortedLeaderboardPlayersByLpGain = sortedLeaderboardPlayersByLp.sort(
+    (a, b) => b.lp - b.prevLp - (a.lp - a.prevLp)
+  );
+  rankPlayersByLpGain(sortedLeaderboardPlayersByLpGain);
+
+  const topLeaderboardPlayers = sortedLeaderboardPlayersByLpGain.slice(0, 10);
+
+  writeFileSync(
+    "./topLeaderboardPlayers.json",
+    JSON.stringify(topLeaderboardPlayers)
   );
 
-  // calc ranks
-  rankPlayersByLpGain(sortedLeaderboardPlayers);
-
-  const topLeaderboardPlayers = sortedLeaderboardPlayers.slice(0, 10);
-
-  console.log(topLeaderboardPlayers);
-
-  // await TwitterService.tweetLeaderboard(leaderboardPlayers);
+  await TwitterService.tweetLpGainLeaderboard(topLeaderboardPlayers);
   process.exit(0);
 };
 
