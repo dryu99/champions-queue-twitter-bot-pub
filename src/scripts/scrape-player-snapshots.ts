@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import mongoose from "mongoose";
-import { rankPlayers } from "../lib/rank";
+import { rankPlayersByLp } from "../lib/rank";
 import { parseSummonerName } from "../lib/summoner-name";
 import { MatchBotService } from "../services/matchbot.service";
 import {
@@ -62,7 +62,7 @@ const main = async () => {
     });
   }
 
-  rankPlayers(playerSnapshots);
+  rankPlayersByLp(playerSnapshots);
 
   const results = await PlayerSnapshotService.addMany(playerSnapshots);
   logger.info("done", { results });

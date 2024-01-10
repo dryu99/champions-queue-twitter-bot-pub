@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import mongoose from "mongoose";
-import { rankPlayers } from "../lib/rank";
+import { rankPlayersByLp } from "../lib/rank";
 import { Role } from "../lib/role";
 import { parseSummonerName } from "../lib/summoner-name";
 import { parseTeamName } from "../lib/team";
@@ -54,7 +54,7 @@ const main = async () => {
   }
 
   // calc ranks
-  rankPlayers(leaderboardPlayers);
+  rankPlayersByLp(leaderboardPlayers);
 
   // calc rank change status
   const now = dayjs().tz();

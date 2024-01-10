@@ -47,3 +47,19 @@ export type LeaderboardPlayer = {
   twitterUsername?: string;
   rankChangeStatus: "up" | "down" | "same";
 };
+
+export type LpGainLeaderboardPlayer = {
+  id: number;
+  summonerNameWithTeam: string;
+  prevLp: number;
+  currLp: number;
+  prevWins?: number;
+  currWins: number;
+  prevLosses?: number;
+  currLosses: number;
+  team: string;
+  role?: Role;
+  prevRank?: number;
+  currRank: number;
+  twitterUsername?: string;
+};

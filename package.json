@@ -14,6 +14,7 @@
     "dev:stream-tweet": "cross-env NODE_ENV=development ts-node ./src/scripts/post-test-tweet.ts",
     "dev:lp-tweet": "cross-env NODE_ENV=development ts-node ./src/scripts/post-lp-leaderboard-tweet.ts",
     "prod:lp-tweet": "cross-env NODE_ENV=production ts-node ./src/scripts/post-lp-leaderboard-tweet.ts",
+    "dev:lp-gain-tweet": "cross-env NODE_ENV=development ts-node ./src/scripts/post-lp-gain-leaderboard-tweet.ts",
     "dev:scrape-snapshots": "cross-env NODE_ENV=development ts-node ./src/scripts/scrape-player-snapshots.ts"
   },
   "dependencies": {
