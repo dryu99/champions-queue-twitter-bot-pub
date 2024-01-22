@@ -7,13 +7,13 @@ export default class ChampsQueueService {
   public static readonly CQ_START_HOUR = 16;
   public static readonly CQ_START_HOUR_EU = 16;
   public static readonly CQ_END_HOUR = 23;
-  public static readonly CQ_CURR_PATCH = "14.1";
-  public static readonly CQ_CURR_SEASON_TEXT = "Preseason";
+  public static readonly CQ_CURR_PATCH = "14.2";
+  public static readonly CQ_CURR_SEASON_TEXT = "Spring";
   // public static readonly CQ_CURR_SPLIT_TEXT = "Split 1";
   public static readonly CQ_CURR_SPLIT_DATE_DATA = {
-    year: 2023,
-    month: 11,
-    date: 12,
+    year: 2024,
+    month: 0,
+    date: 20,
   };
 
   public static getSplitDay() {
