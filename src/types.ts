@@ -64,3 +64,11 @@ export type LpGainLeaderboardPlayer = {
   lpGainRank: number;
   twitterUsername?: string;
 };
+
+export type LeaderboardTeam = {
+  team: string;
+  players: string[];
+  lp: number;
+  wins: number;
+  losses: number;
+};
