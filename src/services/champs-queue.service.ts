@@ -7,7 +7,7 @@ export default class ChampsQueueService {
   public static readonly CQ_START_HOUR = 16;
   public static readonly CQ_START_HOUR_EU = 16;
   public static readonly CQ_END_HOUR = 23;
-  public static readonly CQ_CURR_PATCH = "14.2";
+  public static readonly CQ_CURR_PATCH = "14.3";
   public static readonly CQ_CURR_SEASON_TEXT = "Spring";
   // public static readonly CQ_CURR_SPLIT_TEXT = "Split 1";
   public static readonly CQ_CURR_SPLIT_DATE_DATA = {
