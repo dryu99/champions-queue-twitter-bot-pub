@@ -60,7 +60,7 @@ export default class PlayerService {
   }
 
   public static async getAllTwitch(region: Region): Promise<TwitchPlayer[]> {
-    const mongoPlayers = await PlayerModel.find({ region });
+    const mongoPlayers = await PlayerModel.find({ region: { $exists: true } });
     return mongoPlayers.map((mongoPlayer) => {
       return {
         summonerName: mongoPlayer.summonerName,

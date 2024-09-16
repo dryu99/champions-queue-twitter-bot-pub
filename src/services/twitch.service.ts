@@ -43,10 +43,10 @@ class TwitchService {
       twitchUsername: "beatdowncasts",
       twitterUsername: "BeatDownCasts",
     },
-    // {
-    //   twitchUsername: "applesloi",
-    //   twitterUsername: "ApplesloI",
-    // },
+    {
+      twitchUsername: "applesloi",
+      twitterUsername: "ApplesloI",
+    },
     {
       twitchUsername: "kangascasts",
       twitterUsername: "KangasCasts",

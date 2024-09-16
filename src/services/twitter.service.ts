@@ -177,7 +177,7 @@ export default class TwitterService {
       }
     }
 
-    if (matchData.authorUrl) {
+    if (matchData.authorUrl && matchData.authorUrl !== "@jbryu99") {
       text += `\nUpdate by ${matchData.authorUrl} 👑`;
     }
 
@@ -199,7 +199,7 @@ export default class TwitterService {
       }
     }
 
-    if (matchData.authorUrl) {
+    if (matchData.authorUrl && matchData.authorUrl !== "@jbryu99") {
       text += `\nUpdate by ${matchData.authorUrl} 👑`;
     }
 

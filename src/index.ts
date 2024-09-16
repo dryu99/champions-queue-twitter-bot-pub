@@ -1,4 +1,5 @@
-import { DiscordServer } from "./discord.server";
+import Server from "./server";
+import BugService from "./services/bug.service";
 import { Region } from "./types";
 import { initDayjs } from "./utils/init";
 import logger from "./utils/logger";
@@ -10,13 +11,13 @@ const region = args[0] as Region;
 initDayjs(region);
 logger.info("Starting server...", { region });
 
-DiscordServer.start(region);
+// DiscordServer.start(region);
 
-// Server.start(region).catch((error) => {
-//   logger.error("something went wrong in the server", error);
-//   BugService.captureException(error);
-//   return BugService.close(2000).then(() => process.exit(1));
-// });
+Server.start(region).catch((error) => {
+  logger.error("something went wrong in the server", error);
+  BugService.captureException(error);
+  return BugService.close(2000).then(() => process.exit(1));
+});
 
 // Setup
 // - store all player metadata in db (player metadata should be updated periodically as new players join queue)

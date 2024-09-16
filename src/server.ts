@@ -1,22 +1,21 @@
 import mongoose from "mongoose";
-import Config from "./utils/config";
+import { parseSummonerName } from "./lib/summoner-name";
+import BugService from "./services/bug.service";
+import ChampsQueueService from "./services/champs-queue.service";
+import MatchService from "./services/match.service";
 import PlayerService, { TwitchPlayer } from "./services/player.service";
 import TwitchService from "./services/twitch.service";
 import TwitterService, { MatchTweetData } from "./services/twitter.service";
 import {
-  LowerCaseSummonerNameWithTeam,
   Match,
   MatchPlayer,
   Region,
   SummonerNameWithTeam,
   TwitchUsername,
 } from "./types";
-import logger, { waitForLoggerToComplete } from "./utils/logger";
+import Config from "./utils/config";
+import logger from "./utils/logger";
 import { wait } from "./utils/wait";
-import ChampsQueueService from "./services/champs-queue.service";
-import BugService from "./services/bug.service";
-import MatchService from "./services/match.service";
-import { parseSummonerName } from "./lib/summoner-name";
 
 export default class Server {
   private static twitchPlayerData: Map<TwitchUsername, TwitchPlayer> =
