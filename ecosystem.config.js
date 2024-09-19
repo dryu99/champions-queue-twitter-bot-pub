@@ -5,7 +5,7 @@ module.exports = {
       script: "npm run build && npm start",
       stop_exit_codes: [0], // this doesn't work lol https://github.com/Unitech/pm2/issues/5208
       restart_delay: 15_000,
-      watch: true,
+      watch: false,
       args: "NA",
       max_memory_restart: "1G",
 
