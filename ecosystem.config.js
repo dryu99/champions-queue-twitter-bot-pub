@@ -2,11 +2,10 @@ module.exports = {
   apps: [
     {
       name: "cq-stream-bot",
-      script: "npm run build && npm start",
+      script: "npm run build && npm start NA",
       stop_exit_codes: [0], // this doesn't work lol https://github.com/Unitech/pm2/issues/5208
       restart_delay: 15_000,
       watch: false,
-      args: "NA",
       max_memory_restart: "1G",
 
       // TODO we would use cron if stop_exit_codes worked (we don't want to turn auto_restart off)
