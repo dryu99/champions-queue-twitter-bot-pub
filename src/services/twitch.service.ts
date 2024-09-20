@@ -114,6 +114,26 @@ class TwitchService {
     {
       twitchUsername: "shadowymisstep",
     },
+    {
+      twitchUsername: "applesloi",
+      twitterUsername: "ApplesloI",
+    },
+    {
+      twitchUsername: "VeteranEMEA",
+      twitterUsername: "VeteranEMEA",
+    },
+    {
+      twitchUsername: "therock7_",
+      twitterUsername: "VasilisTheRock7",
+    },
+    {
+      twitchUsername: "caedrel",
+      twitterUsername: "caedrel",
+    },
+    {
+      twitchUsername: "toadamarillo",
+      twitterUsername: "ToadAmarillo",
+    },
   ];
 
   public static async init() {
