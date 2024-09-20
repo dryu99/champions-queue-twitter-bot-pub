@@ -129,25 +129,38 @@ export default class TwitterService {
     const html = HtmlService.buildComponentHtml(LiveGameUpdate, { matchData });
 
     logger.info("tweeting match", { tweetText });
-    ImageService.savePng(html, {
-      width: 610,
-      height: 400,
-    })
-      .then((imgBuffer) =>
-        this.twitterClient.v1.uploadMedia(imgBuffer, { mimeType: "png" })
-      )
-      .then((mediaId) =>
-        this.twitterClient.v2.tweet(tweetText, {
-          media: { media_ids: [mediaId] },
-        })
-      )
-      .then((result) => {
-        logger.info("tweet successfully created", { result });
-      })
-      .catch((error) => {
-        logger.error("tweet creation failed", error);
-        BugService.captureException(error);
+
+    try {
+      const imgBuffer = await ImageService.savePng(html, {
+        width: 610,
+        height: 400,
       });
+
+      const mediaId = await this.twitterClient.v1.uploadMedia(imgBuffer, {
+        mimeType: "png",
+      });
+
+      const initialTweet = await this.twitterClient.v2.tweet(tweetText, {
+        media: { media_ids: [mediaId] },
+      });
+
+      logger.info("initial tweet successfully created", {
+        result: initialTweet,
+      });
+
+      const replyText = this.buildCostreamTweetText(matchData);
+      if (!replyText) return;
+
+      const replyTweet = await this.twitterClient.v2.reply(
+        replyText,
+        initialTweet.data.id
+      );
+
+      logger.info("reply tweet successfully created", { result: replyTweet });
+    } catch (error) {
+      logger.error("tweet creation failed", error);
+      BugService.captureException(error);
+    }
   }
 
   // TODO maybe this should live in match service
@@ -170,13 +183,6 @@ export default class TwitterService {
       }
     }
 
-    if (matchData.communityChannels && matchData.communityChannels.length > 0) {
-      text += `\nCommunity streams:\n`;
-      for (const communityChannel of matchData.communityChannels) {
-        text += `📺 www.twitch.tv/${communityChannel.twitchUsername} | @${communityChannel.twitterUsername}\n`;
-      }
-    }
-
     if (matchData.authorUrl && matchData.authorUrl !== "@jbryu99") {
       text += `\nUpdate by ${matchData.authorUrl} 👑`;
     }
@@ -192,15 +198,33 @@ export default class TwitterService {
       }
     }
 
-    if (matchData.communityChannels) {
-      text += `\nCommunity streams:\n`;
-      for (const communityChannel of matchData.communityChannels) {
-        text += `📺 www.twitch.tv/${communityChannel.twitchUsername}\n`;
-      }
-    }
-
     if (matchData.authorUrl && matchData.authorUrl !== "@jbryu99") {
       text += `\nUpdate by ${matchData.authorUrl} 👑`;
+    }
+
+    return text;
+  }
+
+  private static buildCostreamTweetText(
+    matchData: MatchTweetData
+  ): string | undefined {
+    if (
+      !matchData.communityChannels ||
+      matchData.communityChannels.length === 0
+    )
+      return undefined;
+
+    let text = "Costreams:\n";
+    for (const communityChannel of matchData.communityChannels) {
+      text += `📺 www.twitch.tv/${communityChannel.twitchUsername} | @${communityChannel.twitterUsername}\n`;
+    }
+
+    if (text.length <= 280) return text;
+
+    // try again with more succinct text
+    text = "Costreams:\n";
+    for (const communityChannel of matchData.communityChannels) {
+      text += `📺 www.twitch.tv/${communityChannel.twitchUsername}\n`;
     }
 
     return text;

@@ -50,12 +50,11 @@ const LpLeaderboard: React.FC<LpLeaderboardProps> = ({ players, region }) => {
       </HeaderContainer>
       <SubHeader>
         {/* {region === "NA" ? "🇺🇸" : "🇪🇺"} |{" "} */}
-        {ChampsQueueService.CQ_CURR_SEASON_TEXT} | Day{" "}
-        {ChampsQueueService.getSplitDay()} | Patch{" "}
+        {ChampsQueueService.CQ_CURR_SEASON_TEXT} | Patch{" "}
         {ChampsQueueService.CQ_CURR_PATCH}
       </SubHeader>
       <TeamTitleContainer>
-        <TableTitle>Current Standings</TableTitle>
+        <TableTitle>Final Player Standings</TableTitle>
       </TeamTitleContainer>
       <LpPlayerTable players={players} />
       <div style={{ marginTop: "8px", fontSize: "1.3em" }}>

@@ -23,45 +23,61 @@ class TwitchService {
   public static readonly CQ_COMMAND = "!editcom !cq";
   public static readonly VS_SPLIT_MESSAGE = "| vs. |";
   public static readonly specialChannels: SpecialChannel[] = [
-    {
-      twitchUsername: "cubbyxx",
-      twitterUsername: "Cubbyxx",
-    },
-    {
-      twitchUsername: "kobe",
-      twitterUsername: "esports_kobe",
-    },
+    // {
+    //   twitchUsername: "cubbyxx",
+    //   twitterUsername: "Cubbyxx",
+    // },
+    // {
+    //   twitchUsername: "kobe",
+    //   twitterUsername: "esports_kobe",
+    // },
     // {
     //   twitchUsername: "traytonlol",
     //   twitterUsername: "TraYt0N",
     // },
-    {
-      twitchUsername: "raafaacasts",
-      twitterUsername: "RaafaaCasts",
-    },
-    {
-      twitchUsername: "beatdowncasts",
-      twitterUsername: "BeatDownCasts",
-    },
+    // {
+    //   twitchUsername: "raafaacasts",
+    //   twitterUsername: "RaafaaCasts",
+    // },
+    // {
+    //   twitchUsername: "beatdowncasts",
+    //   twitterUsername: "BeatDownCasts",
+    // },
     {
       twitchUsername: "applesloi",
       twitterUsername: "ApplesloI",
     },
+    // {
+    //   twitchUsername: "kangascasts",
+    //   twitterUsername: "KangasCasts",
+    // },
+    // {
+    //   twitchUsername: "karonmoser",
+    //   twitterUsername: "karonmoser",
+    // },
+    // {
+    //   twitchUsername: "MazelCasts",
+    //   twitterUsername: "MazelCasts",
+    // },
+    // {
+    //   twitchUsername: "madmagical",
+    //   twitterUsername: "Mad_Magical",
+    // },
     {
-      twitchUsername: "kangascasts",
-      twitterUsername: "KangasCasts",
+      twitchUsername: "VeteranEMEA",
+      twitterUsername: "VeteranEMEA",
     },
     {
-      twitchUsername: "karonmoser",
-      twitterUsername: "karonmoser",
+      twitchUsername: "therock7_",
+      twitterUsername: "VasilisTheRock7",
     },
     {
-      twitchUsername: "MazelCasts",
-      twitterUsername: "MazelCasts",
+      twitchUsername: "caedrel",
+      twitterUsername: "caedrel",
     },
     {
-      twitchUsername: "madmagical",
-      twitterUsername: "Mad_Magical",
+      twitchUsername: "toadamarillo",
+      twitterUsername: "ToadAmarillo",
     },
   ];
   private static readonly specialMods: SpecialMod[] = [
@@ -148,7 +164,8 @@ class TwitchService {
           streamTitleLowerCase.includes("champs queue") ||
           streamTitleLowerCase.includes("champions queue") ||
           streamTitleLowerCase.includes("champion's queue") ||
-          streamTitleLowerCase.includes("champ's queue"))
+          streamTitleLowerCase.includes("champ's queue") ||
+          streamTitleLowerCase.includes("inhouse"))
       );
     } catch (err) {
       logger.error("error checking stream live", err);
@@ -191,6 +208,12 @@ class TwitchService {
   ): SpecialChannel | undefined {
     return this.specialChannels.find(
       (channel) => channel.twitchUsername === twitchUsername
+    );
+  }
+
+  public static findSpecialChannels(channels: string[]): SpecialChannel[] {
+    return this.specialChannels.filter((channel) =>
+      channels.includes(channel.twitchUsername)
     );
   }
 }

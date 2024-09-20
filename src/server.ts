@@ -19,7 +19,7 @@ import { wait } from "./utils/wait";
 
 export default class Server {
   private static twitchPlayerData: Map<TwitchUsername, TwitchPlayer> =
-    new Map(); // only contains players with twitch channels
+    new Map(); // contains players and costreamers
   private static playerLcNameMap: Map<
     string, // lc summoner name (no team)
     TwitchUsername | undefined
@@ -81,15 +81,15 @@ export default class Server {
             ? `@${specialMod?.twitterUsername}`
             : `www.twitch.tv/${user}`;
 
-          const communityChannel = TwitchService.getSpecialChannel(channel);
-          const communityChannels = communityChannel
-            ? [communityChannel]
-            : undefined;
+          const liveCommunityChannels = TwitchService.specialChannels.filter(
+            (channel) =>
+              this.twitchPlayerData.get(channel.twitchUsername)?.isStreaming
+          );
 
           logger.info("determined message data", {
             specialMod,
             authorUrl,
-            communityChannels,
+            communityChannels: liveCommunityChannels,
           });
 
           // parse match
@@ -101,7 +101,12 @@ export default class Server {
             );
             const match = this.parseMatchMessage(commandInput);
 
-            matchData = { match, authorUrl, communityChannels, region };
+            matchData = {
+              match,
+              authorUrl,
+              communityChannels: liveCommunityChannels,
+              region,
+            };
           } else if (msg.includes(TwitchService.CQ_COMMAND)) {
             const commandInput = this.parseEditCommandMessage(
               msg,
@@ -109,11 +114,21 @@ export default class Server {
             );
             const match = this.parseMatchMessage(commandInput);
 
-            matchData = { match, authorUrl, communityChannels, region };
+            matchData = {
+              match,
+              authorUrl,
+              communityChannels: liveCommunityChannels,
+              region,
+            };
           } else if (msg.includes(TwitchService.VS_SPLIT_MESSAGE)) {
             // msg didn't contain !editcom !teams but is still a game update msg (for winters ward lol)
             const match = this.parseMatchMessage(msg);
-            matchData = { match, authorUrl, communityChannels, region };
+            matchData = {
+              match,
+              authorUrl,
+              communityChannels: liveCommunityChannels,
+              region,
+            };
           }
 
           if (!matchData) {
@@ -121,7 +136,7 @@ export default class Server {
             return;
           }
 
-          await this.tweetMatch(matchData);
+          this.tweetMatch(matchData);
         } catch (error) {
           logger.error("something went wrong while parsing chat: ", error);
           BugService.captureException(error);
@@ -201,30 +216,17 @@ export default class Server {
       // this promise updates channel list states if the channel is live
       const checkChannelPromise = TwitchService.isChannelLive(channel)
         .then((isChannelLive) => {
-          const isSpecialChannel =
-            TwitchService.getSpecialChannel(channel) !== undefined;
-
           const player = this.twitchPlayerData.get(channel)!;
           if (!isChannelLive) {
-            // toggle live flag
-            if (!isSpecialChannel) {
-              // no player for special channels
-              player.isStreaming = false;
-            }
-
             // stop listening to channel
+            player.isStreaming = false;
             TwitchService.chatClient.part(channel);
             this.listeningChannels.delete(channel);
             return;
           }
 
-          // toggle live flag
-          if (!isSpecialChannel) {
-            // no player for special channels
-            player.isStreaming = true;
-          }
-
           // listen to channel
+          player.isStreaming = true;
           return TwitchService.chatClient.join(channel).then(() => {
             this.listeningChannels.add(channel);
             // this.pendingChannels.delete(channel);
@@ -242,15 +244,26 @@ export default class Server {
     const twitchPlayers = await PlayerService.getAllTwitch(region);
     logger.info("twitchPlayers", twitchPlayers.slice(0, 5));
 
+    // we want to track both players and costreamers here
+    const allPlayers = twitchPlayers.concat(
+      TwitchService.specialChannels.map((channel) => ({
+        summonerNameWithTeam: channel.twitterUsername,
+        summonerName: channel.twitterUsername,
+        twitchUsername: channel.twitchUsername,
+        twitterUsername: channel.twitterUsername,
+        isStreaming: false,
+      }))
+    );
+
     // init player data map
-    this.twitchPlayerData = twitchPlayers.reduce((map, currPlayer) => {
+    this.twitchPlayerData = allPlayers.reduce((map, currPlayer) => {
       if (currPlayer.twitchUsername) {
         map.set(currPlayer.twitchUsername, currPlayer);
       }
       return map;
     }, new Map<TwitchUsername, TwitchPlayer>());
 
-    // init name map
+    // init name map (note that we call twitch players here)
     this.playerLcNameMap = twitchPlayers.reduce((map, currPlayer) => {
       map.set(currPlayer.summonerName.toLowerCase(), currPlayer.twitchUsername);
       return map;
@@ -259,7 +272,6 @@ export default class Server {
     logger.info("cache state", {
       twitchPlayerData: Array.from(this.twitchPlayerData.entries()).slice(0, 5),
       playerLcNameMap: Array.from(this.playerLcNameMap.entries()).slice(0, 5),
-      specialChannels: TwitchService.specialChannels,
     });
 
     // init pending channels list
@@ -291,7 +303,7 @@ export default class Server {
   }
 
   // Lourlo / TL Armao / GG ry0ma / EG Kaori / TSM Shenyi | vs. | TL Bwipo / DNHA Svmmy / BOG rjs / CLG Luger / EST Mia
-  private static parseMatchMessage(message: string): Match {
+  public static parseMatchMessage(message: string): Match {
     const teams = message.split(TwitchService.VS_SPLIT_MESSAGE);
     if (teams.length !== 2) {
       throw new Error(
