@@ -51,7 +51,7 @@ export default class Server {
           (msg.includes(TwitchService.TEAM_COMMAND) ||
             msg.includes(TwitchService.CQ_COMMAND) ||
             msg.includes(TwitchService.VS_SPLIT_MESSAGE)) &&
-          !msg.includes("@");
+          !msg.includes("@"); // to handle cases where mod uses the cmd to @ someone;
 
         if (!isValidCommand) return;
 
