@@ -22,7 +22,7 @@ export default class Server {
     new Map(); // contains players and costreamers
   private static playerLcNameMap: Map<
     string, // lc summoner name (no team)
-    TwitchUsername | undefined
+    TwitchPlayer
   > = new Map(); // contains name mappings for ALL players (if no twitch channel, val is undefined)
   private static listeningChannels: Set<TwitchUsername> = new Set();
   private static matchService = new MatchService();
@@ -265,9 +265,9 @@ export default class Server {
 
     // init name map (note that we call twitch players here)
     this.playerLcNameMap = twitchPlayers.reduce((map, currPlayer) => {
-      map.set(currPlayer.summonerName.toLowerCase(), currPlayer.twitchUsername);
+      map.set(currPlayer.summonerName.toLowerCase(), currPlayer);
       return map;
-    }, new Map<SummonerNameWithTeam, TwitchUsername | undefined>());
+    }, new Map<SummonerNameWithTeam, TwitchPlayer>());
 
     logger.info("cache state", {
       twitchPlayerData: Array.from(this.twitchPlayerData.entries()).slice(0, 5),
@@ -353,7 +353,8 @@ export default class Server {
       // we do this since playerLcName cache doesnt contain teams. have to extract only the summonername somehow
       const summonerName = parseSummonerName(summonerNameWithTeam);
 
-      if (!this.playerLcNameMap.has(summonerName.toLowerCase())) {
+      const cachedPlayer = this.playerLcNameMap.get(summonerName.toLowerCase());
+      if (!cachedPlayer) {
         logger.warn(
           "getMatchPlayers invalid summoner name, check db if player exists",
           { summonerNameWithTeam, summonerName }
@@ -365,34 +366,11 @@ export default class Server {
         };
       }
 
-      const twitchUsername = this.playerLcNameMap.get(
-        summonerName.toLowerCase()
-      );
-      if (!twitchUsername) {
-        logger.info("getMatchPlayers no twitch username", {
-          summonerNameWithTeam,
-        });
-        return {
-          summonerNameWithTeam,
-          isStreaming: false,
-        };
-      }
-
-      const player = this.twitchPlayerData.get(twitchUsername);
-      logger.info("getMatchPlayers player", { player });
-      if (!player) {
-        return {
-          summonerNameWithTeam,
-          twitchUsername,
-          isStreaming: false,
-        };
-      }
-
       return {
-        summonerNameWithTeam,
-        twitchUsername,
-        twitterUsername: player.twitterUsername,
-        isStreaming: player.isStreaming,
+        summonerNameWithTeam: cachedPlayer.summonerNameWithTeam,
+        twitchUsername: cachedPlayer.twitchUsername,
+        twitterUsername: cachedPlayer.twitterUsername,
+        isStreaming: cachedPlayer.isStreaming,
       };
     });
   }
