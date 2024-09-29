@@ -48,8 +48,8 @@ export default class Server {
     TwitchService.chatClient.onMessage(
       async (channel: string, user: string, msg: string) => {
         const isValidCommand =
-          (msg.includes(TwitchService.TEAM_COMMAND) ||
-            msg.includes(TwitchService.CQ_COMMAND)) &&
+          msg.includes(TwitchService.TEAM_COMMAND) ||
+          msg.includes(TwitchService.CQ_COMMAND) ||
           msg.includes(TwitchService.VS_SPLIT_MESSAGE);
 
         if (!isValidCommand) return;
