@@ -215,7 +215,7 @@ export default class Server {
     const checkChannelPromises: Promise<void>[] = [];
     for (const channel of channels) {
       // this promise updates channel list states if the channel is live
-      const checkChannelPromise = TwitchService.isChannelLive(channel)
+      const checkChannelPromise = TwitchService.isChannelLive(channel, true)
         .then((isChannelLive) => {
           const player = this.twitchPlayerData.get(channel)!;
           if (!isChannelLive) {
