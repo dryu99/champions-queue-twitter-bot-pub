@@ -335,7 +335,13 @@ export default class Server {
     message: string,
     splitText: string
   ): string {
-    const messageParts = message.split(splitText);
+    let parsedMessage: string = message;
+    if (parsedMessage.toLowerCase().includes(":")) {
+      // e.g. CQ game: Boda / Elramir / Xeltop / Exakick / Zoeyls | vs. | Addusto / Tarzan / Eika / Vespa / Stend
+      parsedMessage = parsedMessage.split(":")[1]?.trim() ?? "";
+    }
+
+    const messageParts = parsedMessage.split(splitText);
     const commandInput = messageParts[1];
 
     if (!commandInput) {
