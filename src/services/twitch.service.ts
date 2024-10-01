@@ -134,6 +134,9 @@ class TwitchService {
       twitchUsername: "toadamarillo",
       twitterUsername: "ToadAmarillo",
     },
+    {
+      twitchUsername: "FlorenceMyth",
+    },
   ];
 
   public static async init() {
