@@ -123,22 +123,6 @@ class TwitchService {
       twitterUsername: "ApplesloI",
     },
     {
-      twitchUsername: "VeteranEMEA",
-      twitterUsername: "VeteranEMEA",
-    },
-    {
-      twitchUsername: "therock7_",
-      twitterUsername: "VasilisTheRock7",
-    },
-    {
-      twitchUsername: "caedrel",
-      twitterUsername: "caedrel",
-    },
-    {
-      twitchUsername: "toadamarillo",
-      twitterUsername: "ToadAmarillo",
-    },
-    {
       twitchUsername: "FlorenceMyth",
     },
   ];
@@ -205,15 +189,17 @@ class TwitchService {
     channel: string,
     modUsername: string
   ): Promise<boolean> {
-    if (modUsername === "nightbot") return false;
-    if (modUsername === channel) return true;
-    if (this.isUserSpecialMod(modUsername)) return true;
+    let lcModUsername = modUsername.toLowerCase();
+
+    if (lcModUsername === "nightbot") return false;
+    if (lcModUsername === channel.toLowerCase()) return true;
+    if (this.isUserSpecialMod(lcModUsername)) return true;
 
     const modsResult = await this.apiClient.moderation.getModerators(channel);
 
     return (
       modsResult.data.findIndex(
-        (mod) => mod.userName.toLowerCase() === modUsername.toLowerCase()
+        (mod) => mod.userName.toLowerCase() === lcModUsername
       ) !== -1
     );
   }
@@ -221,14 +207,15 @@ class TwitchService {
   public static isUserSpecialMod(twitchUsername: string): boolean {
     return (
       this.specialMods.findIndex(
-        (mod) => mod.twitchUsername === twitchUsername
+        (mod) =>
+          mod.twitchUsername.toLowerCase() === twitchUsername.toLowerCase()
       ) !== -1
     );
   }
 
   public static getSpecialMod(twitchUsername: string): SpecialMod | undefined {
     return this.specialMods.find(
-      (mod) => mod.twitchUsername === twitchUsername
+      (mod) => mod.twitchUsername.toLowerCase() === twitchUsername.toLowerCase()
     );
   }
 
