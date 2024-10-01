@@ -208,7 +208,9 @@ class TwitchService {
     const modsResult = await this.apiClient.moderation.getModerators(channel);
 
     return (
-      modsResult.data.findIndex((mod) => mod.userName === modUsername) !== -1
+      modsResult.data.findIndex(
+        (mod) => mod.userName.toLowerCase() === modUsername.toLowerCase()
+      ) !== -1
     );
   }
 
