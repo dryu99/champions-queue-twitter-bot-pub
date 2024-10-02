@@ -50,7 +50,9 @@ export default class Server {
         const isValidCommand =
           (msg.includes(TwitchService.TEAM_COMMAND) ||
             msg.includes(TwitchService.CQ_COMMAND) ||
-            msg.includes(TwitchService.VS_SPLIT_MESSAGE)) &&
+            // only let winters ward do these kinds of messages
+            (msg.includes(TwitchService.VS_SPLIT_MESSAGE) &&
+              user.toLowerCase() === "wintersward")) &&
           !msg.includes("@") && // to handle cases where mod uses the cmd to @ someone;
           !msg.includes("!editcoms"); // to handle case where mods make a typo
 
