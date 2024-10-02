@@ -123,8 +123,14 @@ export default class Server {
               region,
             };
           } else if (msg.includes(TwitchService.VS_SPLIT_MESSAGE)) {
+            let parsedMessage: string = msg;
+            if (parsedMessage.toLowerCase().includes(":")) {
+              // e.g. CQ game: Boda / Elramir / Xeltop / Exakick / Zoeyls | vs. | Addusto / Tarzan / Eika / Vespa / Stend
+              parsedMessage = parsedMessage.split(":")[1]?.trim() ?? "";
+            }
+
             // msg didn't contain !editcom !teams but is still a game update msg (for winters ward lol)
-            const match = this.parseMatchMessage(msg);
+            const match = this.parseMatchMessage(parsedMessage);
             matchData = {
               match,
               authorUrl,
