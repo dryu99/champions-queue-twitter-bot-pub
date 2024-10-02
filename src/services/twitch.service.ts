@@ -83,6 +83,14 @@ class TwitchService {
       twitchUsername: "yamatocannon",
       twitterUsername: "YamatoMebdi",
     },
+    {
+      twitchUsername: "kamet0",
+      twitterUsername: "Kammeto",
+    },
+    {
+      twitchUsername: "jesporthub",
+      twitterUsername: "JesportHub",
+    },
   ];
   private static readonly specialMods: SpecialMod[] = [
     {
