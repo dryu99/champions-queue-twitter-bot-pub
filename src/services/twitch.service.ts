@@ -87,10 +87,10 @@ class TwitchService {
       twitchUsername: "kamet0",
       twitterUsername: "Kammeto",
     },
-    {
-      twitchUsername: "jesporthub",
-      twitterUsername: "JesportHub",
-    },
+    // {
+    //   twitchUsername: "jesporthub",
+    //   twitterUsername: "JesportHub",
+    // },
   ];
   private static readonly specialMods: SpecialMod[] = [
     {
@@ -187,7 +187,9 @@ class TwitchService {
           streamTitleLowerCase.includes("champions queue") ||
           streamTitleLowerCase.includes("champion's queue") ||
           streamTitleLowerCase.includes("champ's queue") ||
-          streamTitleLowerCase.includes("inhouse"))
+          streamTitleLowerCase.includes("inhouse") ||
+          streamTitleLowerCase.includes("in house") ||
+          streamTitleLowerCase.includes("in-house"))
       );
     } catch (err) {
       logger.error("error checking stream live", err);
