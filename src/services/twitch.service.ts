@@ -69,7 +69,7 @@ class TwitchService {
     },
     {
       twitchUsername: "therock7_",
-      twitterUsername: "VasilisTheRock7",
+      twitterUsername: "TheRock_euw",
     },
     {
       twitchUsername: "caedrel",
@@ -187,6 +187,9 @@ class TwitchService {
           streamTitleLowerCase.includes("champions queue") ||
           streamTitleLowerCase.includes("champion's queue") ||
           streamTitleLowerCase.includes("champ's queue") ||
+          streamTitleLowerCase.includes("championsq") ||
+          streamTitleLowerCase.includes("champions q") ||
+          streamTitleLowerCase.includes("champion q") ||
           streamTitleLowerCase.includes("inhouse") ||
           streamTitleLowerCase.includes("in house") ||
           streamTitleLowerCase.includes("in-house"))
