@@ -87,6 +87,10 @@ class TwitchService {
       twitchUsername: "kamet0",
       twitterUsername: "Kammeto",
     },
+    {
+      twitchUsername: "doublelift",
+      twitterUsername: "doublelift1",
+    },
     // {
     //   twitchUsername: "jesporthub",
     //   twitterUsername: "JesportHub",
