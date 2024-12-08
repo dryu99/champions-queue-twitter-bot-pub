@@ -95,8 +95,7 @@ const LiveGameUpdate: React.FC<LiveGameUpdateProps> = ({ matchData }) => {
         </HeaderContainer>
         <SubHeader>
           {/* {region === "NA" ? "🇺🇸" : "🇪🇺"} |{" "} */}
-          {ChampsQueueService.CQ_CURR_SEASON_TEXT} | Patch{" "}
-          {ChampsQueueService.CQ_CURR_PATCH}
+          Patch {ChampsQueueService.CQ_CURR_PATCH}
         </SubHeader>
         <HeaderLine />
         <Teams>

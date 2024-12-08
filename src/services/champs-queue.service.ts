@@ -5,8 +5,8 @@ export default class ChampsQueueService {
   public static readonly CQ_START_HOUR = 16;
   public static readonly CQ_START_HOUR_EU = 16;
   public static readonly CQ_END_HOUR = 23;
-  public static readonly CQ_CURR_PATCH = "14.18";
-  public static readonly CQ_CURR_SEASON_TEXT = "Worlds 2024";
+  public static readonly CQ_CURR_PATCH = "15.1";
+  public static readonly CQ_CURR_SEASON_TEXT = "";
   // public static readonly CQ_CURR_SPLIT_TEXT = "Split 1";
   public static readonly CQ_CURR_SPLIT_DATE_DATA = {
     year: 2024,
