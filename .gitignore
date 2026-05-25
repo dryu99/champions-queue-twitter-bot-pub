@@ -108,3 +108,6 @@ dist
 .tern-port
 
 generated/
+
+# Personal dev notes (kept local, not published)
+TODOS.md
