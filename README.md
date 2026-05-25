@@ -1,4 +1,4 @@
-# Champion's Queue Stream Updates Twitter Bot
+# Champion's Queue Twitter Bot
 
 Twitter bot that posts live game updates for Champion's Queue ([@ChampsQueueBot](https://x.com/ChampsQueueBot)).
 
