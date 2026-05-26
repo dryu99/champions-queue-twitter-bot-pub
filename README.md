@@ -2,6 +2,12 @@
 
 Twitter bot that posts live game updates for Champion's Queue ([@ChampsQueueBot](https://x.com/ChampsQueueBot)).
 
+<img width="800" alt="Screenshot 2026-05-25 at 5 49 39 PM" src="https://github.com/user-attachments/assets/bb14c38e-6923-4635-85cf-cf02c77554b5" />
+
+<img width="663" alt="Screenshot 2026-05-25 at 5 50 18 PM" src="https://github.com/user-attachments/assets/64026427-b708-4f14-9d96-54e9fb0bb0ce" />
+
+
+
 ## What is Champion's Queue?
 
 [Champion's Queue](https://championsqueue.lolesports.com/en-us/about) is a private server for pro North American League of Legends players with a dedicated leaderboard and prizepool.
